@@ -1,0 +1,2309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>CubeNova — speedcubing timer</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#101216">
+<meta name="description" content="CubeNova — a speedcubing timer with scrambles, live cube diagrams, stats, graphs, and an OLL/PLL/F2L/CLL/EG-1 trainer.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CubeNova">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg: #101216; --surface: #1b1f27; --surface2: #22262f; --line: #2a2f3a;
+    --text: #eef0f3; --muted: #7d8492; --muted2: #565c68;
+    --green: #35d68a; --red: #ef5350; --amber: #f2b84b; --blue2: #4a9eff;
+    --c-U:#f4f4f0; --c-D:#ffd21f; --c-F:#17b860; --c-B:#2f6bff; --c-L:#ff7a1f; --c-R:#e0222c;
+    --c-m0:#f4f4f0; --c-m1:#e0222c; --c-m2:#17b860; --c-m3:#ffd21f; --c-m4:#7a3ff2; --c-m5:#2f6bff;
+    --c-m6:#ff7a1f; --c-m7:#9099a3; --c-m8:#25d4c9; --c-m9:#ef5da8; --c-m10:#0d5c3a; --c-m11:#12246e;
+    --c-s0:#f4f4f0; --c-s1:#e0222c; --c-s2:#17b860; --c-s3:#ffd21f; --c-s4:#7a3ff2; --c-s5:#2f6bff; --c-s6:#ff7a1f; --c-s7:#25d4c9;
+  }
+  body.light{
+    --bg:#f2f3f6; --surface:#ffffff; --surface2:#eef0f4; --line:#dfe2e8;
+    --text:#15171c; --muted:#5b616e; --muted2:#8a909c;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background: radial-gradient(ellipse 900px 500px at 50% -10%, color-mix(in srgb, var(--surface) 60%, transparent) 0%, transparent 60%), var(--bg);
+    color:var(--text);
+    font-family:'Space Grotesk', system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    user-select:none;
+    overflow-x:hidden;
+  }
+  .wrap{ max-width:800px; margin:0 auto; padding:20px 16px 60px; min-height:100dvh; display:flex; flex-direction:column; gap:16px; }
+
+  header{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .brand{ display:flex; align-items:center; gap:9px; }
+  .logo{ flex:0 0 auto; display:block; border-radius:7px; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.35)); }
+  .brand .mark{ font-family:'JetBrains Mono', monospace; font-weight:800; font-size:19px; letter-spacing:-0.02em; }
+  .brand .mark .dot{ color:var(--green); }
+  .brand .tag{ font-size:11px; color:var(--muted2); letter-spacing:.14em; text-transform:uppercase; font-family:'JetBrains Mono', monospace; }
+
+  .seg{ display:flex; flex-wrap:wrap; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:3px; gap:2px; max-width:100%; }
+  .seg button{ font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing:.05em; padding:7px 10px; border-radius:7px; border:none; background:transparent; color:var(--muted); cursor:pointer; }
+  .seg button.active{ background:var(--surface2); color:var(--text); }
+
+  .topnav{ display:flex; gap:6px; flex-wrap:wrap; }
+  .topnav button{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.05em; padding:8px 12px; border-radius:9px; border:1px solid var(--line); background:var(--surface); color:var(--muted); cursor:pointer; }
+  .topnav button.active{ color:var(--green); border-color:var(--green); background:var(--surface2); }
+
+  .view{ display:none; flex-direction:column; gap:16px; }
+  .view.active{ display:flex; }
+
+  .stats{ display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+  .stats.full{ grid-template-columns:repeat(5,1fr); }
+  .stat{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:9px 6px; text-align:center; }
+  .stat .v{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:15px; font-variant-numeric: tabular-nums; }
+  .stat .l{ margin-top:2px; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted2); }
+
+  .scramble-box{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .scramble-text{ font-family:'JetBrains Mono', monospace; font-size:14.5px; letter-spacing:.03em; line-height:1.7; color:#dfe2e8; word-spacing:2px; }
+  body.light .scramble-text{ color:#2a2f3a; }
+  .re-scramble{ flex:0 0 auto; width:36px; height:36px; border-radius:9px; background:var(--surface2); border:1px solid var(--line); color:var(--muted); display:flex;align-items:center;justify-content:center; cursor:pointer; font-size:16px; }
+  .scramble-btns{ display:flex; gap:6px; flex:0 0 auto; }
+  .re-scramble.disabled{ opacity:0.35; pointer-events:none; }
+  .re-scramble.copied{ color:var(--green); border-color:var(--green); }
+  .re-scramble:hover{ color:var(--green); border-color:var(--green); }
+
+  .net-wrap{ display:flex; justify-content:center; padding:6px 0 2px; }
+  .net{ display:grid; gap:2px; }
+  .sticker{ border-radius:2.5px; box-shadow: inset 0 -2px 3px rgba(0,0,0,.28), inset 0 1px 1px rgba(255,255,255,.25); }
+  .no-diagram-note{ display:none; text-align:center; font-family:'JetBrains Mono', monospace; font-size:11.5px; color:var(--muted2); padding:4px 0; }
+
+  .timer-stage{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:210px;
+    border-radius:18px; border:1px solid var(--line); background:var(--surface); position:relative; cursor:pointer;
+    padding:28px 16px; transition:background .12s ease, border-color .12s ease;
+  }
+  .timer-stage.holding{ background:#241717; border-color:#4a2323; }
+  .timer-stage.ready{ background:#132218; border-color:#1f4a30; }
+  .timer-stage.inspecting{ background:#241d10; border-color:#4a3a1f; }
+  .timer-stage.inspecting .timer-display{ color:var(--amber); }
+  .timer-stage.insp-warn.inspecting .timer-display{ color:var(--red); }
+  .insp-toggle-row{ display:flex; justify-content:center; margin-top:-6px; }
+
+  body.focus-mode header,
+  body.focus-mode .topnav,
+  body.focus-mode .stats,
+  body.focus-mode .scramble-box,
+  body.focus-mode .net-wrap,
+  body.focus-mode .no-diagram-note,
+  body.focus-mode .insp-toggle-row{ display:none !important; }
+  body.focus-mode .wrap{ padding:0; max-width:none; height:100dvh; }
+  body.focus-mode #view-timer{ height:100%; }
+  body.focus-mode .timer-stage{
+    position:fixed; inset:0; z-index:1000; border-radius:0; margin:0; border:none;
+    width:100vw; height:100vh; height:100dvh;
+  }
+  body.focus-mode .timer-display{ font-size:min(24vw,220px); }
+  body.focus-mode .timer-hint{ font-size:16px; }
+  body.focus-mode .penalty-row{ position:absolute; bottom:40px; }
+  .timer-display{ font-family:'JetBrains Mono', monospace; font-weight:700; font-variant-numeric: tabular-nums; font-size:clamp(50px, 12vw, 88px); letter-spacing:-0.01em; color:var(--text); transition:color .12s ease; }
+  .timer-stage.holding .timer-display{ color:var(--red); }
+  .timer-stage.ready .timer-display{ color:var(--green); }
+  .timer-hint{ margin-top:10px; font-size:12px; color:var(--muted2); font-family:'JetBrains Mono', monospace; letter-spacing:.04em; min-height:16px; }
+  .penalty-row{ display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; justify-content:center; }
+  .pbtn{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.06em; padding:7px 14px; border-radius:8px; border:1px solid var(--line); background:var(--surface2); color:var(--muted); cursor:pointer; }
+  .pbtn:hover{ color:var(--text); }
+  .pbtn.active-plus2{ color:var(--amber); border-color:var(--amber); }
+  .pbtn.active-dnf{ color:var(--red); border-color:var(--red); }
+
+  .history-head{ display:flex; align-items:center; justify-content:space-between; margin-top:4px; }
+  .history-head h3{ font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted2); margin:0; font-weight:600; }
+  .clear-btn{ font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--muted2); background:none; border:none; cursor:pointer; }
+  .clear-btn:hover{ color:var(--red); }
+  .history{ display:flex; flex-wrap:wrap; gap:7px; max-height:340px; overflow-y:auto; }
+  .hitem{ font-family:'JetBrains Mono', monospace; font-size:12.5px; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:6px 8px 6px 10px; color:var(--text); cursor:pointer; display:flex; align-items:center; gap:7px; }
+  .hitem:hover{ border-color:#3a4150; }
+  .hitem .n{ color:var(--muted2); }
+  .hitem.plus2{ color:var(--amber); }
+  .hitem.dnf{ color:var(--red); text-decoration:line-through; text-decoration-color:#6b3030;}
+  .hitem .x{ color:var(--muted2); font-weight:700; padding:0 2px; border-radius:4px; }
+  .hitem .x:hover{ color:var(--red); background:#2a1a1a; }
+  .empty-note{ font-size:12.5px; color:var(--muted2); font-family:'JetBrains Mono', monospace; }
+
+  .cat-tabs{ display:flex; gap:8px; }
+  .cat-tabs button{ flex:1; font-family:'JetBrains Mono', monospace; font-size:12.5px; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--surface); color:var(--muted); cursor:pointer; }
+  .cat-tabs button.active{ color:var(--green); border-color:var(--green); background:var(--surface2); }
+
+  .case-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(64px,1fr)); gap:7px; }
+  .case-chip{ font-family:'JetBrains Mono', monospace; font-size:11.5px; background:var(--surface); border:1px solid var(--line); border-radius:9px; padding:8px 4px; text-align:center; color:var(--muted); cursor:pointer; line-height:1.3; }
+  .case-chip b{ display:block; color:var(--text); font-size:13px; }
+  .case-chip.sel{ border-color:var(--green); color:var(--green); }
+
+  .detail{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .detail-name{ font-size:14px; font-weight:600; }
+  .detail-sub{ font-size:11px; color:var(--muted2); font-family:'JetBrains Mono', monospace; }
+  .detail-alg{ font-family:'JetBrains Mono', monospace; font-size:14.5px; text-align:center; letter-spacing:.02em; min-height:22px; color:var(--text); }
+  .detail-alg.hidden-alg{ color:transparent; text-shadow: 0 0 9px rgba(120,120,120,0.6); cursor:pointer; }
+  .detail-row{ display:flex; gap:8px; margin-top:4px; flex-wrap:wrap; justify-content:center; }
+  .dbtn{ font-family:'JetBrains Mono', monospace; font-size:12px; padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--surface2); color:var(--muted); cursor:pointer; }
+  .dbtn:hover{ color:var(--text); }
+  .dbtn.primary{ color:var(--green); border-color:var(--green); }
+  .toggle-row{ display:flex; align-items:center; gap:8px; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--muted); }
+  .mini-select{ font-family:'JetBrains Mono', monospace; font-size:12px; background:var(--surface2); color:var(--text); border:1px solid var(--line); border-radius:6px; padding:3px 6px; }
+  .toggle-row input{ accent-color: var(--green); }
+
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:12px; }
+  .card h3{ margin:0; font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted2); font-weight:600; }
+  .row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .field{ font-family:'JetBrains Mono', monospace; font-size:12.5px; background:var(--surface2); border:1px solid var(--line); border-radius:8px; padding:8px 10px; color:var(--text); flex:1; min-width:120px; }
+  .swatch{ width:26px; height:26px; border-radius:50%; border:2px solid var(--line); cursor:pointer; }
+  .swatch.sel{ border-color:var(--text); }
+  .sess-item, .cube-item{ display:flex; align-items:center; justify-content:space-between; gap:8px; background:var(--surface2); border:1px solid var(--line); border-radius:9px; padding:8px 12px; font-family:'JetBrains Mono', monospace; font-size:12.5px; }
+  .sess-item.active{ border-color:var(--green); color:var(--green); }
+  .mini-btn{ font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--muted); background:none; border:1px solid var(--line); border-radius:6px; padding:4px 8px; cursor:pointer; }
+  .mini-btn:hover{ color:var(--text); }
+  .mini-btn.danger:hover{ color:var(--red); border-color:var(--red); }
+
+  canvas.chart{ width:100%; height:140px; display:block; background:var(--surface2); border-radius:10px; }
+  .chart-label{ font-size:11px; color:var(--muted2); font-family:'JetBrains Mono', monospace; letter-spacing:.08em; text-transform:uppercase; margin-bottom:-4px; }
+
+  @keyframes pbflash{ 0%{ box-shadow:0 0 0 0 rgba(53,214,138,0.55);} 100%{ box-shadow:0 0 0 22px rgba(53,214,138,0);} }
+  .timer-stage.pbflash{ animation: pbflash .7s ease-out; }
+  .hitem .star{ color:var(--amber); }
+  .hitem .edit{ color:var(--muted2); font-weight:700; padding:0 2px; border-radius:4px; }
+  .hitem .edit:hover{ color:var(--blue2); background:#182636; }
+  .hitem .note-btn{ font-size:11px; opacity:0.7; padding:0 1px; }
+  .hitem .note-btn:hover{ opacity:1; }
+  .hitem .note-dot{ width:5px; height:5px; border-radius:50%; background:var(--blue2); display:inline-block; }
+  .history-tools{ display:flex; gap:8px; align-items:center; }
+  .hint-delta{ color:var(--muted2); }
+  .hint-delta.better{ color:var(--green); }
+  .hint-delta.worse{ color:var(--red); }
+
+  @media (max-width:480px){
+    .stats{ grid-template-columns:repeat(3,1fr); }
+    .stats:not(.full) .stat:nth-child(4), .stats:not(.full) .stat:nth-child(5){ display:none; }
+    .stats.full{ grid-template-columns:repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <img class="logo" src="data:image/png;base64,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" width="32" height="32" alt="CubeNova logo">
+        <span class="mark">CubeNova</span>
+        <span class="tag">speedcube trainer</span>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <div class="seg" id="eventSeg">
+          <button data-ev="333" class="active">3×3</button>
+          <button data-ev="222">2×2</button>
+          <button data-ev="444">4×4</button>
+          <button data-ev="555">5×5</button>
+          <button data-ev="666">6×6</button>
+          <button data-ev="777">7×7</button>
+          <button data-ev="pyra">Pyra</button>
+          <button data-ev="skewb">Skewb</button>
+          <button data-ev="mega">Mega</button>
+          <button data-ev="sq1">Sq-1</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="topnav">
+      <button data-view="timer" class="active">🏠 Timer</button>
+      <button data-view="stats">📊 Stats</button>
+      <button data-view="graphs">📈 Graphs</button>
+      <button data-view="learn">🎓 Learn</button>
+      <button data-view="settings">⚙️ Settings</button>
+    </div>
+
+    <!-- TIMER VIEW -->
+    <div class="view active" id="view-timer">
+      <div class="stats">
+        <div class="stat"><div class="v" id="statBest">–</div><div class="l">best</div></div>
+        <div class="stat"><div class="v" id="statAo5">–</div><div class="l">ao5</div></div>
+        <div class="stat"><div class="v" id="statAo12">–</div><div class="l">ao12</div></div>
+        <div class="stat"><div class="v" id="statMean">–</div><div class="l">mean</div></div>
+        <div class="stat"><div class="v" id="statCount">0</div><div class="l">solves</div></div>
+      </div>
+
+      <div class="scramble-box">
+        <div class="scramble-text" id="scrambleText">—</div>
+        <div class="scramble-btns">
+          <div class="re-scramble" id="prevScramble" title="Previous scramble">‹</div>
+          <div class="re-scramble" id="nextScramble" title="Next scramble">›</div>
+          <div class="re-scramble" id="copyScramble" title="Copy scramble">📋</div>
+          <div class="re-scramble" id="reScramble" title="New scramble">⟳</div>
+        </div>
+      </div>
+
+      <div class="net-wrap"><div class="net" id="net"></div></div>
+      <div class="net-wrap" id="skewbNetWrap" style="display:none; width:100%;"><div id="skewbNet" style="width:100%;"></div></div>
+      <div class="net-wrap" id="pyraNetWrap" style="display:none; width:100%;"><div id="pyraNet" style="width:100%;"></div></div>
+      <div class="net-wrap" id="megaNetWrap" style="display:none; width:100%;"><div id="megaNet" style="width:100%;"></div></div>
+      <div class="net-wrap" id="sq1NetWrap" style="display:none; width:100%;"><div id="sq1Net" style="width:100%;"></div></div>
+      <div class="no-diagram-note" id="noDiagramNote">no live diagram for this puzzle yet — scramble text only</div>
+
+      <div class="insp-toggle-row" style="gap:14px; flex-wrap:wrap;">
+        <label class="toggle-row">inspection:
+          <select id="inspectSelect" class="mini-select">
+            <option value="0">off</option>
+            <option value="15">15s</option>
+            <option value="30">30s</option>
+          </select>
+        </label>
+        <label class="toggle-row"><input type="checkbox" id="hideTimeToggle"> hide time while solving</label>
+        <label class="toggle-row"><input type="checkbox" id="practiceToggle"> practice mode (don't save)</label>
+        <label class="toggle-row"><input type="checkbox" id="splitToggle"> multi-phase splits (press Enter to mark a phase)</label>
+        <label class="toggle-row"><input type="checkbox" id="focusToggle"> fullscreen timer (hide everything while solving)</label>
+      </div>
+
+      <div class="timer-stage" id="timerStage">
+        <div class="timer-display" id="timerDisplay">0.00</div>
+        <div class="timer-hint" id="timerHint">hold space or press &amp; hold here to start</div>
+        <div class="penalty-row" id="penaltyRow" style="display:none;">
+          <button class="pbtn" id="btnPlus2">+2</button>
+          <button class="pbtn" id="btnDnf">DNF</button>
+          <button class="pbtn" id="btnUndo">↩ undo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS VIEW -->
+    <div class="view" id="view-stats">
+      <div class="stats full">
+        <div class="stat"><div class="v" id="fBest">–</div><div class="l">best</div></div>
+        <div class="stat"><div class="v" id="fWorst">–</div><div class="l">worst</div></div>
+        <div class="stat"><div class="v" id="fAo5">–</div><div class="l">ao5</div></div>
+        <div class="stat"><div class="v" id="fAo12">–</div><div class="l">ao12</div></div>
+        <div class="stat"><div class="v" id="fAo25">–</div><div class="l">ao25</div></div>
+        <div class="stat"><div class="v" id="fAo50">–</div><div class="l">ao50</div></div>
+        <div class="stat"><div class="v" id="fAo100">–</div><div class="l">ao100</div></div>
+        <div class="stat"><div class="v" id="fMean">–</div><div class="l">mean</div></div>
+        <div class="stat"><div class="v" id="fStddev">–</div><div class="l">std dev</div></div>
+        <div class="stat"><div class="v" id="fCount">0</div><div class="l">solves</div></div>
+      </div>
+      <div class="history-head">
+        <h3 id="sessionLabel">history — 0 solves</h3>
+        <button class="clear-btn" id="clearBtn">clear all</button>
+      </div>
+      <div class="history" id="history"></div>
+    </div>
+
+    <!-- GRAPHS VIEW -->
+    <div class="view" id="view-graphs">
+      <div class="chart-label" id="graphEventLabel">3×3 — time progression</div>
+      <canvas class="chart" id="chartTimes"></canvas>
+      <div class="chart-label">personal-best progression</div>
+      <canvas class="chart" id="chartPB"></canvas>
+      <div class="chart-label">ao5 (green) vs ao12 (blue) trend</div>
+      <canvas class="chart" id="chartAvg"></canvas>
+      <div class="chart-label">time distribution</div>
+      <canvas class="chart" id="chartHist"></canvas>
+    </div>
+
+    <!-- LEARN VIEW -->
+    <div class="view" id="view-learn">
+      <div class="cat-tabs" id="catTabs" style="flex-wrap:wrap;">
+        <button data-cat="OLL" class="active">OLL <span style="color:var(--muted2)">· 57</span></button>
+        <button data-cat="PLL">PLL <span style="color:var(--muted2)">· 21</span></button>
+        <button data-cat="F2L">F2L <span style="color:var(--muted2)">· 41</span></button>
+        <button data-cat="OLL2">2×2 OLL <span style="color:var(--muted2)">· 7</span></button>
+        <button data-cat="PLL2">2×2 PLL <span style="color:var(--muted2)">· 3</span></button>
+        <button data-cat="CLL">CLL <span style="color:var(--muted2)">· 40</span></button>
+        <button data-cat="EG1">EG-1 <span style="color:var(--muted2)">· 40</span></button>
+      </div>
+      <div class="detail-sub" id="catNote" style="text-align:center; display:none;"></div>
+      <div class="detail">
+        <div class="detail-sub" id="detailSub">—</div>
+        <div class="detail-name" id="detailName">—</div>
+        <div class="net-wrap"><div class="net" id="caseNet"></div></div>
+        <div class="detail-alg" id="detailAlg">—</div>
+        <div class="detail-row">
+          <button class="dbtn" id="prevCase">‹ prev</button>
+          <button class="dbtn primary" id="shuffleCase">🔀 random</button>
+          <button class="dbtn" id="nextCase">next ›</button>
+        </div>
+        <label class="toggle-row"><input type="checkbox" id="trainMode"> trainer mode (hide algorithm)</label>
+      </div>
+      <div class="case-grid" id="caseGrid"></div>
+    </div>
+
+    <!-- SETTINGS VIEW -->
+    <div class="view" id="view-settings">
+      <div class="card">
+        <h3>Appearance</h3>
+        <div class="row">
+          <button class="dbtn" id="themeToggle">🌙 Dark / ☀️ Light</button>
+        </div>
+        <div class="row" id="accentRow"></div>
+      </div>
+
+      <div class="card">
+        <h3>Sound</h3>
+        <label class="toggle-row"><input type="checkbox" id="soundToggle" checked> timer sounds (start beep, inspection warnings)</label>
+        <label class="toggle-row"><input type="checkbox" id="voiceToggle" checked> spoken inspection alerts (8s / 12s)</label>
+      </div>
+
+      <div class="card">
+        <h3>Sessions</h3>
+        <div id="sessList" style="display:flex; flex-direction:column; gap:7px;"></div>
+        <div class="row">
+          <input class="field" id="newSessName" placeholder="new session name…">
+          <button class="dbtn primary" id="addSession">+ Create</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Backup</h3>
+        <div class="row">
+          <button class="dbtn" id="exportBtn">⬇ Export current session (JSON)</button>
+          <button class="dbtn" id="exportCsvBtn">⬇ Export current session (CSV)</button>
+          <label class="dbtn" style="cursor:pointer;">⬆ Import JSON<input type="file" id="importFile" accept="application/json" style="display:none;"></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>My Cubes</h3>
+        <div id="cubeList" style="display:flex; flex-direction:column; gap:7px;"></div>
+        <div class="row">
+          <input class="field" id="newCubeName" placeholder="cube name, e.g. GAN 12 Maglev">
+          <input class="field" id="newCubeNotes" placeholder="notes (optional)">
+          <button class="dbtn primary" id="addCube">+ Add</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Bluetooth Timer <span style="color:var(--muted2); text-transform:none; letter-spacing:0;">(experimental)</span></h3>
+        <div class="row">
+          <button class="dbtn" id="btConnect">🔵 Pair Bluetooth device</button>
+        </div>
+        <div class="detail-sub" id="btStatus">Not connected. Note: this can pair with a nearby Bluetooth timer, but automatically feeding times into the app isn't wired up yet — full Stackmat/GAN timer protocol support would need real hardware to build and test against.</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+
+// ================= LOCAL STORAGE SHIM =================
+// Replaces the Claude-artifact-only `window.storage` API with a real, standalone
+// implementation backed by localStorage, so this app works once hosted on its own —
+// same get/set/delete/list interface, so nothing else in the app had to change.
+if (!window.storage) {
+  window.storage = (function(){
+    const PREFIX = 'cubenova:';
+    async function get(key){
+      try{
+        const raw = localStorage.getItem(PREFIX+key);
+        if(raw===null) return null;
+        return {key, value: raw};
+      }catch(e){ return null; }
+    }
+    async function set(key, value){
+      try{ localStorage.setItem(PREFIX+key, value); return {key, value}; }
+      catch(e){ return null; }
+    }
+    async function del(key){
+      try{ localStorage.removeItem(PREFIX+key); return {key, deleted:true}; }
+      catch(e){ return null; }
+    }
+    async function list(prefix){
+      try{
+        const keys = [];
+        for(let i=0;i<localStorage.length;i++){
+          const k = localStorage.key(i);
+          if(k && k.startsWith(PREFIX)){
+            const short = k.slice(PREFIX.length);
+            if(!prefix || short.startsWith(prefix)) keys.push(short);
+          }
+        }
+        return {keys, prefix};
+      }catch(e){ return null; }
+    }
+    return {get, set, delete: del, list};
+  })();
+}
+
+// Register the service worker for offline support + installability (no-op if unavailable, e.g. file://).
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+// ================= CUBE ENGINE (generalized, verified) =================
+function buildEngine(n){
+  const FACES=['U','R','F','D','L','B'];
+  const OFFSET={}; let off=0; for(const f of FACES){OFFSET[f]=off; off+=n*n;}
+  const COLORS={U:'U',R:'R',F:'F',D:'D',L:'L',B:'B'};
+  const NORMAL={U:[0,1,0],D:[0,-1,0],F:[0,0,1],B:[0,0,-1],L:[-1,0,0],R:[1,0,0]};
+  function coord(i){ return n===1?0: -1 + 2*i/(n-1); }
+  function gridToXYZ(face,r,c){
+    const a=coord(c), b=coord(r);
+    switch(face){
+      case 'U': return [a,1,b]; case 'D': return [a,-1,-b];
+      case 'F': return [a,-b,1]; case 'B': return [-a,-b,-1];
+      case 'L': return [-1,-b,a]; case 'R': return [1,-b,-a];
+    }
+  }
+  const total=6*n*n;
+  const posOf=new Array(total), normOf=new Array(total);
+  const coordToIndex={};
+  for(const face of FACES){
+    for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+      const idx=OFFSET[face]+r*n+c;
+      const xyz=gridToXYZ(face,r,c).map(v=>Math.round(v*10000)/10000);
+      posOf[idx]=xyz; normOf[idx]=NORMAL[face];
+      coordToIndex[xyz.join(',')+'|'+NORMAL[face].join(',')]=idx;
+    }
+  }
+  function solved(){ const cube=new Array(total); for(const f of FACES) for(let i=0;i<n*n;i++) cube[OFFSET[f]+i]=COLORS[f]; return cube; }
+  const tR=p=>[p[0],p[2],-p[1]], tL=p=>[p[0],-p[2],p[1]];
+  const tU=p=>[-p[2],p[1],p[0]], tD=p=>[p[2],p[1],-p[0]];
+  const tF=p=>[p[1],-p[0],p[2]], tB=p=>[-p[1],p[0],p[2]];
+  const FACE_DEF={
+    R:{axis:0,sign:1,t:tR}, L:{axis:0,sign:-1,t:tL},
+    U:{axis:1,sign:1,t:tU}, D:{axis:1,sign:-1,t:tD},
+    F:{axis:2,sign:1,t:tF}, B:{axis:2,sign:-1,t:tB},
+  };
+  const SPECIAL_DEF={
+    M:{axis:0,sign:0,t:tL,sliceOnly:true}, E:{axis:1,sign:0,t:tD,sliceOnly:true}, S:{axis:2,sign:0,t:tF,sliceOnly:true},
+    x:{axis:0,sign:1,t:tR,whole:true}, y:{axis:1,sign:1,t:tU,whole:true}, z:{axis:2,sign:1,t:tF,whole:true},
+  };
+  function condFace(def, p, depth){
+    const eps = 1e-4;
+    const threshold = def.sign>0 ? (1 - 2*(depth-1)/(n-1)) : (-1 + 2*(depth-1)/(n-1));
+    return def.sign>0 ? p[def.axis] >= threshold-eps : p[def.axis] <= threshold+eps;
+  }
+  function condSpecial(def, p){
+    if(def.whole) return true;
+    if(def.sliceOnly) return Math.abs(p[def.axis])<1e-4;
+  }
+  function applyCW(cube, letter, depth){
+    const faceDef = FACE_DEF[letter];
+    const def = faceDef || SPECIAL_DEF[letter];
+    if(!def) return cube;
+    const out=cube.slice();
+    for(let i=0;i<total;i++){
+      const hit = faceDef ? condFace(def, posOf[i], depth) : condSpecial(def, posOf[i]);
+      if(hit){
+        const np=def.t(posOf[i]).map(v=>Math.round(v*10000)/10000);
+        const nn=def.t(normOf[i]).map(v=>Math.round(v*10000)/10000);
+        const ni=coordToIndex[np.join(',')+'|'+nn.join(',')];
+        if(ni!==undefined) out[ni]=cube[i];
+      }
+    }
+    return out;
+  }
+  // parse a move token: optional leading digits (depth), a letter, optional 'w', optional modifier
+  function parseToken(token){
+    let i=0; while(i<token.length && token[i]>='0' && token[i]<='9') i++;
+    const digits = token.slice(0,i);
+    const rawLetter = token[i]; i++;
+    let wide=false;
+    if(token[i]==='w'){ wide=true; i++; }
+    const mod = token.slice(i);
+    let cnt=1; if(mod[0]==='2') cnt=2; else if(mod[0]==="'") cnt=3;
+    const isFaceLetter = 'RLUDFB'.includes(rawLetter.toUpperCase());
+    let letter, depth=1;
+    if(isFaceLetter){
+      letter = rawLetter.toUpperCase();
+      const isLower = rawLetter === rawLetter.toLowerCase() && rawLetter !== rawLetter.toUpperCase();
+      if(digits) depth = parseInt(digits,10);
+      else if(wide || isLower) depth = 2;
+      else depth = 1;
+    } else {
+      letter = rawLetter; // M,S,E,x,y,z as-is
+    }
+    return {letter, depth, cnt};
+  }
+  function applyToken(cube, token){
+    const {letter, depth, cnt} = parseToken(token);
+    let c=cube;
+    for(let k=0;k<cnt;k++) c=applyCW(c, letter, depth);
+    return c;
+  }
+  function applyAlg(cube, str){
+    const tokens=str.replace(/[()]/g,'').split(/\s+/).filter(Boolean);
+    let c=cube;
+    for(const t of tokens) c=applyToken(c,t);
+    return c;
+  }
+  function isSolved(cube){
+    for(const f of FACES){ const first=cube[OFFSET[f]]; for(let i=0;i<n*n;i++) if(cube[OFFSET[f]+i]!==first) return false; }
+    return true;
+  }
+  return {FACES,OFFSET,solved,applyToken,applyAlg,isSolved,n};
+}
+function invertAlg(str){
+  const tokens=str.replace(/[()]/g,'').split(/\s+/).filter(Boolean);
+  return tokens.slice().reverse().map(t=>{
+    const letter=t[0]; const mod=t.slice(1);
+    if(mod[0]==="'") return letter;
+    if(mod[0]==='2') return letter+'2';
+    return letter+"'";
+  }).join(' ');
+}
+
+const E3 = buildEngine(3);
+const E2 = buildEngine(2);
+const E4 = buildEngine(4);
+const E5 = buildEngine(5);
+const E6 = buildEngine(6);
+const E7 = buildEngine(7);
+
+// ================= SKEWB ENGINE (verified separately: 30 stickers, moves order-3,
+// exactly 7/14 pieces move per turn, scramble+inverse=solved) =================
+const SKEWB = (function(){
+  const CORNERS = [];
+  for (const sx of [1,-1]) for (const sy of [1,-1]) for (const sz of [1,-1]) CORNERS.push([sx,sy,sz]);
+  const CENTERS = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+  const FACE_OF = (n) => n[0]===1?'R':n[0]===-1?'L':n[1]===1?'U':n[1]===-1?'D':n[2]===1?'F':'B';
+  const STICKERS = [];
+  for (const c of CORNERS) for (let axis=0; axis<3; axis++){ const facing=[0,0,0]; facing[axis]=c[axis]; STICKERS.push({piecePos:c.slice(), facing}); }
+  for (const c of CENTERS) STICKERS.push({piecePos:c.slice(), facing:c.slice()});
+  STICKERS.forEach(s => s.color = FACE_OF(s.facing));
+  function key(pos, facing){ return pos.join(',')+'|'+facing.join(','); }
+  const slotIndex = {};
+  STICKERS.forEach((s,i)=> slotIndex[key(s.piecePos, s.facing)] = i);
+  function solved(){ return STICKERS.map(s=>s.color); }
+  function rot(v, P){ const [px,py,pz]=P; return [px*pz*v[2], px*py*v[0], py*pz*v[1]]; }
+  function dot(a,b){ return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]; }
+  const POLES = { U:[1,1,1], L:[-1,1,-1], R:[1,1,-1], B:[-1,1,1] };
+  function applyCW(cube, poleLetter){
+    const P = POLES[poleLetter];
+    const out = cube.slice();
+    for (let i=0;i<STICKERS.length;i++){
+      const s = STICKERS[i];
+      if (dot(s.piecePos, P) > 0){
+        const np = rot(s.piecePos, P), nf = rot(s.facing, P);
+        out[slotIndex[key(np, nf)]] = cube[i];
+      }
+    }
+    return out;
+  }
+  function applyMove(cube, notation){
+    const letter = notation[0], mod = notation.slice(1);
+    let cnt = mod[0]==="'" ? 2 : 1;
+    let c = cube;
+    for (let k=0;k<cnt;k++) c = applyCW(c, letter);
+    return c;
+  }
+  function applyAlg(cube, str){ let c=cube; for(const t of str.split(/\s+/).filter(Boolean)) c=applyMove(c,t); return c; }
+  return { solved, applyMove, applyAlg, slotIndex, key };
+})();
+
+// Which physical corner sits at each face's 4 drawn positions (top-left, top-right,
+// bottom-left, bottom-right), reusing the exact same per-face coordinate convention
+// as the NxN cube net above, so orientation matches visually across puzzle types.
+const SKEWB_FACE_CORNERS = {
+  U: [[-1,1,-1],[1,1,-1],[-1,1,1],[1,1,1]],
+  D: [[-1,-1,1],[1,-1,1],[-1,-1,-1],[1,-1,-1]],
+  F: [[-1,1,1],[1,1,1],[-1,-1,1],[1,-1,1]],
+  B: [[1,1,-1],[-1,1,-1],[1,-1,-1],[-1,-1,-1]],
+  L: [[-1,1,-1],[-1,1,1],[-1,-1,-1],[-1,-1,1]],
+  R: [[1,1,1],[1,1,-1],[1,-1,1],[1,-1,-1]],
+};
+const SKEWB_FACE_NORMAL = {U:[0,1,0],D:[0,-1,0],F:[0,0,1],B:[0,0,-1],L:[-1,0,0],R:[1,0,0]};
+const SKEWB_FACE_GRID = {U:[1,0], L:[0,1], F:[1,1], R:[2,1], B:[3,1], D:[1,2]};
+
+function buildSkewbSVG(container){
+  container.innerHTML = '';
+  const FACE=100, GAP=8;
+  const W = 4*FACE+3*GAP, H = 3*FACE+2*GAP;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('width','100%');
+  svg.style.maxWidth = '360px';
+  svg.style.display = 'block';
+  svg.style.margin = '0 auto';
+  const polys = {};
+  for(const face of Object.keys(SKEWB_FACE_GRID)){
+    const [col,row] = SKEWB_FACE_GRID[face];
+    const x0 = col*(FACE+GAP), y0 = row*(FACE+GAP);
+    const normal = SKEWB_FACE_NORMAL[face];
+    const [tl,tr,bl,br] = SKEWB_FACE_CORNERS[face];
+    const regions = [
+      {pos:tl, pts:[[0,0],[50,0],[0,50]]},
+      {pos:tr, pts:[[100,0],[50,0],[100,50]]},
+      {pos:bl, pts:[[0,100],[0,50],[50,100]]},
+      {pos:br, pts:[[100,100],[100,50],[50,100]]},
+      {pos:normal, pts:[[50,0],[100,50],[50,100],[0,50]]},
+    ];
+    for(const r of regions){
+      const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      poly.setAttribute('points', r.pts.map(([px,py])=>`${x0+px},${y0+py}`).join(' '));
+      poly.setAttribute('stroke', 'rgba(0,0,0,0.55)');
+      poly.setAttribute('stroke-width','1.5');
+      poly.setAttribute('stroke-linejoin','round');
+      svg.appendChild(poly);
+      polys[SKEWB.key(r.pos, normal)] = poly;
+    }
+  }
+  container.appendChild(svg);
+  return polys;
+}
+function renderSkewbNet(polys, cube){
+  for(const k in polys){
+    const idx = SKEWB.slotIndex[k];
+    if(idx!==undefined) polys[k].setAttribute('fill', colorFor(cube[idx]));
+  }
+}
+
+// ================= PYRAMINX ENGINE (verified separately: 36 stickers, moves order-3,
+// corner turns leave tips untouched, tip turns move only their own 3 stickers,
+// corner turns move exactly 9 stickers, scramble+inverse=fully solved) =================
+const PYRA = (function(){
+  const VERTS = { A:[1,1,1], B:[1,-1,-1], C:[-1,1,-1], D:[-1,-1,1] };
+  const VNAMES = ['A','B','C','D'];
+  const COLOR_OF_FACE = { A:'F', B:'D', C:'R', D:'B' };
+  function others(v){ return VNAMES.filter(x=>x!==v); }
+  const STICKERS = [];
+  for (const v of VNAMES) for (const w of others(v)) {
+    STICKERS.push({piecePos: VERTS[v].slice(), posLabel: v, facing: w, layer:'tip'});
+    STICKERS.push({piecePos: VERTS[v].slice(), posLabel: v, facing: w, layer:'corner'});
+  }
+  const EDGE_PAIRS = [];
+  for (let i=0;i<4;i++) for (let j=i+1;j<4;j++) EDGE_PAIRS.push([VNAMES[i],VNAMES[j]]);
+  for (const [v,w] of EDGE_PAIRS) {
+    const rest = VNAMES.filter(x=>x!==v && x!==w);
+    const pos = [VERTS[v][0]+VERTS[w][0], VERTS[v][1]+VERTS[w][1], VERTS[v][2]+VERTS[w][2]];
+    for (const f of rest) STICKERS.push({piecePos: pos, posLabel: [v,w].sort().join(''), facing: f, layer:'edge'});
+  }
+  STICKERS.forEach(s => s.color = COLOR_OF_FACE[s.facing]);
+  function key(pos, facing, layer){ return pos.map(v=>Math.round(v*1000)/1000).join(',')+'|'+facing+'|'+layer; }
+  const slotIndex = {};
+  STICKERS.forEach((s,i)=> slotIndex[key(s.piecePos, s.facing, s.layer)] = i);
+  function solved(){ return STICKERS.map(s=>s.color); }
+  function dot(a,b){ return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]; }
+  function rot(v, P){ const [px,py,pz]=P; return [px*pz*v[2], px*py*v[0], py*pz*v[1]]; }
+  function rotLabel(label, P){
+    const v = rot(VERTS[label], P);
+    for (const n of VNAMES) if (Math.abs(VERTS[n][0]-v[0])<0.01 && Math.abs(VERTS[n][1]-v[1])<0.01 && Math.abs(VERTS[n][2]-v[2])<0.01) return n;
+    return null;
+  }
+  function applyCW(cube, poleLetter, tipOnly){
+    const P = VERTS[poleLetter];
+    const out = cube.slice();
+    for (let i=0;i<STICKERS.length;i++){
+      const s = STICKERS[i];
+      const hit = tipOnly ? (s.layer==='tip' && s.posLabel===poleLetter) : (s.layer!=='tip' && dot(s.piecePos, P) > 0);
+      if (hit){
+        const np = rot(s.piecePos, P), nf = rotLabel(s.facing, P);
+        out[slotIndex[key(np, nf, s.layer)]] = cube[i];
+      }
+    }
+    return out;
+  }
+  const MOVE_TO_VERTEX = {u:'A',U:'A', l:'B',L:'B', r:'C',R:'C', b:'D',B:'D'};
+  function applyMove(cube, notation){
+    const letter = notation[0], mod = notation.slice(1);
+    const tipOnly = letter === letter.toLowerCase();
+    const P = MOVE_TO_VERTEX[letter];
+    let cnt = mod[0]==="'" ? 2 : 1;
+    let c = cube;
+    for (let k=0;k<cnt;k++) c = applyCW(c, P, tipOnly);
+    return c;
+  }
+  function applyAlg(cube, str){ let c=cube; for(const t of str.split(/\s+/).filter(Boolean)) c=applyMove(c,t); return c; }
+  return { solved, applyMove, applyAlg, slotIndex, key };
+})();
+
+const PYRA_FACE_LAYOUT = {
+  A: {top:'B', bl:'C', br:'D'},
+  B: {top:'A', bl:'C', br:'D'},
+  C: {top:'A', bl:'B', br:'D'},
+  D: {top:'A', bl:'B', br:'C'},
+};
+function buildPyraminxSVG(container){
+  container.innerHTML = '';
+  const SIDE=140, H=121.24, GAP=14;
+  const W = 4*SIDE+3*GAP, HH = H;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox', `0 0 ${W} ${HH}`);
+  svg.setAttribute('width','100%');
+  svg.style.maxWidth = '420px';
+  svg.style.display = 'block';
+  svg.style.margin = '0 auto';
+  const polys = {};
+  ['A','B','C','D'].forEach((face, fi) => {
+    const x0 = fi*(SIDE+GAP);
+    const P0=[[70,0]], P1=[[46.67,40.41],[93.33,40.41]], P2=[[23.33,80.83],[70,80.83],[116.67,80.83]],
+          P3=[[0,121.24],[46.67,121.24],[93.33,121.24],[140,121.24]];
+    const off = ([x,y]) => [x0+x, y];
+    const {top, bl, br} = PYRA_FACE_LAYOUT[face];
+    const regions = [
+      {tri:[P0[0],P1[0],P1[1]], key:{pos:top, layer:'tip'}},
+      {tri:[P1[0],P2[0],P2[1]], key:{pair:[top,bl], layer:'edge'}},
+      {tri:[P1[0],P1[1],P2[1]], key:{pos:top, layer:'corner'}},
+      {tri:[P1[1],P2[1],P2[2]], key:{pair:[top,br], layer:'edge'}},
+      {tri:[P2[0],P3[0],P3[1]], key:{pos:bl, layer:'tip'}},
+      {tri:[P2[0],P2[1],P3[1]], key:{pos:bl, layer:'corner'}},
+      {tri:[P2[1],P3[1],P3[2]], key:{pair:[bl,br], layer:'edge'}},
+      {tri:[P2[1],P2[2],P3[2]], key:{pos:br, layer:'corner'}},
+      {tri:[P2[2],P3[2],P3[3]], key:{pos:br, layer:'tip'}},
+    ];
+    for(const r of regions){
+      const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      poly.setAttribute('points', r.tri.map(p=>off(p).join(',')).join(' '));
+      poly.setAttribute('stroke','rgba(0,0,0,0.55)');
+      poly.setAttribute('stroke-width','1.5');
+      poly.setAttribute('stroke-linejoin','round');
+      svg.appendChild(poly);
+      const posArr = r.key.layer==='edge' ? VERT_SUM(r.key.pair[0], r.key.pair[1]) : PYRA_VERTS[r.key.pos];
+      const k = pyraKey(posArr, face, r.key.layer);
+      polys[k] = poly;
+    }
+  });
+  container.appendChild(svg);
+  return polys;
+}
+const PYRA_VERTS = { A:[1,1,1], B:[1,-1,-1], C:[-1,1,-1], D:[-1,-1,1] };
+function VERT_SUM(v,w){ return [PYRA_VERTS[v][0]+PYRA_VERTS[w][0], PYRA_VERTS[v][1]+PYRA_VERTS[w][1], PYRA_VERTS[v][2]+PYRA_VERTS[w][2]]; }
+function pyraKey(pos, facing, layer){ return pos.map(v=>Math.round(v*1000)/1000).join(',')+'|'+facing+'|'+layer; }
+function renderPyraminxNet(polys, cube){
+  for(const k in polys){
+    const idx = PYRA.slotIndex[k];
+    if(idx!==undefined) polys[k].setAttribute('fill', colorFor(cube[idx]));
+  }
+}
+
+// ================= MEGAMINX ENGINE (verified separately: real dodecahedron built from
+// edge-adjacency graph — 20 verts each 3-valent, 30 edges each shared by 2 faces, 12
+// pentagon faces via Euler's formula; 132 stickers; every face-turn^5=identity; a turn
+// moves exactly 25 visibly-changing stickers (15 corner + 10 edge, center pivots in place
+// with no visible change); scrambles invert cleanly) =================
+const MEGA = (function(){
+  const phi = (1+Math.sqrt(5))/2, invphi = 1/phi;
+  const VERTS = [];
+  for (const sx of [1,-1]) for (const sy of [1,-1]) for (const sz of [1,-1]) VERTS.push([sx,sy,sz]);
+  for (const sy of [1,-1]) for (const sz of [1,-1]) VERTS.push([0, sy*invphi, sz*phi]);
+  for (const sx of [1,-1]) for (const sy of [1,-1]) VERTS.push([sx*invphi, sy*phi, 0]);
+  for (const sx of [1,-1]) for (const sz of [1,-1]) VERTS.push([sx*phi, 0, sz*invphi]);
+  function dist(a,b){ return Math.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2); }
+  function norm(v){ const m=Math.sqrt(v[0]**2+v[1]**2+v[2]**2); return [v[0]/m,v[1]/m,v[2]/m]; }
+  function cross(a,b){ return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]; }
+  function dot(a,b){ return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]; }
+  function sub(a,b){ return [a[0]-b[0],a[1]-b[1],a[2]-b[2]]; }
+  function add(a,b){ return [a[0]+b[0],a[1]+b[1],a[2]+b[2]]; }
+  function scale(a,s){ return [a[0]*s,a[1]*s,a[2]*s]; }
+  const EDGE_LEN = 2/phi;
+  const adj = Array.from({length:20}, ()=>[]);
+  for(let i=0;i<20;i++) for(let j=0;j<20;j++) if(i!==j && Math.abs(dist(VERTS[i],VERTS[j])-EDGE_LEN)<0.001) adj[i].push(j);
+  function traceFace(start, second, faceNormalHint){
+    const face=[start,second]; let prev=start, cur=second;
+    for(let step=0; step<3; step++){
+      const candidates = adj[cur].filter(n=>n!==prev);
+      let best=null, bestScore=-Infinity;
+      for(const cand of candidates){
+        const n = cross(sub(VERTS[cur],VERTS[prev]), sub(VERTS[cand],VERTS[cur]));
+        const score = dot(norm(n), faceNormalHint);
+        if(score>bestScore){ bestScore=score; best=cand; }
+      }
+      face.push(best); prev=cur; cur=best;
+    }
+    return face;
+  }
+  const FACES = [];
+  { const seen=new Set();
+    for(let v=0; v<20; v++) for(const w of adj[v]){
+      const guessNormal = norm(add(VERTS[v], VERTS[w]));
+      const face = traceFace(v, w, guessNormal);
+      const key = [...face].sort((a,b)=>a-b).join(',');
+      if(!seen.has(key) && new Set(face).size===5){ seen.add(key); FACES.push(face); }
+    }
+  }
+  const FACE_NORMALS = FACES.map(f => norm(f.reduce((acc,vi)=>add(acc,VERTS[vi]), [0,0,0])));
+  function rodrigues(v,k,theta){
+    const c=Math.cos(theta), s=Math.sin(theta);
+    return add(add(scale(v,c), scale(cross(k,v),s)), scale(k, dot(k,v)*(1-c)));
+  }
+  function rnd(v){ return v.map(x=>Math.round(x*1000)/1000); }
+  const cornerFacesOf = Array.from({length:20}, ()=>[]);
+  FACES.forEach((f,fi)=> f.forEach(vi=>cornerFacesOf[vi].push(fi)));
+  const edgeMap = new Map();
+  FACES.forEach((f,fi)=>{
+    for(let i=0;i<5;i++){
+      const a=f[i], b=f[(i+1)%5];
+      const key=[a,b].sort((x,y)=>x-y).join(',');
+      if(!edgeMap.has(key)) edgeMap.set(key, {verts:[a,b], faces:[]});
+      edgeMap.get(key).faces.push(fi);
+    }
+  });
+  const EDGES = [...edgeMap.values()];
+  const STICKERS = [];
+  for(let fi=0; fi<12; fi++) STICKERS.push({type:'center', pos: FACE_NORMALS[fi].slice(), facing: fi});
+  for(let vi=0; vi<20; vi++) for(const fi of cornerFacesOf[vi]) STICKERS.push({type:'corner', pos: VERTS[vi].slice(), facing: fi, vert: vi});
+  EDGES.forEach((e,ei)=>{
+    const pos = add(VERTS[e.verts[0]], VERTS[e.verts[1]]);
+    for(const fi of e.faces) STICKERS.push({type:'edge', pos: pos.slice(), facing: fi, edgeIdx: ei});
+  });
+  function key(pos,facing){ return rnd(pos).join(',')+'|'+facing; }
+  const slotIndex = {};
+  STICKERS.forEach((s,i)=> slotIndex[key(s.pos,s.facing)] = i);
+  const COLORS = ['m0','m1','m2','m3','m4','m5','m6','m7','m8','m9','m10','m11'];
+  function solved(){ return STICKERS.map(s => COLORS[s.facing]); }
+  const faceVertSet = FACES.map(f=>new Set(f));
+  const faceEdgeIdxSet = FACES.map((f,fi)=>{ const s=new Set(); EDGES.forEach((e,ei)=>{ if(e.faces.includes(fi)) s.add(ei); }); return s; });
+  function rotateFacing(facingIdx, axis, theta){
+    const n = rodrigues(FACE_NORMALS[facingIdx], axis, theta);
+    let best=-1, bestD=-Infinity;
+    FACE_NORMALS.forEach((fn,i)=>{ const d=dot(norm(n),fn); if(d>bestD){ bestD=d; best=i; } });
+    return best;
+  }
+  function applyCW(cube, faceIdx){
+    const axis = FACE_NORMALS[faceIdx], theta = 2*Math.PI/5;
+    const out = cube.slice();
+    for(let i=0;i<STICKERS.length;i++){
+      const s = STICKERS[i];
+      let hit=false;
+      if(s.type==='center') hit=(s.facing===faceIdx);
+      else if(s.type==='corner') hit=faceVertSet[faceIdx].has(s.vert);
+      else hit=faceEdgeIdxSet[faceIdx].has(s.edgeIdx);
+      if(hit){
+        const np = rodrigues(s.pos, axis, theta);
+        const nf = (s.type==='center') ? s.facing : rotateFacing(s.facing, axis, theta);
+        const ni = slotIndex[key(np,nf)];
+        if(ni!==undefined) out[ni]=cube[i];
+      }
+    }
+    return out;
+  }
+  function applyMove(cube, faceIdx, steps){
+    let c=cube; const n=((steps%5)+5)%5;
+    for(let k=0;k<n;k++) c=applyCW(c,faceIdx);
+    return c;
+  }
+  function applyWholeRotation(cube, faceIdx, steps){
+    const axis = FACE_NORMALS[faceIdx], theta = 2*Math.PI/5;
+    const n = ((steps%5)+5)%5;
+    let c = cube;
+    for(let s=0; s<n; s++){
+      const out = c.slice();
+      for(let i=0;i<STICKERS.length;i++){
+        const st = STICKERS[i];
+        const np = rodrigues(st.pos, axis, theta);
+        const nf = rotateFacing(st.facing, axis, theta);
+        const ni = slotIndex[key(np,nf)];
+        if(ni!==undefined) out[ni]=c[i];
+      }
+      c = out;
+    }
+    return c;
+  }
+  // R/D/U notation: R and D are 2 adjacent faces from the ring surrounding a fixed pivot
+  // face (index 0); U reorients the whole puzzle, cycling which physical faces are
+  // currently "R" and "D" -- exactly matching real WCA megaminx scrambling convention.
+  const PIVOT_FACE = 0;
+  const RING = (function(){
+    const verts = FACES[PIVOT_FACE], ring=[];
+    for(let k=0;k<5;k++){
+      const a=verts[k], b=verts[(k+1)%5];
+      const edge = EDGES.find(e=>{ const vs=e.verts; return (vs[0]===a&&vs[1]===b)||(vs[0]===b&&vs[1]===a); });
+      ring.push(edge.faces.find(f=>f!==PIVOT_FACE));
+    }
+    return ring;
+  })();
+  function applyToken(cube, token){
+    const faceIdx = parseInt(token.replace("'",''),10);
+    const steps = token.endsWith("'") ? 4 : 1;
+    return applyMove(cube, faceIdx, steps);
+  }
+  function applyAlg(cube, str){ let c=cube; for(const t of str.split(/\s+/).filter(Boolean)) c=applyToken(c,t); return c; }
+  return { solved, applyMove, applyToken, applyAlg, applyWholeRotation, FACES, FACE_NORMALS, EDGES, slotIndex, key: key, RING, PIVOT_FACE };
+})();
+
+function buildMegaminxSVG(container){
+  container.innerHTML = '';
+  const R=60, GAP=10, cols=6;
+  const cellW = 2*R+GAP, cellH = 2*R+GAP;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox', `0 0 ${cols*cellW} ${2*cellH}`);
+  svg.setAttribute('width','100%');
+  svg.style.maxWidth = '520px';
+  svg.style.display = 'block';
+  svg.style.margin = '0 auto';
+  const polys = {};
+  const t = 0.32, rInner = 0.44;
+  function pentPoint(k, radius, cx, cy){
+    const ang = -Math.PI/2 + k*2*Math.PI/5;
+    return [cx + radius*Math.cos(ang), cy + radius*Math.sin(ang)];
+  }
+  for(let fi=0; fi<12; fi++){
+    const col = fi % cols, row = Math.floor(fi/cols);
+    const cx = col*cellW + cellW/2, cy = row*cellH + cellH/2;
+    const O=[0,1,2,3,4].map(k=>pentPoint(k,R,cx,cy));
+    const I=[0,1,2,3,4].map(k=>pentPoint(k,R*rInner,cx,cy));
+    const A=[0,1,2,3,4].map(k=>{ const nx=(k+1)%5; return [O[k][0]+t*(O[nx][0]-O[k][0]), O[k][1]+t*(O[nx][1]-O[k][1])]; });
+    const B=[0,1,2,3,4].map(k=>{ const pk=(k+4)%5; return [O[k][0]+t*(O[pk][0]-O[k][0]), O[k][1]+t*(O[pk][1]-O[k][1])]; });
+    const faceVerts = MEGA.FACES[fi];
+    for(let k=0;k<5;k++){
+      // corner region k (at outer vertex k)
+      const cornerPoly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      cornerPoly.setAttribute('points', [O[k], A[k], I[k], B[k]].map(p=>p.join(',')).join(' '));
+      cornerPoly.setAttribute('stroke','rgba(0,0,0,0.55)'); cornerPoly.setAttribute('stroke-width','1.2');
+      svg.appendChild(cornerPoly);
+      const vertIdx = faceVerts[k];
+      polys[MEGA.key(MEGA_VERT(vertIdx), fi)] = cornerPoly;
+
+      // edge region k (between outer vertex k and k+1)
+      const nx=(k+1)%5;
+      const edgePoly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      edgePoly.setAttribute('points', [A[k], B[nx], I[nx], I[k]].map(p=>p.join(',')).join(' '));
+      edgePoly.setAttribute('stroke','rgba(0,0,0,0.55)'); edgePoly.setAttribute('stroke-width','1.2');
+      svg.appendChild(edgePoly);
+      const v1 = faceVerts[k], v2 = faceVerts[nx];
+      const edgeEntry = MEGA.EDGES.find(e=>{
+        const vs=e.verts; return (vs[0]===v1&&vs[1]===v2)||(vs[0]===v2&&vs[1]===v1);
+      });
+      const edgePos = MEGA_ADD(MEGA_VERT(v1), MEGA_VERT(v2));
+      polys[MEGA.key(edgePos, fi)] = edgePoly;
+    }
+    const centerPoly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    centerPoly.setAttribute('points', I.map(p=>p.join(',')).join(' '));
+    centerPoly.setAttribute('stroke','rgba(0,0,0,0.55)'); centerPoly.setAttribute('stroke-width','1.2');
+    svg.appendChild(centerPoly);
+    polys[MEGA.key(MEGA.FACE_NORMALS[fi], fi)] = centerPoly;
+  }
+  container.appendChild(svg);
+  return polys;
+}
+const MEGA_PHI = (1+Math.sqrt(5))/2, MEGA_INVPHI = 1/MEGA_PHI;
+const MEGA_VERTS_LIST = (function(){
+  const v=[];
+  for (const sx of [1,-1]) for (const sy of [1,-1]) for (const sz of [1,-1]) v.push([sx,sy,sz]);
+  for (const sy of [1,-1]) for (const sz of [1,-1]) v.push([0, sy*MEGA_INVPHI, sz*MEGA_PHI]);
+  for (const sx of [1,-1]) for (const sy of [1,-1]) v.push([sx*MEGA_INVPHI, sy*MEGA_PHI, 0]);
+  for (const sx of [1,-1]) for (const sz of [1,-1]) v.push([sx*MEGA_PHI, 0, sz*MEGA_INVPHI]);
+  return v;
+})();
+function MEGA_VERT(i){ return MEGA_VERTS_LIST[i]; }
+function MEGA_ADD(a,b){ return [a[0]+b[0],a[1]+b[1],a[2]+b[2]]; }
+function renderMegaminxNet(polys, cube){
+  for(const k in polys){
+    const idx = MEGA.slotIndex[k];
+    if(idx!==undefined) polys[k].setAttribute('fill', colorFor(cube[idx]));
+  }
+}
+function generateMegaminxDiagramScramble(numPairs){
+  // real megaminx notation: alternating R++/R--/D++/D-- pairs, with occasional U/U' to
+  // bring new faces into the R/D position -- matches actual WCA-style scrambles.
+  const tokens = [];
+  const mods = ['++','--'];
+  for(let i=0;i<numPairs;i++){
+    tokens.push('R'+mods[Math.floor(Math.random()*2)]);
+    tokens.push('D'+mods[Math.floor(Math.random()*2)]);
+    if(Math.random()<0.85) tokens.push(Math.random()<0.5 ? 'U' : "U'");
+  }
+  return tokens;
+}
+function applyMegaminxAlg(tokens){
+  let state = MEGA.solved();
+  let offset = 0;
+  const ring = MEGA.RING;
+  for(const tok of tokens){
+    if(tok==='U'){ state = MEGA.applyWholeRotation(state, MEGA.PIVOT_FACE, 1); offset=(offset+1)%5; }
+    else if(tok==="U'"){ state = MEGA.applyWholeRotation(state, MEGA.PIVOT_FACE, 4); offset=(offset+4)%5; }
+    else {
+      const face = tok[0]==='R' ? ring[offset%5] : ring[(offset+1)%5];
+      const steps = tok.slice(1)==='++' ? 2 : 3;
+      state = MEGA.applyMove(state, face, steps);
+    }
+  }
+  return state;
+}
+
+
+// ================= SCRAMBLE GENERATION =================
+const AXIS = {U:'y',D:'y',L:'x',R:'x',F:'z',B:'z'};
+function generateScramble(len){
+  const faces = ['U','D','L','R','F','B'];
+  const mods = ['', "'", '2'];
+  const moves = [];
+  let lastFace=null, lastAxis=null;
+  for(let i=0;i<len;i++){
+    let face;
+    do { face = faces[Math.floor(Math.random()*6)]; }
+    while(face===lastFace || AXIS[face]===lastAxis);
+    const mod = mods[Math.floor(Math.random()*3)];
+    moves.push(face+mod);
+    lastFace=face; lastAxis=AXIS[face];
+  }
+  return moves;
+}
+// 4x4 / 5x5: outer or wide (lowercase) turn per face, no immediate face repeat
+function generateBigCubeScramble(n, len){
+  const faces = ['U','D','L','R','F','B'];
+  const mods = ['', "'", '2'];
+  const maxDepth = Math.max(1, Math.floor(n/2));
+  const moves = [];
+  let lastFace=null;
+  for(let i=0;i<len;i++){
+    let face;
+    do { face = faces[Math.floor(Math.random()*6)]; } while(face===lastFace);
+    const depth = 1 + Math.floor(Math.random()*maxDepth);
+    let token;
+    if(depth===1) token = face;
+    else if(depth===2) token = face.toLowerCase();
+    else token = depth + face.toLowerCase() + 'w';
+    moves.push(token + mods[Math.floor(Math.random()*3)]);
+    lastFace = face;
+  }
+  return moves;
+}
+function displayToken(t){
+  let i=0; while(t[i]>='0' && t[i]<='9') i++;
+  const digits = t.slice(0,i);
+  const letter = t[i];
+  let j=i+1;
+  if(t[j]==='w') j++;
+  const mod = t.slice(j);
+  if(/[a-z]/.test(letter)) return digits + letter.toUpperCase() + 'w' + mod;
+  return t;
+}
+function generatePyraminxScramble(){
+  const faces = ['U','L','R','B'];
+  const mods = ['', "'"];
+  const moves = [];
+  let lastFace=null;
+  const count = 8 + Math.floor(Math.random()*3);
+  for(let i=0;i<count;i++){
+    let face;
+    do { face = faces[Math.floor(Math.random()*4)]; } while(face===lastFace);
+    moves.push(face + mods[Math.floor(Math.random()*2)]);
+    lastFace = face;
+  }
+  const tips = ['u','l','r','b'];
+  for(const t of tips){
+    const roll = Math.random();
+    if(roll < 0.34) moves.push(t);
+    else if(roll < 0.68) moves.push(t+"'");
+  }
+  return moves;
+}
+function generateSkewbScramble(){
+  const faces = ['U','L','R','B'];
+  const mods = ['', "'"];
+  const moves = [];
+  let lastFace=null;
+  const count = 8 + Math.floor(Math.random()*3);
+  for(let i=0;i<count;i++){
+    let face;
+    do { face = faces[Math.floor(Math.random()*4)]; } while(face===lastFace);
+    moves.push(face + mods[Math.floor(Math.random()*2)]);
+    lastFace = face;
+  }
+  return moves;
+}
+// Square-1: approximate practice-style (x,y) twist sequence (not official WCA random-state)
+// ================= SQUARE-1 ENGINE (verified separately: layers are 12-unit circular
+// arrays, corner pieces occupy 2 units / edges occupy 1; slice swaps units 0-5 between
+// layers and is correctly BLOCKED whenever a piece straddles the cut, matching real
+// Square-1 behavior; "/(6,6)/" fully swaps top<->bottom exactly as documented) =================
+const SQ1 = (function(){
+  function makeSolvedLayer(prefix){
+    const widths = [2,1,2,1,2,1,2,1];
+    const layer = [];
+    widths.forEach((w,pieceIdx)=>{ for(let k=0;k<w;k++) layer.push({id:prefix+pieceIdx, colorIdx:pieceIdx}); });
+    return layer;
+  }
+  function solved(){ return { top: makeSolvedLayer('T'), bottom: makeSolvedLayer('B') }; }
+  function rotate(layer, n){ const len=layer.length; const k=((n%len)+len)%len; return layer.slice(k).concat(layer.slice(0,k)); }
+  function hasBoundaryAt(layer, idx){ return layer[(idx-1+12)%12].id !== layer[idx].id; }
+  function sliceValid(state){
+    return hasBoundaryAt(state.top,0) && hasBoundaryAt(state.top,6) && hasBoundaryAt(state.bottom,0) && hasBoundaryAt(state.bottom,6);
+  }
+  function applySlice(state){
+    if(!sliceValid(state)) return state;
+    return { top: state.bottom.slice(0,6).concat(state.top.slice(6,12)), bottom: state.top.slice(0,6).concat(state.bottom.slice(6,12)) };
+  }
+  function applyTurn(state, topN, bottomN){ return { top: rotate(state.top, topN), bottom: rotate(state.bottom, bottomN) }; }
+  function applyToken(state, token){
+    if(token==='/') return applySlice(state);
+    const m = token.match(/\(([-\d]+),([-\d]+)\)/);
+    if(!m) return state;
+    return applyTurn(state, parseInt(m[1],10), parseInt(m[2],10));
+  }
+  function applyAlg(state, tokens){ let s=state; for(const t of tokens) s=applyToken(s,t); return s; }
+  return { solved, applyToken, applyAlg, sliceValid };
+})();
+
+function generateSquare1Scramble(){
+  let state = SQ1.solved();
+  const tokens = [];
+  const count = 10 + Math.floor(Math.random()*4);
+  for(let i=0;i<count;i++){
+    let t,b;
+    do{ t = Math.floor(Math.random()*12)-5; b = Math.floor(Math.random()*12)-5; } while(t===0 && b===0);
+    const tok = '('+t+','+b+')';
+    tokens.push(tok);
+    state = SQ1.applyToken(state, tok);
+    if(Math.random()<0.7 && SQ1.sliceValid(state)){
+      tokens.push('/');
+      state = SQ1.applyToken(state, '/');
+    }
+  }
+  return tokens;
+}
+function groupLayerIntoPieces(layer){
+  // layer = 12 unit-slots; group consecutive same-id units into pieces with their unit span
+  const pieces = [];
+  let i = 0;
+  while(i < 12){
+    let j = i;
+    while(j+1 < 12 && layer[j+1].id === layer[i].id) j++;
+    pieces.push({ id: layer[i].id, colorIdx: layer[i].colorIdx, startUnit: i, unitCount: j-i+1 });
+    i = j+1;
+  }
+  // handle wraparound: if the last piece and first piece share an id (piece straddles the 0/11 boundary)
+  if(pieces.length > 1 && pieces[0].id === pieces[pieces.length-1].id){
+    const first = pieces.shift();
+    const last = pieces[pieces.length-1];
+    last.unitCount += first.unitCount;
+  }
+  return pieces;
+}
+function buildSquare1Flower(container){
+  container.innerHTML = '';
+  const size=460, Rboundary=50, RcornerTip=64, RedgeTip=96, Rcore=14, cyOffset=115;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox', `0 0 ${size} 260`);
+  svg.setAttribute('width','100%');
+  svg.style.maxWidth = '460px';
+  svg.style.display = 'block';
+  svg.style.margin = '0 auto';
+  const centers = { top: [115, cyOffset], bottom: [345, cyOffset] };
+  const groups = { top: [], bottom: [] };
+  for(const which of ['top','bottom']){
+    const [cx,cy] = centers[which];
+    const pt = (r,a) => [cx + r*Math.cos(a), cy + r*Math.sin(a)];
+    for(let slot=0; slot<12; slot++){
+      const petal = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      petal.setAttribute('stroke','rgba(0,0,0,0.55)'); petal.setAttribute('stroke-width','1.4');
+      svg.appendChild(petal);
+      const core = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      core.setAttribute('stroke','rgba(0,0,0,0.55)'); core.setAttribute('stroke-width','1');
+      svg.appendChild(core);
+      groups[which].push({petal, core, cx, cy, pt});
+    }
+  }
+  // static middle-layer pieces (fixed, never reorder in this simplified model)
+  const midY = 235;
+  const rectL = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  rectL.setAttribute('x',60); rectL.setAttribute('y',midY); rectL.setAttribute('width',60); rectL.setAttribute('height',22);
+  rectL.setAttribute('fill', colorFor('s6')); rectL.setAttribute('stroke','rgba(0,0,0,0.55)');
+  svg.appendChild(rectL);
+  const rectR = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  rectR.setAttribute('x',120); rectR.setAttribute('y',midY); rectR.setAttribute('width',100); rectR.setAttribute('height',22);
+  rectR.setAttribute('fill', colorFor('s2')); rectR.setAttribute('stroke','rgba(0,0,0,0.55)');
+  svg.appendChild(rectR);
+  container.appendChild(svg);
+
+  return { groups, Rboundary, RcornerTip, RedgeTip, Rcore };
+}
+function renderSquare1(built, state){
+  const { groups, Rboundary, RcornerTip, RedgeTip, Rcore } = built;
+  for(const which of ['top','bottom']){
+    const layer = state[which];
+    const pieces = groupLayerIntoPieces(layer);
+    let idx = 0, u = 0;
+    pieces.forEach(piece=>{
+      const a1 = -Math.PI/2 + u*(Math.PI/6);
+      const a2 = a1 + piece.unitCount*(Math.PI/6);
+      const am = (a1+a2)/2;
+      const g = groups[which][idx];
+      const isCorner = piece.unitCount===2;
+      let petalPts;
+      if(isCorner){
+        petalPts = [g.pt(Rboundary,a1), g.pt(RcornerTip,am), g.pt(Rboundary,a2), g.pt(Rcore,am)];
+      } else {
+        petalPts = [g.pt(Rboundary,a1), g.pt(RedgeTip,am), g.pt(Rboundary,a2)];
+      }
+      g.petal.setAttribute('points', petalPts.map(p=>p.join(',')).join(' '));
+      g.petal.setAttribute('fill', colorFor('s'+piece.colorIdx));
+      g.petal.style.display = '';
+      const layerColor = piece.id[0]==='T' ? 'U' : 'D';
+      const corePts = [
+        g.pt(9, am - 0.32), g.pt(17, am), g.pt(9, am + 0.32), g.pt(2, am)
+      ];
+      g.core.setAttribute('points', corePts.map(p=>p.join(',')).join(' '));
+      g.core.setAttribute('fill', colorFor(layerColor));
+      g.core.style.display = '';
+      idx++; u += piece.unitCount;
+    });
+    for(; idx<12; idx++){ groups[which][idx].petal.style.display='none'; groups[which][idx].core.style.display='none'; }
+  }
+}
+
+// ================= NET RENDERING =================
+function engineForSize(n){ return n===2?E2:n===4?E4:n===5?E5:n===6?E6:n===7?E7:E3; }
+function buildNetCells(container, n){
+  container.innerHTML='';
+  const px = n<=2?22:n===3?15:n===4?11:n===5?8:n===6?6.5:5.5;
+  const pxMin = n<=2?14:n===3?9:n===4?7:n===5?5:n===6?4:3.2;
+  container.style.gridTemplateColumns = `repeat(${4*n}, minmax(${pxMin}px,${px}px))`;
+  container.style.gridTemplateRows = `repeat(${3*n}, minmax(${pxMin}px,${px}px))`;
+  const OFFSET = engineForSize(n).OFFSET;
+  const cellEls = new Array(6*n*n);
+  function addFace(face, rowStart, colStart){
+    for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+      const idx = OFFSET[face]+r*n+c;
+      const d=document.createElement('div');
+      d.className='sticker';
+      d.style.gridRow=(rowStart+r+1);
+      d.style.gridColumn=(colStart+c+1);
+      container.appendChild(d);
+      cellEls[idx]=d;
+    }
+  }
+  addFace('U',0,n); addFace('L',n,0); addFace('F',n,n); addFace('R',n,2*n); addFace('B',n,3*n); addFace('D',2*n,n);
+  return cellEls;
+}
+function colorFor(letter){ return getComputedStyle(document.documentElement).getPropertyValue('--c-'+letter).trim(); }
+function renderNet(cellEls, cube){
+  for(let i=0;i<cube.length;i++){ if(cellEls[i]) cellEls[i].style.background = colorFor(cube[i]); }
+}
+
+const scrambleNetEl = document.getElementById('net');
+let scrambleCells = buildNetCells(scrambleNetEl, 3);
+const skewbNetEl = document.getElementById('skewbNet');
+let skewbPolys = null;
+const pyraNetEl = document.getElementById('pyraNet');
+let pyraPolys = null;
+const megaNetEl = document.getElementById('megaNet');
+let megaPolys = null;
+const sq1NetEl = document.getElementById('sq1Net');
+let sq1Cells = null;
+
+// ================= EVENT STATE =================
+const EVENT_LABELS = {'333':'3×3','222':'2×2','444':'4×4','555':'5×5','666':'6×6','777':'7×7','pyra':'Pyraminx','skewb':'Skewb','mega':'Megaminx','sq1':'Square-1'};
+const EVENTS = Object.keys(EVENT_LABELS);
+let currentEvent = '333';
+let currentScrambleMoves = [];
+let currentCube = null;
+let solvesByEvent = {}; EVENTS.forEach(ev=>solvesByEvent[ev]=[]);
+
+function hasDiagram(ev){ return ev==='333'||ev==='222'||ev==='444'||ev==='555'||ev==='666'||ev==='777'||ev==='skewb'||ev==='pyra'||ev==='mega'||ev==='sq1'; }
+function engineFor(ev){ return ev==='222'?E2: ev==='444'?E4: ev==='555'?E5: ev==='666'?E6: ev==='777'?E7: E3; }
+function scrambleLenFor(ev){ return ev==='222'?9: ev==='444'?40: ev==='555'?60: ev==='666'?70: ev==='777'?80: 20; }
+
+function newScramble(){
+  const ev = currentEvent;
+  const moves = generateMovesFor(ev);
+  pushHistoryAndShow(ev, moves);
+}
+function generateMovesFor(ev){
+  if(ev==='skewb') return generateSkewbScramble();
+  if(ev==='pyra') return generatePyraminxScramble();
+  if(ev==='mega') return generateMegaminxDiagramScramble(7);
+  if(ev==='sq1') return generateSquare1Scramble();
+  const eng = engineFor(ev);
+  const useWide = (ev==='444'||ev==='555'||ev==='666'||ev==='777');
+  const rawMoves = useWide ? generateBigCubeScramble(eng.n, scrambleLenFor(ev)) : generateScramble(scrambleLenFor(ev));
+  return useWide ? rawMoves.map(displayToken) : rawMoves;
+}
+function applyAndShowScramble(ev, moves){
+  const noteEl = document.getElementById('noDiagramNote');
+  const skewbWrap = document.getElementById('skewbNetWrap');
+  const pyraWrap = document.getElementById('pyraNetWrap');
+  const megaWrap = document.getElementById('megaNetWrap');
+  const sq1Wrap = document.getElementById('sq1NetWrap');
+  function hideAll(){
+    scrambleNetEl.style.display='none';
+    skewbWrap.style.display='none';
+    pyraWrap.style.display='none';
+    megaWrap.style.display='none';
+    sq1Wrap.style.display='none';
+  }
+  noteEl.style.display='none';
+  currentScrambleMoves = moves;
+  document.getElementById('scrambleText').innerHTML = moves.map(m=>'<span>'+m+'</span>').join(' ');
+  if(ev==='skewb'){
+    hideAll(); skewbWrap.style.display='flex';
+    if(!skewbPolys) skewbPolys = buildSkewbSVG(skewbNetEl);
+    renderSkewbNet(skewbPolys, SKEWB.applyAlg(SKEWB.solved(), moves.join(' ')));
+    return;
+  }
+  if(ev==='pyra'){
+    hideAll(); pyraWrap.style.display='flex';
+    if(!pyraPolys) pyraPolys = buildPyraminxSVG(pyraNetEl);
+    renderPyraminxNet(pyraPolys, PYRA.applyAlg(PYRA.solved(), moves.join(' ')));
+    return;
+  }
+  if(ev==='mega'){
+    hideAll(); megaWrap.style.display='flex';
+    if(!megaPolys) megaPolys = buildMegaminxSVG(megaNetEl);
+    renderMegaminxNet(megaPolys, applyMegaminxAlg(moves));
+    return;
+  }
+  if(ev==='sq1'){
+    hideAll(); sq1Wrap.style.display='flex';
+    if(!sq1Cells) sq1Cells = buildSquare1Flower(sq1NetEl);
+    renderSquare1(sq1Cells, SQ1.applyAlg(SQ1.solved(), moves));
+    return;
+  }
+  scrambleNetEl.style.display='grid';
+  skewbWrap.style.display='none';
+  pyraWrap.style.display='none';
+  megaWrap.style.display='none';
+  sq1Wrap.style.display='none';
+  const eng = engineFor(ev);
+  currentCube = eng.applyAlg(eng.solved(), moves.join(' '));
+  if(scrambleCells.length !== 6*eng.n*eng.n) scrambleCells = buildNetCells(scrambleNetEl, eng.n);
+  renderNet(scrambleCells, currentCube);
+}
+
+// ---- scramble history (per event) so "previous scramble" can step back ----
+const scrambleHistoryByEvent = {};
+const scrambleHistoryIdx = {};
+const MAX_SCRAMBLE_HISTORY = 30;
+function pushHistoryAndShow(ev, moves){
+  if(!scrambleHistoryByEvent[ev]) scrambleHistoryByEvent[ev] = [];
+  const hist = scrambleHistoryByEvent[ev];
+  hist.push(moves);
+  if(hist.length > MAX_SCRAMBLE_HISTORY) hist.shift();
+  scrambleHistoryIdx[ev] = hist.length - 1;
+  applyAndShowScramble(ev, moves);
+  updatePrevButtonState();
+}
+function updatePrevButtonState(){
+  const hist = scrambleHistoryByEvent[currentEvent] || [];
+  const idx = scrambleHistoryIdx[currentEvent] || 0;
+  document.getElementById('prevScramble').classList.toggle('disabled', idx<=0 || hist.length<=1);
+  document.getElementById('nextScramble').classList.toggle('disabled', idx>=hist.length-1);
+}
+document.getElementById('prevScramble').addEventListener('click', ()=>{
+  const ev = currentEvent;
+  const hist = scrambleHistoryByEvent[ev];
+  if(!hist || scrambleHistoryIdx[ev]<=0) return;
+  scrambleHistoryIdx[ev]--;
+  applyAndShowScramble(ev, hist[scrambleHistoryIdx[ev]]);
+  updatePrevButtonState();
+});
+document.getElementById('nextScramble').addEventListener('click', ()=>{
+  const ev = currentEvent;
+  const hist = scrambleHistoryByEvent[ev];
+  if(!hist || scrambleHistoryIdx[ev]>=hist.length-1) return;
+  scrambleHistoryIdx[ev]++;
+  applyAndShowScramble(ev, hist[scrambleHistoryIdx[ev]]);
+  updatePrevButtonState();
+});
+document.getElementById('copyScramble').addEventListener('click', async ()=>{
+  const btn = document.getElementById('copyScramble');
+  const text = currentScrambleMoves.join(' ');
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch(e){
+    // fallback for browsers/contexts without clipboard API access
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e2){}
+    document.body.removeChild(ta);
+  }
+  btn.textContent = '✓'; btn.classList.add('copied');
+  setTimeout(()=>{ btn.textContent='📋'; btn.classList.remove('copied'); }, 1200);
+});
+document.getElementById('reScramble').addEventListener('click', newScramble);
+
+// ================= SESSIONS + STORAGE =================
+let sessions = [];
+let currentSessionId = null;
+
+function solvesKey(sessionId, ev){ return 'solves_'+sessionId+'_'+ev; }
+async function loadSolves(ev){
+  try{
+    const res = await window.storage.get(solvesKey(currentSessionId, ev), false);
+    solvesByEvent[ev] = (res && res.value) ? JSON.parse(res.value) : [];
+  }catch(e){ solvesByEvent[ev] = []; }
+}
+async function saveSolves(ev){
+  try{ await window.storage.set(solvesKey(currentSessionId, ev), JSON.stringify(solvesByEvent[ev]), false); }catch(e){}
+}
+async function loadAllSolvesForCurrentSession(){ await Promise.all(EVENTS.map(loadSolves)); }
+
+async function initSessions(){
+  try{
+    const res = await window.storage.get('sessions', false);
+    if(res && res.value) sessions = JSON.parse(res.value);
+  }catch(e){}
+  if(!sessions || sessions.length===0){
+    sessions = [{id:'s'+Date.now(), name:'Session 1'}];
+    await window.storage.set('sessions', JSON.stringify(sessions), false);
+  }
+  try{
+    const cur = await window.storage.get('currentSessionId', false);
+    currentSessionId = (cur && cur.value) ? cur.value : sessions[0].id;
+  }catch(e){ currentSessionId = sessions[0].id; }
+  if(!sessions.find(s=>s.id===currentSessionId)) currentSessionId = sessions[0].id;
+
+  // one-time migration from the old un-scoped keys (solves_<event>) into this session
+  try{
+    const migRes = await window.storage.get('migrated_v1', false);
+    if(!migRes){
+      for(const ev of EVENTS){
+        try{
+          const old = await window.storage.get('solves_'+ev, false);
+          if(old && old.value){
+            const existing = await window.storage.get(solvesKey(currentSessionId, ev), false).catch(()=>null);
+            if(!existing || !existing.value){
+              await window.storage.set(solvesKey(currentSessionId, ev), old.value, false);
+            }
+          }
+        }catch(e){}
+      }
+      await window.storage.set('migrated_v1', '1', false);
+    }
+  }catch(e){}
+}
+async function setCurrentSession(id){
+  currentSessionId = id;
+  await window.storage.set('currentSessionId', id, false);
+  await loadAllSolvesForCurrentSession();
+  renderHistory(); renderStats(); renderFullStats(); renderSessions(); renderGraphs();
+}
+async function saveSessions(){ await window.storage.set('sessions', JSON.stringify(sessions), false); }
+
+function renderSessions(){
+  const el = document.getElementById('sessList');
+  el.innerHTML='';
+  sessions.forEach(s=>{
+    const d=document.createElement('div');
+    d.className='sess-item'+(s.id===currentSessionId?' active':'');
+    d.innerHTML = '<span>'+s.name+'</span>';
+    const btns = document.createElement('div');
+    btns.style.display='flex'; btns.style.gap='6px';
+    if(s.id!==currentSessionId){
+      const use=document.createElement('button'); use.className='mini-btn'; use.textContent='switch';
+      use.addEventListener('click', ()=>setCurrentSession(s.id));
+      btns.appendChild(use);
+    }
+    const ren=document.createElement('button'); ren.className='mini-btn'; ren.textContent='rename';
+    ren.addEventListener('click', async ()=>{
+      const name = prompt('Rename session', s.name);
+      if(name){ s.name=name; await saveSessions(); renderSessions(); renderStats(); renderFullStats(); }
+    });
+    btns.appendChild(ren);
+    if(sessions.length>1){
+      const del=document.createElement('button'); del.className='mini-btn danger'; del.textContent='delete';
+      del.addEventListener('click', async ()=>{
+        if(!confirm('Delete session "'+s.name+'" and its solves?')) return;
+        sessions = sessions.filter(x=>x.id!==s.id);
+        await saveSessions();
+        if(s.id===currentSessionId) await setCurrentSession(sessions[0].id);
+        else renderSessions();
+      });
+      btns.appendChild(del);
+    }
+    d.appendChild(btns);
+    el.appendChild(d);
+  });
+}
+document.getElementById('addSession').addEventListener('click', async ()=>{
+  const input = document.getElementById('newSessName');
+  const name = input.value.trim();
+  if(!name) return;
+  const s = {id:'s'+Date.now(), name};
+  sessions.push(s);
+  await saveSessions();
+  input.value='';
+  await setCurrentSession(s.id);
+});
+
+// ================= EXPORT / IMPORT =================
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const payload = { session: sessions.find(s=>s.id===currentSessionId)?.name || 'session', exportedAt: new Date().toISOString(), events: solvesByEvent };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'splits-export.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
+  const rows = [['event','number','time_seconds','penalty','note','scramble']];
+  EVENTS.forEach(ev=>{
+    (solvesByEvent[ev]||[]).forEach((s,i)=>{
+      const timeSec = (s.time/1000).toFixed(2);
+      const scrambleStr = (s.scramble||[]).join(' ').replace(/"/g,"'");
+      const noteStr = (s.note||'').replace(/"/g,"'");
+      rows.push([ev, i+1, timeSec, s.penalty||'', `"${noteStr}"`, `"${scrambleStr}"`]);
+    });
+  });
+  const csv = rows.map(r=>r.join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'splits-export.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+document.getElementById('importFile').addEventListener('change', async (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  try{
+    const text = await file.text();
+    const data = JSON.parse(text);
+    const events = data.events || data;
+    for(const ev of EVENTS){
+      if(Array.isArray(events[ev]) && events[ev].length){
+        solvesByEvent[ev] = (solvesByEvent[ev]||[]).concat(events[ev]);
+        await saveSolves(ev);
+      }
+    }
+    renderHistory(); renderStats(); renderFullStats(); renderGraphs();
+    alert('Import complete.');
+  }catch(err){ alert('Could not read that file as a valid export.'); }
+  e.target.value='';
+});
+
+// ================= CUBE COLLECTION =================
+let cubes = [];
+async function loadCubes(){
+  try{ const res = await window.storage.get('cubes', false); cubes = (res && res.value) ? JSON.parse(res.value) : []; }catch(e){ cubes=[]; }
+  renderCubes();
+}
+async function saveCubes(){ await window.storage.set('cubes', JSON.stringify(cubes), false); }
+function renderCubes(){
+  const el = document.getElementById('cubeList');
+  el.innerHTML = cubes.length ? '' : '<div class="empty-note">no cubes added yet</div>';
+  cubes.forEach((c,i)=>{
+    const d=document.createElement('div'); d.className='cube-item';
+    d.innerHTML = '<span><b>'+c.name+'</b>'+(c.notes?' — '+c.notes:'')+'</span>';
+    const del=document.createElement('button'); del.className='mini-btn danger'; del.textContent='remove';
+    del.addEventListener('click', async ()=>{ cubes.splice(i,1); await saveCubes(); renderCubes(); });
+    d.appendChild(del);
+    el.appendChild(d);
+  });
+}
+document.getElementById('addCube').addEventListener('click', async ()=>{
+  const name = document.getElementById('newCubeName').value.trim();
+  const notes = document.getElementById('newCubeNotes').value.trim();
+  if(!name) return;
+  cubes.push({name, notes});
+  await saveCubes(); renderCubes();
+  document.getElementById('newCubeName').value=''; document.getElementById('newCubeNotes').value='';
+});
+
+// ================= BLUETOOTH (experimental stub) =================
+document.getElementById('btConnect').addEventListener('click', async ()=>{
+  const status = document.getElementById('btStatus');
+  if(!navigator.bluetooth){
+    status.textContent = 'Web Bluetooth is not available in this browser/context.';
+    return;
+  }
+  try{
+    const device = await navigator.bluetooth.requestDevice({ acceptAllDevices:true });
+    status.textContent = 'Paired with "'+device.name+'". Automatic time capture from this device is not wired up yet — pairing support only.';
+  }catch(err){
+    status.textContent = 'No device paired (' + (err && err.message ? err.message : 'cancelled') + ').';
+  }
+});
+
+// ================= THEME =================
+const ACCENTS = [
+  {name:'green', hex:'#35d68a'}, {name:'blue', hex:'#4a9eff'},
+  {name:'pink', hex:'#ef5da8'}, {name:'orange', hex:'#f2984b'},
+];
+
+// ================= SOUND =================
+let soundEnabled = true;
+let audioCtx = null;
+function beep(freq, durMs){
+  if(!soundEnabled) return;
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine'; osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.14, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + durMs/1000);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + durMs/1000);
+  }catch(e){}
+}
+async function loadSoundSetting(){
+  try{
+    const res = await window.storage.get('soundEnabled', false);
+    soundEnabled = res && res.value!==null ? res.value==='true' : true;
+  }catch(e){ soundEnabled = true; }
+  const el = document.getElementById('soundToggle');
+  if(el) el.checked = soundEnabled;
+  try{
+    const res2 = await window.storage.get('voiceAlertsEnabled', false);
+    voiceAlertsEnabled = res2 && res2.value!==null ? res2.value==='true' : true;
+  }catch(e){ voiceAlertsEnabled = true; }
+  const el2 = document.getElementById('voiceToggle');
+  if(el2) el2.checked = voiceAlertsEnabled;
+}
+let voiceAlertsEnabled = true;
+function speak(text){
+  if(!voiceAlertsEnabled) return;
+  try{
+    if(!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 1; u.volume = 0.85; u.pitch = 1;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+document.getElementById('voiceToggle').addEventListener('change', async (e)=>{
+  voiceAlertsEnabled = e.target.checked;
+  await window.storage.set('voiceAlertsEnabled', String(voiceAlertsEnabled), false);
+});
+document.getElementById('soundToggle').addEventListener('change', async (e)=>{
+  soundEnabled = e.target.checked;
+  await window.storage.set('soundEnabled', String(soundEnabled), false);
+});
+
+async function initTheme(){
+  let mode='dark', accent='#35d68a';
+  try{
+    const res = await window.storage.get('theme', false);
+    if(res && res.value){ const t = JSON.parse(res.value); mode=t.mode||'dark'; accent=t.accent||'#35d68a'; }
+  }catch(e){}
+  document.body.classList.toggle('light', mode==='light');
+  document.documentElement.style.setProperty('--green', accent);
+  const row = document.getElementById('accentRow');
+  row.innerHTML='';
+  ACCENTS.forEach(a=>{
+    const s = document.createElement('div');
+    s.className='swatch'+(a.hex===accent?' sel':'');
+    s.style.background=a.hex;
+    s.addEventListener('click', async ()=>{
+      document.documentElement.style.setProperty('--green', a.hex);
+      document.querySelectorAll('.swatch').forEach(el=>el.classList.remove('sel'));
+      s.classList.add('sel');
+      await saveTheme();
+    });
+    row.appendChild(s);
+  });
+}
+async function saveTheme(){
+  const mode = document.body.classList.contains('light') ? 'light' : 'dark';
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--green').trim();
+  await window.storage.set('theme', JSON.stringify({mode, accent}), false);
+}
+document.getElementById('themeToggle').addEventListener('click', async ()=>{
+  document.body.classList.toggle('light');
+  await saveTheme();
+});
+
+// ================= STATS =================
+function solves(){ return solvesByEvent[currentEvent]; }
+function effectiveTime(s){ return s.penalty==='DNF' ? Infinity : s.time + (s.penalty==='+2' ? 2000 : 0); }
+function fmt(ms){ if(ms===Infinity) return 'DNF'; return fmtSeconds(ms/1000); }
+function fmtSeconds(totalSec){
+  if(totalSec < 60) return totalSec.toFixed(2);
+  const mins = Math.floor(totalSec/60);
+  const secs = totalSec - mins*60;
+  return mins + ':' + secs.toFixed(2).padStart(5,'0');
+}
+function average(list){
+  if(list.length===0) return null;
+  const dnfCount = list.filter(s=>s.penalty==='DNF').length;
+  if(list.length>=3 && dnfCount>1) return Infinity;
+  const times = list.map(effectiveTime).slice().sort((a,b)=>a-b);
+  if(list.length<3){ return times.reduce((a,b)=>a+b,0)/times.length; }
+  const trimmed = times.slice(1,-1);
+  return trimmed.reduce((a,b)=>a+b,0)/trimmed.length;
+}
+function stddevOf(list){
+  const valid = list.map(effectiveTime).filter(t=>isFinite(t));
+  if(valid.length<2) return null;
+  const mean = valid.reduce((a,b)=>a+b,0)/valid.length;
+  const variance = valid.reduce((a,b)=>a+(b-mean)*(b-mean),0)/valid.length;
+  return Math.sqrt(variance);
+}
+function renderStats(){
+  const S = solves();
+  document.getElementById('statCount').textContent = S.length;
+  if(S.length===0){
+    ['statBest','statAo5','statAo12','statMean'].forEach(id=>document.getElementById(id).textContent='–');
+    return;
+  }
+  const times = S.map(effectiveTime);
+  const best = Math.min(...times);
+  document.getElementById('statBest').textContent = best===Infinity?'DNF':fmt(best);
+  const last5 = S.slice(-5);
+  document.getElementById('statAo5').textContent = last5.length===5 ? fmt(average(last5)) : '–';
+  const last12 = S.slice(-12);
+  document.getElementById('statAo12').textContent = last12.length===12 ? fmt(average(last12)) : '–';
+  const validTimes = times.filter(t=>t!==Infinity);
+  const mean = validTimes.length ? validTimes.reduce((a,b)=>a+b,0)/validTimes.length : Infinity;
+  document.getElementById('statMean').textContent = mean===Infinity?'DNF':fmt(mean);
+}
+function renderFullStats(){
+  const S = solves();
+  document.getElementById('fCount').textContent = S.length;
+  document.getElementById('sessionLabel').textContent = 'history — '+S.length+' solve'+(S.length===1?'':'s')+' ('+EVENT_LABELS[currentEvent]+')';
+  if(S.length===0){
+    ['fBest','fWorst','fAo5','fAo12','fAo25','fAo50','fAo100','fMean','fStddev'].forEach(id=>document.getElementById(id).textContent='–');
+    return;
+  }
+  const times = S.map(effectiveTime);
+  const best = Math.min(...times), worst = Math.max(...times);
+  document.getElementById('fBest').textContent = best===Infinity?'DNF':fmt(best);
+  document.getElementById('fWorst').textContent = worst===Infinity?'DNF':fmt(worst);
+  const last5=S.slice(-5), last12=S.slice(-12), last25=S.slice(-25), last50=S.slice(-50), last100=S.slice(-100);
+  document.getElementById('fAo5').textContent = last5.length===5?fmt(average(last5)):'–';
+  document.getElementById('fAo12').textContent = last12.length===12?fmt(average(last12)):'–';
+  document.getElementById('fAo25').textContent = last25.length===25?fmt(average(last25)):'–';
+  document.getElementById('fAo50').textContent = last50.length===50?fmt(average(last50)):'–';
+  document.getElementById('fAo100').textContent = last100.length===100?fmt(average(last100)):'–';
+  const validTimes = times.filter(t=>t!==Infinity);
+  const mean = validTimes.length ? validTimes.reduce((a,b)=>a+b,0)/validTimes.length : Infinity;
+  document.getElementById('fMean').textContent = mean===Infinity?'DNF':fmt(mean);
+  const sd = stddevOf(S);
+  document.getElementById('fStddev').textContent = sd===null?'–':fmtSeconds(sd/1000);
+}
+function renderHistory(){
+  const el = document.getElementById('history');
+  const S = solves();
+  el.innerHTML='';
+  if(S.length===0){ el.innerHTML='<div class="empty-note">no solves yet — your times will show up here</div>'; return; }
+  S.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='hitem'+(s.penalty==='+2'?' plus2':s.penalty==='DNF'?' dnf':'');
+    const label = s.penalty==='DNF' ? 'DNF' : (fmt(s.time+(s.penalty==='+2'?2000:0)) + (s.penalty==='+2'?'+':''));
+    d.innerHTML = '<span class="n">'+(i+1)+'</span><span class="t">'+label+'</span>'
+      + '<span class="note-btn" title="'+(s.note?('note: '+s.note.replace(/"/g,'&quot;')):'add note')+'">'+(s.note?'💬':'🗨')+'</span>'
+      + '<span class="edit" title="edit time">✎</span>'
+      + '<span class="x">×</span>';
+    let titleStr = 'click time to cycle penalty · scramble: '+s.scramble.join(' ');
+    if(s.splits && s.splits.length){
+      const phaseTimes = s.splits.map((t,i)=> (( (i===0?t:t-s.splits[i-1]) )/1000).toFixed(2));
+      const lastPhase = ((s.time - s.splits[s.splits.length-1])/1000).toFixed(2);
+      titleStr += ' · phases: '+phaseTimes.concat(lastPhase).join(' / ');
+    }
+    d.title = titleStr;
+    d.querySelector('.t').addEventListener('click', ()=>{
+      s.penalty = s.penalty===null ? '+2' : s.penalty==='+2' ? 'DNF' : null;
+      saveSolves(currentEvent); renderHistory(); renderStats(); renderFullStats(); renderGraphs();
+    });
+    d.querySelector('.note-btn').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const val = prompt('Note for this solve (leave blank to remove):', s.note||'');
+      if(val===null) return;
+      s.note = val.trim() ? val.trim() : undefined;
+      saveSolves(currentEvent); renderHistory();
+    });
+    d.querySelector('.edit').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const cur = (s.time/1000).toFixed(2);
+      const val = prompt('Edit time (seconds):', cur);
+      if(val===null) return;
+      const num = parseFloat(val);
+      if(isNaN(num) || num<0){ alert('Enter a valid non-negative number of seconds.'); return; }
+      s.time = Math.round(num*1000);
+      saveSolves(currentEvent); renderHistory(); renderStats(); renderFullStats(); renderGraphs();
+    });
+    d.querySelector('.x').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      solvesByEvent[currentEvent] = solvesByEvent[currentEvent].filter(x=>x!==s);
+      saveSolves(currentEvent); renderHistory(); renderStats(); renderFullStats(); renderGraphs();
+    });
+    el.appendChild(d);
+  });
+}
+document.getElementById('clearBtn').addEventListener('click', ()=>{
+  if(solves().length===0) return;
+  if(confirm('Delete all '+EVENT_LABELS[currentEvent]+' solves from this session?')){
+    solvesByEvent[currentEvent]=[];
+    saveSolves(currentEvent); renderHistory(); renderStats(); renderFullStats(); renderGraphs();
+  }
+});
+
+// ================= GRAPHS =================
+function drawLineChart(canvas, seriesList){
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio||1;
+  const rect = canvas.getBoundingClientRect();
+  const w = rect.width||300, h = rect.height||140;
+  canvas.width = w*dpr; canvas.height = h*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  const allVals = seriesList.flatMap(s=>s.data).filter(v=>isFinite(v));
+  if(allVals.length<2){
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted2').trim() || '#777';
+    ctx.font = '12px JetBrains Mono, monospace';
+    ctx.fillText('not enough data yet', 10, h/2);
+    return;
+  }
+  const min=Math.min(...allVals), max=Math.max(...allVals);
+  const pad=(max-min)*0.12 || 1;
+  const lo=min-pad, hi=max+pad;
+  const mL=6,mR=6,mT=8,mB=8;
+  seriesList.forEach(s=>{
+    const n=s.data.length; if(n<2) return;
+    ctx.beginPath();
+    let started=false;
+    s.data.forEach((v,i)=>{
+      const x = mL + (w-mL-mR)*(n===1?0:i/(n-1));
+      if(!isFinite(v)){ started=false; return; }
+      const y = mT + (h-mT-mB)*(1-(v-lo)/(hi-lo));
+      if(!started){ ctx.moveTo(x,y); started=true; } else ctx.lineTo(x,y);
+    });
+    ctx.strokeStyle=s.color; ctx.lineWidth=2; ctx.lineJoin='round'; ctx.stroke();
+  });
+}
+function drawHistogram(canvas, values){
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio||1;
+  const rect = canvas.getBoundingClientRect();
+  const w = rect.width||300, h = rect.height||140;
+  canvas.width = w*dpr; canvas.height = h*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  const vals = values.filter(v=>isFinite(v));
+  if(vals.length<3){
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted2').trim() || '#777';
+    ctx.font = '12px JetBrains Mono, monospace';
+    ctx.fillText('not enough data yet', 10, h/2);
+    return;
+  }
+  const min=Math.min(...vals), max=Math.max(...vals);
+  const range = (max-min) || 1;
+  const binCount = Math.min(16, Math.max(6, Math.round(Math.sqrt(vals.length))));
+  const binWidth = range/binCount;
+  const bins = new Array(binCount).fill(0);
+  vals.forEach(v=>{
+    let idx = Math.floor((v-min)/binWidth);
+    if(idx>=binCount) idx=binCount-1;
+    if(idx<0) idx=0;
+    bins[idx]++;
+  });
+  const maxCount = Math.max(...bins);
+  const mL=6,mR=6,mT=8,mB=8, gap=2;
+  const barW = (w-mL-mR)/binCount;
+  const color = getComputedStyle(document.documentElement).getPropertyValue('--green').trim();
+  bins.forEach((count,i)=>{
+    const barH = maxCount>0 ? (count/maxCount)*(h-mT-mB) : 0;
+    const x = mL + i*barW;
+    const y = h-mB-barH;
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.85;
+    ctx.fillRect(x+gap/2, y, Math.max(1,barW-gap), barH);
+  });
+  ctx.globalAlpha = 1;
+}
+function renderGraphs(){
+  const S = solves();
+  document.getElementById('graphEventLabel').textContent = EVENT_LABELS[currentEvent]+' — time progression';
+  const timeData = S.map(s=>{ const t=effectiveTime(s); return isFinite(t)? t/1000 : NaN; });
+  drawLineChart(document.getElementById('chartTimes'), [{data:timeData, color: getComputedStyle(document.documentElement).getPropertyValue('--green').trim()}]);
+
+  let best=Infinity; const pbData = S.map(s=>{ const t=effectiveTime(s); if(isFinite(t) && t<best) best=t; return isFinite(best)? best/1000 : NaN; });
+  drawLineChart(document.getElementById('chartPB'), [{data:pbData, color:'#4a9eff'}]);
+
+  const ao5Data = S.map((_,i)=>{ if(i<4) return NaN; const v=average(S.slice(i-4,i+1)); return isFinite(v)? v/1000 : NaN; });
+  const ao12Data = S.map((_,i)=>{ if(i<11) return NaN; const v=average(S.slice(i-11,i+1)); return isFinite(v)? v/1000 : NaN; });
+  drawLineChart(document.getElementById('chartAvg'), [
+    {data:ao5Data, color: getComputedStyle(document.documentElement).getPropertyValue('--green').trim()},
+    {data:ao12Data, color:'#4a9eff'}
+  ]);
+
+  const histData = S.map(s=>{ const t=effectiveTime(s); return isFinite(t)? t/1000 : NaN; });
+  drawHistogram(document.getElementById('chartHist'), histData);
+}
+
+// ================= TIMER =================
+const stage=document.getElementById('timerStage');
+const display=document.getElementById('timerDisplay');
+const hint=document.getElementById('timerHint');
+const penaltyRow=document.getElementById('penaltyRow');
+const btnPlus2=document.getElementById('btnPlus2');
+const btnDnf=document.getElementById('btnDnf');
+let state='idle', holdTimeout=null, startTs=0, rafId=null, lastSolveIndex=null;
+let inspectionLimit=0, phase=null, inspectionStart=null, inspectionRaf=null, pendingPenalty=null;
+const HOLD_MS=350;
+document.getElementById('inspectSelect').addEventListener('change', (e)=>{ inspectionLimit = parseInt(e.target.value,10); });
+
+function setStage(cls){ stage.classList.remove('holding','ready','inspecting','insp-warn'); if(cls) cls.split(' ').forEach(c=>stage.classList.add(c)); updateFocusMode(); }
+let focusModeEnabled = false;
+function updateFocusMode(){
+  const active = focusModeEnabled && state!=='idle' && state!=='stopped';
+  document.body.classList.toggle('focus-mode', active);
+}
+document.getElementById('focusToggle').addEventListener('change', (e)=>{ focusModeEnabled = e.target.checked; updateFocusMode(); });
+function tick(){
+  const el=performance.now()-startTs;
+  display.textContent = hideTimeWhileSolving ? 'solving…' : fmtSeconds(el/1000);
+  if(splitPhasesEnabled) hint.textContent = 'phase '+(currentSplits.length+1)+' — press Enter to split';
+  rafId=requestAnimationFrame(tick);
+}
+
+let lastInspectionBeepSecond = null;
+function startInspection(){
+  state='inspecting'; setStage('inspecting'); inspectionStart=performance.now();
+  hint.textContent='inspecting — hold to start';
+  lastInspectionBeepSecond = null;
+  spoken8 = false; spoken12 = false;
+  inspectionRaf=requestAnimationFrame(inspectionTick);
+}
+let spoken8=false, spoken12=false;
+function inspectionTick(){
+  const elapsed = performance.now()-inspectionStart;
+  const remaining = inspectionLimit - Math.floor(elapsed/1000);
+  if(!spoken8 && elapsed>=8000){ speak('8'); spoken8=true; }
+  if(!spoken12 && elapsed>=12000){ speak('12'); spoken12=true; }
+  if(remaining>=0){
+    display.textContent = String(remaining);
+    stage.classList.toggle('insp-warn', remaining<=3);
+    if(remaining<=3 && remaining!==lastInspectionBeepSecond){ beep(remaining===0?880:660, remaining===0?160:80); lastInspectionBeepSecond=remaining; }
+  } else {
+    display.textContent = remaining>=-2 ? '+2' : 'DNF';
+    stage.classList.add('insp-warn');
+    if(lastInspectionBeepSecond!==remaining && (remaining===-1||remaining===-3)){ beep(220,220); lastInspectionBeepSecond=remaining; }
+  }
+  inspectionRaf = requestAnimationFrame(inspectionTick);
+}
+function beginHold(){
+  if(state==='running'||state==='holding'||state==='ready') return;
+  if(state==='inspecting'){ cancelAnimationFrame(inspectionRaf); phase='start-solve'; }
+  else { phase = inspectionLimit>0 ? 'start-inspection' : 'start-solve'; inspectionStart=null; }
+  state='holding'; setStage('holding'); hint.textContent='keep holding…'; penaltyRow.style.display='none';
+  holdTimeout=setTimeout(()=>{
+    state='ready'; setStage('ready');
+    hint.textContent = phase==='start-inspection' ? 'release to begin inspection' : 'release to start';
+  }, HOLD_MS);
+}
+function releaseHold(){
+  if(state==='holding'){
+    clearTimeout(holdTimeout);
+    if(phase==='start-solve' && inspectionLimit>0 && inspectionStart!==null){
+      startInspectionResume();
+      return;
+    }
+    state='idle'; setStage(null); hint.textContent='hold space or press & hold here to start';
+    return;
+  }
+  if(state==='ready'){
+    if(phase==='start-inspection'){ startInspection(); return; }
+    state='running'; setStage(null); hint.textContent=''; display.textContent='0.00';
+    startTs=performance.now();
+    pendingPenalty=null;
+    currentSplits=[];
+    if(inspectionLimit>0 && inspectionStart!==null){
+      const insElapsed = (startTs-inspectionStart)/1000;
+      if(insElapsed>inspectionLimit+2) pendingPenalty='DNF';
+      else if(insElapsed>inspectionLimit) pendingPenalty='+2';
+    }
+    inspectionStart=null;
+    beep(520,70);
+    rafId=requestAnimationFrame(tick);
+  }
+}
+let currentSplits = [];
+let splitPhasesEnabled = false;
+function logSplit(){
+  if(state!=='running' || !splitPhasesEnabled) return;
+  currentSplits.push(performance.now()-startTs);
+  beep(440,50);
+}
+function startInspectionResume(){
+  state='inspecting'; setStage('inspecting'); hint.textContent='inspecting — hold to start';
+  inspectionRaf=requestAnimationFrame(inspectionTick);
+}
+function stopTimer(){
+  if(state!=='running') return;
+  cancelAnimationFrame(rafId);
+  const elapsed=performance.now()-startTs;
+  state='stopped'; setStage(null);
+  display.textContent=fmtSeconds(elapsed/1000);
+  beep(660,90);
+  if(practiceMode){
+    hint.textContent='practice mode — not saved. hold to go again';
+    pendingPenalty=null;
+    newScramble();
+    return;
+  }
+  hint.textContent='hold space or press & hold here for next solve';
+  solvesByEvent[currentEvent].push({time:elapsed, penalty:pendingPenalty, scramble:currentScrambleMoves, splits: currentSplits.length?currentSplits.slice():undefined});
+  pendingPenalty=null;
+  lastSolveIndex = solvesByEvent[currentEvent].length-1;
+  saveSolves(currentEvent); renderHistory(); renderStats(); renderFullStats(); renderGraphs();
+  penaltyRow.style.display='flex'; updatePenaltyButtons();
+  newScramble();
+}
+function undoLastSolve(){
+  if(lastSolveIndex===null) return;
+  const S = solvesByEvent[currentEvent];
+  if(S.length===0) return;
+  S.pop();
+  lastSolveIndex = null;
+  penaltyRow.style.display='none';
+  saveSolves(currentEvent); renderHistory(); renderStats(); renderFullStats(); renderGraphs();
+}
+document.getElementById('btnUndo').addEventListener('click',(e)=>{ e.stopPropagation(); undoLastSolve(); });
+let practiceMode=false, hideTimeWhileSolving=false;
+document.getElementById('practiceToggle').addEventListener('change', (e)=>{ practiceMode = e.target.checked; });
+document.getElementById('splitToggle').addEventListener('change', (e)=>{ splitPhasesEnabled = e.target.checked; });
+document.getElementById('hideTimeToggle').addEventListener('change', (e)=>{ hideTimeWhileSolving = e.target.checked; });
+function resetTimerToIdle(){
+  cancelAnimationFrame(rafId); cancelAnimationFrame(inspectionRaf); clearTimeout(holdTimeout);
+  state='idle'; phase=null; inspectionStart=null; pendingPenalty=null;
+  setStage(null); display.textContent='0.00'; hint.textContent='hold space or press & hold here to start';
+}
+function updatePenaltyButtons(){
+  if(lastSolveIndex===null) return;
+  const s=solves()[lastSolveIndex]; if(!s) return;
+  btnPlus2.classList.toggle('active-plus2', s.penalty==='+2');
+  btnDnf.classList.toggle('active-dnf', s.penalty==='DNF');
+}
+btnPlus2.addEventListener('click',(e)=>{ e.stopPropagation(); if(lastSolveIndex===null)return; const s=solves()[lastSolveIndex]; if(!s)return; s.penalty=s.penalty==='+2'?null:'+2'; saveSolves(currentEvent); renderHistory(); renderStats(); renderFullStats(); renderGraphs(); updatePenaltyButtons(); });
+btnDnf.addEventListener('click',(e)=>{ e.stopPropagation(); if(lastSolveIndex===null)return; const s=solves()[lastSolveIndex]; if(!s)return; s.penalty=s.penalty==='DNF'?null:'DNF'; saveSolves(currentEvent); renderHistory(); renderStats(); renderFullStats(); renderGraphs(); updatePenaltyButtons(); });
+
+window.addEventListener('keydown',(e)=>{
+  if(!document.getElementById('view-timer').classList.contains('active')) return;
+  if(e.code!=='Space') return;
+  if(e.target && (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')) return;
+  e.preventDefault(); if(e.repeat) return;
+  if(state==='running'){ stopTimer(); return; }
+  beginHold();
+});
+window.addEventListener('keydown',(e)=>{
+  if(!document.getElementById('view-timer').classList.contains('active')) return;
+  if(e.code!=='Enter'&&e.code!=='NumpadEnter') return;
+  if(e.target && (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')) return;
+  if(state!=='running') return;
+  e.preventDefault();
+  logSplit();
+});
+window.addEventListener('keyup',(e)=>{ if(e.code!=='Space') return; e.preventDefault(); releaseHold(); });
+stage.addEventListener('mousedown',(e)=>{ if(e.target.closest('.pbtn')) return; if(state==='running'){ stopTimer(); return; } beginHold(); });
+window.addEventListener('mouseup',()=>{ releaseHold(); });
+stage.addEventListener('touchstart',(e)=>{ if(e.target.closest('.pbtn')) return; e.preventDefault(); if(state==='running'){ stopTimer(); return; } beginHold(); },{passive:false});
+window.addEventListener('touchend',()=>{ releaseHold(); });
+
+// ================= EVENT SWITCH =================
+document.getElementById('eventSeg').addEventListener('click', async (e)=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  const ev = btn.dataset.ev; if(ev===currentEvent) return;
+  currentEvent = ev;
+  document.querySelectorAll('#eventSeg button').forEach(b=>b.classList.toggle('active', b.dataset.ev===ev));
+  lastSolveIndex=null; penaltyRow.style.display='none';
+  resetTimerToIdle();
+  newScramble();
+  renderHistory(); renderStats(); renderFullStats(); renderGraphs();
+});
+
+// ================= TOP NAV =================
+document.querySelector('.topnav').addEventListener('click', (e)=>{
+  const btn=e.target.closest('button'); if(!btn) return;
+  document.querySelectorAll('.topnav button').forEach(b=>b.classList.toggle('active', b===btn));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+btn.dataset.view).classList.add('active');
+  if(btn.dataset.view==='graphs') renderGraphs();
+});
+
+// ================= ALGORITHM DATA =================
+const OLL = [
+["Runway","R U2' R2' F R F' U2 R' F R F'"],["Zamboni","U' R U' R2' D' r U r' D R2 U R'"],
+["Anti-Pinwheel","U f R U R' U' f' U' F R U R' U' F'"],["Pinwheel","f R U R' U' f' U F R U R' U' F'"],
+["Lefty Square","U2 l' U2 L U L' U l"],["Righty Square","U2 r U2 R' U' R U' r'"],
+["Lightning","r U R' U R U2 r'"],["Reverse Lightning","l' U' L U' L' U2 l"],
+["Kite","U' R U R' U' R' F R2 U R' U' F'"],["Anti-Kite","U' R U R' U R' F R F' R U2' R'"],
+["Downstairs","U' r' R2 U R' U R U2' R' U M'"],["Upstairs","U' r R2' U' R U' R' U2 R U' r' R"],
+["Gun","F U R U2' R' U' R U R' F'"],["Anti-Gun","R' F R U R' F' R F U' F'"],
+["Squeegee","U2 l' U' l L' U' L U l' U l"],["Anti-Squeegee","U2 r U r' R U R' U' r U' r'"],
+["Slash","R U R' U R' F R F' U2 R' F R F'"],["Crown","R U2 R2 F R F' U2 M' U R U' r'"],
+["Bunny","S' R U R' S U' R' F R F'"],["Checkers","r' R U R U R' U' r R' M' U R U' r'"],
+["Sune-H","R U R' U R U' R' U R U2 R'"],["Pi","R U2' R2' U' R2 U' R2' U2' R"],
+["Headlights","R2' D' R U2 R' D R U2 R"],["T-OCLL","r U R' U' r' F R F'"],
+["Bowtie","U2 F R' F' r U R U' r'"],["Antisune","y' R U2 R' U' R U' R'"],
+["Sune","R U R' U R U2' R'"],["Stealth","r U R' U' r' R U R U' R'"],
+["Spotted Chameleon","U R U R' U' R U' R' F' U' F R U R'"],["Anti-Spotted Chameleon","U2 F U R U2' R' U' R U2 R' U' F'"],
+["Couch","U2 R' U' F U R U' R' F' R"],["Anti-Couch","S R U R' U' R' F R f'"],
+["Tying Shoelaces","R U R' U' R' F R F'"],["City","R U R2' U' R' F R U R U' F'"],
+["Fish Salad","R U2' R2' F R F' R U2' R'"],["Sea-Mew","U2 L' U' L U' L' U L U L F' L' F"],
+["Mounted Fish","U F R' F' R U R U' R'"],["Mario","U2 R U R' U R U' R' U' R' F R F'"],
+["Fung","L F' L' U' L U F U' L'"],["Anti-Fung","R' F R U R' U' F' U R"],
+["Awkward Fish","U2 R U R' U R U2 R' F R U R' U' F'"],["Lefty Awkward Fish","R' U' R U' R' U2' R F R U R' U' F'"],
+["Anti-P","U R' U' F' U F R"],["P","U2 F U R U' R' F'"],
+["Suit Up (T)","F R U R' U' F'"],["Seein' Headlights","R' U' R' F R F' U R"],
+["Anti-Breakneck","F' L' U' L U L' U' L U F"],["Breakneck","F R U R' U' R U R' U' F'"],
+["Right Back Squeezy","U2 r U' r2' U r2 U r2' U' r"],["Right Front Squeezy","U2 R' F R2 B' R2' F' R2 B R'"],
+["Bottlecap","F U R U' R' U R U' R' F'"],["Rice Cooker","R U R' U R U' B U' B' R'"],
+["Frying Pan","l' U' L U' L' U L U' L' U2 l"],["Anti-Frying Pan","r U R' U R U' R' U R U2' r'"],
+["Highway","U R' F R U R U' R2' F' R2 U' R' U R U R'"],["Streetlights","r U r' U R U' R' U R U' R' r U' r'"],
+["Mummy","R U R' U' M' U R U' r'"]
+].map((x,i)=>({id:i+1,name:x[0],alg:x[1]}));
+
+const PLL = [
+["H","M2' U M2' U2 M2' U M2'"],["Ua","U2 M2' U M U2 M' U M2'"],["Ub","U2 M2 U' M U2 M' U' M2"],
+["Z","U M' U M2' U M2' U M' U2 M2'"],["Aa","U' x R' U R' D2 R U' R' D2 R2 x'"],
+["Ab","U' x R2' D2 R U R' D2 R U' R x'"],["E","U x' R U' R' D R U R' D' R U R' D R U' R' D' x"],
+["F","y L R2 U R U R2 U' R' U' R2 U' R U2 L' U R'"],["Ga","y R2 U R' U R' U' R U' R2 D U' R' U R D'"],
+["Gb","R' U' R U D' R2 U R' U R U' R U' R2 D"],["Gc","y R2 U' R U' R U R' U R2 D' U R U' R' D"],
+["Gd","y2 R U R' U' D R2 U' R U' R' U R' U R2 D'"],["Ja","y2 L U' R' U L' U2 R U' R' U2 R"],
+["Jb","R U R' F' R U R' U' R' F R2 U' R' U'"],["Na","R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'"],
+["Nb","R' U R U' R' F' U' F R U R' F R' F' R U' R"],["Ra","R U R' F' R U2 R' U2' R' F R U R U2 R' U'"],
+["Rb","R' U2 R U2' R' F R U R' U' R' F' R2 U'"],["T","R U R' U' R' F R2 U' R' U' R U R' F'"],
+["V","R' U R' U' y R' F' R2 U' R' U R' F R F"],["Y","F R U' R' U' R U R' F' R U R' U' R' F R F'"]
+].map((x,i)=>({id:i+1,name:x[0],alg:x[1]}));
+
+const F2L = [
+["Case 1","U R U' R'"],["Case 2","y' U' R' U R"],["Case 3","U' R U R' U2 R U' R'"],["Case 4","d R' U' R U2' R' U R"],
+["Case 5","U' R U2' R' U2 R U' R'"],["Case 6","d R' U2 R U2' R' U R"],["Case 7","y' R' U R U' d' R U R'"],
+["Case 8","R U' R' U d R' U' R"],["Case 9","y' R' U' R"],["Case 10","R U R'"],
+["Case 11","d R' U' R U' R' U' R"],["Case 12","U' R U R' U R U R'"],["Case 13","U' R U2' R' d R' U' R"],
+["Case 14","R' U2 R2 U R2' U R"],["Case 15","d R' U R U' R' U' R"],["Case 16","U' R U' R' U R U R'"],
+["Case 17","R U2' R' U' R U R'"],["Case 18","y' R' U2 R U R' U' R"],["Case 19","U R U2 R' U R U' R'"],
+["Case 20","y' U' R' U2 R U' R' U R"],["Case 21","U2 R U R' U R U' R'"],["Case 22","y' U2 R' U' R U' R' U R"],
+["Case 23","y' U R' U2 R y R U2 R' U R U' R'"],["Case 24","U' R U2' R' y' R' U2 R U' R' U R"],
+["Case 25","U R U' R' d' L' U L"],["Case 26","y' U' R' U R r' U' R U M'"],["Case 27","y' R' U' R U R' U' R"],
+["Case 28","R U R' U' R U R'"],["Case 29","R U' R' U R U' R'"],["Case 30","y' R' U R U' R' U R"],
+["Case 31","U' R U' R' U2 R U' R'"],["Case 32","d R' U R U2 R' U R"],["Case 33","U' R U R' d R' U' R"],
+["Case 34","d R' U' R d' R U R'"],["Case 35","R U' R' d R' U R"],["Case 36","R U R' U' R U R' U' R U R'"],
+["Case 37","R U' R' U' R U R' U2 R U' R'"],["Case 38","R U R' U2 R U' R' U R U R'"],
+["Case 39","R U' R' d R' U' R U' R' U' R"],["Case 40","R U R' U' R U' R' U2 y' R' U' R"],
+["Case 41","R U' R' U y' R' U2 R U2' R' U R"]
+].map((x,i)=>({id:i+1,name:x[0],alg:x[1]}));
+
+// 2x2 OLL (7 cases): pure corner-orientation algorithms — since a 2x2 has no edges at all,
+// these are the same geometric corner-turns as the "OCLL" subset of the 3x3 OLL set above
+// (ids 21,22,24,25,26,27,28), reused here under their 2x2-appropriate shape names.
+const OLL2 = [
+  ["Sune", OLL[26].alg], ["Antisune", OLL[25].alg], ["H", OLL[20].alg],
+  ["Pi", OLL[21].alg], ["T", OLL[23].alg], ["L", OLL[24].alg], ["U", OLL[27].alg]
+].map((x,i)=>({id:i+1,name:x[0],alg:x[1]}));
+
+// 2x2 PLL (3 cases): pure corner-permutation algorithms — reusing the 3x3 PLL entries that are
+// themselves pure corner cycles (Aa/Ab 3-cycles, E diagonal double-swap), which apply identically
+// to a 2x2's corners.
+const PLL2 = [
+  ["Adjacent 3-cycle (A)", PLL[4].alg], ["Adjacent 3-cycle (B)", PLL[5].alg], ["Diagonal swap (E)", PLL[6].alg]
+].map((x,i)=>({id:i+1,name:x[0],alg:x[1]}));
+
+// CLL (40 cases): 2x2 "Corners of the Last Layer" — orients + permutes the last layer in one look.
+// Primary algorithm per case, sourced from a widely-used community CLL reference sheet.
+const CLL = [
+["Sune 1","R U R' U R U2 R'"],["Sune 2","F R' F' R U2 R U2 R'"],["Sune 3","L' U2 L U2 L F' L' F"],
+["Sune 4","R U' R' F L' U' L"],["Sune 5","U' R' F R2 F' R U2 R' U' R2"],["Sune 6","U2 R U' R U' R' U R' U' y R U' R'"],
+["Antisune 1","R' U' R U' R' U2 R"],["Antisune 2","U2 R U2 R' U2 R' F R F'"],["Antisune 3","U2 F' L F L' U2 L' U2 L"],
+["Antisune 4","U2 R' F R F' R U R'"],["Antisune 5","U2 R' F2 R F' R' F2 R U' R' F R F'"],["Antisune 6","U2 R' U R U' R2' F R F' R U R' U' R"],
+["Pi 1","F R U R' U' R U R' U' F'"],["Pi 2","U' R' U' R' F R F' R U' R' U2 R"],["Pi 3","R U' R' F R' F R U R' F R"],
+["Pi 4","U' R U' R U' R' U R' F R2 F'"],["Pi 5","R U2 R' U' R U R' U2 R' F R F'"],["Pi 6","R' F2 R F' U2 R U' R' U' F"],
+["U 1","F R U R' U' F'"],["U 2","R2 F2 R U R' F R2 U2 R' U' R"],["U 3","R U2 R U' R' F R' F2 U' F"],
+["U 4","x R U' R U' R' U L' U' L"],["U 5","U R U' R2 F R F' R U R' U' R U R'"],["U 6","U R' U R' F R F' R U2 R' U R"],
+["L 1","U F' R U R' U' R' F R"],["L 2","F R' F' R U R U' R'"],["L 3","U2 R' F2 R F' R' F2 R2 U' R'"],
+["L 4","U R' U R' U2 R U' R' U R U' R2"],["L 5","U R U2' R2' F2 R U R' F2 R F'"],["L 6","U' R' F' R U R' U' R' F R2 U' R' U2 R"],
+["T 1","R U R' U' R' F R F'"],["T 2","F R F' R U R' U' R'"],["T 3","U F U' R U2 R' U' F2 R U R'"],
+["T 4","U R' U R U2' R2' F' R U' R' F2 R2"],["T 5","U' F R F' R U R' U R' U' R U' R'"],["T 6","U R' U R U2 R2 F R F' R"],
+["H 1","R2 U2 R U2' R2'"],["H 2","x' U2 R U2 R2 F2 R U2"],["H 3","R U R' U R U R' F R' F' R"],
+["H 4","U F R2 U' R2' U' R2 U R2' F'"]
+].map((x,i)=>({id:i+1,name:x[0],alg:x[1]}));
+
+// EG-1 (40 cases): like CLL, but recognized with 2 adjacent bottom-layer pieces already matching —
+// a more advanced one-look method. Also sourced from a community reference sheet; each case here
+// assumes the "bar" held at the back (the default orientation shown on that reference).
+const EG1 = [
+["Sune 1","U2 R' F R2 F' R2 U2 R"],["Sune 2","U' R' F R U2 R U' R2 F2 R F'"],["Sune 3","R' F R2 U' R' U L F' L' F"],
+["Sune 4","F' U R U' R' U F R U R'"],["Sune 5","R U R' F2 U F R U R'"],["Sune 6","U R U' R' U R U' R' U F R U' R'"],
+["Antisune 1","U' B U' R2 F2 U' F"],["Antisune 2","U2 R U' R2 F R U' R' F R F'"],["Antisune 3","F' R U R' U' R U R2' F' R"],
+["Antisune 4","R U' R' F' U' R U R' U' F"],["Antisune 5","U' R U R' F' U' R U R' U' R U R'"],["Antisune 6","U R U' R' F' U' F2 R U' R'"],
+["Pi 1","U2 R2 B2 R' U R' U' R U2 R U' R2"],["Pi 2","U' R' F R2 U' R2 F R"],["Pi 3","U' F R' F U' F2 R U R"],
+["Pi 4","U' R U' R' U R U' R' F R U' R'"],["Pi 5","U F U' R U2 R' F' R U R' F'"],["Pi 6","U' R' F R F' R' F R2 U R' U' R U' R'"],
+["U 1","R U' R2' F R2 U R' U' R U' R'"],["U 2","U2 x U' R' U R U' F R U R U'"],["U 3","U F' U2 R U2 R' U2 F"],
+["U 4","U2 R' F R F' R' F R2 U' R'"],["U 5","U2 R' F R F' U R U' R' F R U' R'"],["U 6","U' R' F R2 U' R' U y' R U R'"],
+["L 1","R U' R' U R U' R2 F' R F"],["L 2","U2 F R' F' R U2 R U' R2 F' R2 U R'"],["L 3","R' U R2 U' R2 U' F R2 U' R'"],
+["L 4","R' F R2 U R' F' R U2 R'"],["L 5","U L' U L y' R U2 R U' R2"],["L 6","U R' U2 F R U2 R U' R2 F"],
+["T 1","U2 R2 U R U' R2 F R U2 R' F"],["T 2","U F' R' F R2 U R' U' R U R'"],["T 3","U2 R U' R2 F R U R U2 R'"],
+["T 4","R2 B2 U' R' U' R U' R' U R'"],["T 5","U2 R U R2 x U' R U R' U' R"],["T 6","U' R U' R' U2 F R U2 R' F"],
+["H 1","R' F R2 U' R2 U' F U R"],["H 2","F' U R U' R2 F2 R U' F"],["H 3","R' U' R' F2 U F' R F'"],
+["H 4","R U R' F' R U R' U' R U R' U'"]
+].map((x,i)=>({id:i+1,name:x[0],alg:x[1]}));
+
+const CASES = {OLL, PLL, F2L, OLL2, PLL2, CLL, EG1};
+const CASE_ENGINE_2x2 = {OLL2:true, PLL2:true, CLL:true, EG1:true};
+const CAT_NOTES = {
+  CLL: 'One-look last layer for 2x2 (orient + permute together). "Anti-CLL" isn\u2019t a separate algorithm set — it\u2019s a technique for recognizing these same CLL algorithms using extra info from the bottom layer, similar in spirit to EG-1.',
+  EG1: 'Advanced 2x2 method: like CLL, but used when two adjacent bottom-layer pieces already match, letting you skip a look. Assumes the matching bar is held at the back.'
+};
+
+
+// ================= LEARN VIEW =================
+const caseNetEl = document.getElementById('caseNet');
+let caseCells = buildNetCells(caseNetEl, 3);
+let currentCat = 'OLL';
+let currentCaseIdx = 0;
+let trainerHidden = false;
+
+function renderCaseGrid(){
+  const grid = document.getElementById('caseGrid');
+  grid.innerHTML='';
+  CASES[currentCat].forEach((c,i)=>{
+    const d=document.createElement('div');
+    d.className='case-chip'+(i===currentCaseIdx?' sel':'');
+    d.innerHTML = '<b>'+c.id+'</b>'+c.name;
+    d.addEventListener('click', ()=>{ currentCaseIdx=i; showCase(); });
+    grid.appendChild(d);
+  });
+  const note = document.getElementById('catNote');
+  if(CAT_NOTES[currentCat]){ note.textContent = CAT_NOTES[currentCat]; note.style.display='block'; }
+  else note.style.display='none';
+}
+function showCase(){
+  const list = CASES[currentCat];
+  const c = list[currentCaseIdx];
+  document.getElementById('detailSub').textContent = currentCat+' · case '+c.id+' of '+list.length;
+  document.getElementById('detailName').textContent = c.name;
+  const algEl = document.getElementById('detailAlg');
+  algEl.textContent = c.alg;
+  algEl.classList.toggle('hidden-alg', trainerHidden);
+  const eng = CASE_ENGINE_2x2[currentCat] ? E2 : E3;
+  if(caseCells.length !== 6*eng.n*eng.n) caseCells = buildNetCells(caseNetEl, eng.n);
+  const caseState = eng.applyAlg(eng.solved(), invertAlg(c.alg));
+  renderNet(caseCells, caseState);
+  document.querySelectorAll('.case-chip').forEach((el,i)=>el.classList.toggle('sel', i===currentCaseIdx));
+}
+document.getElementById('detailAlg').addEventListener('click', ()=>{
+  const algEl = document.getElementById('detailAlg');
+  if(trainerHidden){ algEl.classList.remove('hidden-alg'); setTimeout(()=>{ if(trainerHidden) showCase(); },1500); }
+});
+document.getElementById('catTabs').addEventListener('click',(e)=>{
+  const btn=e.target.closest('button'); if(!btn) return;
+  currentCat = btn.dataset.cat; currentCaseIdx=0;
+  document.querySelectorAll('#catTabs button').forEach(b=>b.classList.toggle('active', b===btn));
+  renderCaseGrid(); showCase();
+});
+document.getElementById('prevCase').addEventListener('click', ()=>{
+  const list=CASES[currentCat]; currentCaseIdx=(currentCaseIdx-1+list.length)%list.length; renderCaseGrid(); showCase();
+});
+document.getElementById('nextCase').addEventListener('click', ()=>{
+  const list=CASES[currentCat]; currentCaseIdx=(currentCaseIdx+1)%list.length; renderCaseGrid(); showCase();
+});
+document.getElementById('shuffleCase').addEventListener('click', ()=>{
+  const list=CASES[currentCat];
+  let idx; do{ idx=Math.floor(Math.random()*list.length); }while(idx===currentCaseIdx && list.length>1);
+  currentCaseIdx=idx; renderCaseGrid(); showCase();
+});
+document.getElementById('trainMode').addEventListener('change', (e)=>{
+  trainerHidden = e.target.checked;
+  showCase();
+});
+
+// ================= INIT =================
+renderCaseGrid();
+showCase();
+newScramble();
+(async function init(){
+  await initSessions();
+  await loadAllSolvesForCurrentSession();
+  await initTheme();
+  await loadSoundSetting();
+  await loadCubes();
+  renderSessions();
+  renderHistory(); renderStats(); renderFullStats(); renderGraphs();
+})();
+
+})();
+</script>
+</body>
+</html>
