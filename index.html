@@ -194,6 +194,34 @@
     .stats:not(.full) .stat:nth-child(4), .stats:not(.full) .stat:nth-child(5){ display:none; }
     .stats.full{ grid-template-columns:repeat(2,1fr); }
   }
+
+  /* Fit the Timer tab to one screen with no page scroll, on tall-enough viewports.
+     Short/mobile viewports fall back to normal scrolling (safety net via overflow-y:auto).
+     --fit is set at runtime by computeFit() in JS, which measures the ACTUAL rendered
+     height (real webfonts, real wrapping, whatever the browser decides) and binary-searches
+     the largest scale that removes overflow — so this is correct regardless of font metrics,
+     browser, zoom, or OS, not just tuned against one test render. */
+  @media (min-height:700px){
+    .wrap{ height:100dvh; overflow-y:auto; padding:calc(12px*var(--fit,1)) 24px; gap:calc(8px*var(--fit,1)); }
+    header{ flex-wrap:nowrap; }
+    #eventSeg{ flex-wrap:nowrap; overflow-x:auto; scrollbar-width:thin; }
+    .topnav{ flex-wrap:nowrap; overflow-x:auto; scrollbar-width:thin; }
+    #view-timer.active{ flex:1; min-height:0; gap:calc(8px*var(--fit,1)); }
+    #view-timer.active .stats,
+    #view-timer.active .scramble-box,
+    #view-timer.active .net-wrap,
+    #view-timer.active .no-diagram-note,
+    #view-timer.active .insp-toggle-row{ flex:0 0 auto; }
+    #view-timer.active .stat{ padding:calc(9px*var(--fit,1)) 10px; }
+    #view-timer.active .scramble-box{ padding:calc(8px*var(--fit,1)) 16px; max-height:calc(13vh*var(--fit,1)); overflow-y:auto; }
+    #view-timer.active .scramble-text{ font-size:calc(13px*var(--fit,1)); line-height:1.55; }
+    #view-timer.active .net-wrap{ max-height:calc(20vh*var(--fit,1)); overflow:hidden; padding:2px 0; }
+    #view-timer.active .net-wrap svg{ width:auto !important; height:100% !important; max-width:100%; display:block; margin:0 auto; }
+    #view-timer.active .insp-toggle-row{ margin-top:-2px; max-height:calc(9vh*var(--fit,1)); overflow-y:auto; row-gap:4px; }
+    #view-timer.active .timer-stage{ flex:1; min-height:0; padding:calc(min(28px,3vh)*var(--fit,1)) 16px; }
+    #view-timer.active .timer-display{ font-size:max(24px, calc(min(12vw,16vh)*var(--fit,1))); }
+    #view-timer.active .timer-hint{ margin-top:calc(min(10px,1.5vh)*var(--fit,1)); font-size:calc(1em*var(--fit,1)); }
+  }
 </style>
 </head>
 <body>
@@ -1378,6 +1406,7 @@ function pushHistoryAndShow(ev, moves){
   scrambleHistoryIdx[ev] = hist.length - 1;
   applyAndShowScramble(ev, moves);
   updatePrevButtonState();
+  computeFit();
 }
 function updatePrevButtonState(){
   const hist = scrambleHistoryByEvent[currentEvent] || [];
@@ -2101,6 +2130,39 @@ window.addEventListener('mouseup',()=>{ releaseHold(); });
 stage.addEventListener('touchstart',(e)=>{ if(e.target.closest('.pbtn')||e.target.closest('.focus-exit')) return; e.preventDefault(); if(state==='running'){ stopTimer(); return; } beginHold(); },{passive:false});
 window.addEventListener('touchend',()=>{ releaseHold(); });
 
+// ================= AUTO-FIT TIMER VIEW (measures real rendered height; shrinks only as much as needed) =================
+function computeFit(){
+  const wrap = document.querySelector('.wrap');
+  const viewTimer = document.getElementById('view-timer');
+  if(!wrap || !viewTimer || !viewTimer.classList.contains('active')) return;
+  if(!window.matchMedia('(min-height:700px)').matches){
+    document.documentElement.style.removeProperty('--fit');
+    return;
+  }
+  function fits(v){
+    document.documentElement.style.setProperty('--fit', v.toFixed(4));
+    void wrap.offsetHeight;
+    return wrap.scrollHeight <= wrap.clientHeight + 1;
+  }
+  if(fits(1)) return;
+  const lo0 = 0.5;
+  if(!fits(lo0)) return; // even the floor overflows; inner scrollboxes (scramble/toggle rows) absorb the rest
+  let lo = lo0, hi = 1;
+  for(let i=0;i<10;i++){
+    const mid = (lo+hi)/2;
+    if(fits(mid)) lo = mid; else hi = mid;
+  }
+  fits(lo);
+}
+let fitRAF = null;
+function scheduleFit(){
+  if(fitRAF) cancelAnimationFrame(fitRAF);
+  fitRAF = requestAnimationFrame(computeFit);
+}
+window.addEventListener('resize', scheduleFit);
+window.addEventListener('load', scheduleFit);
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(computeFit); }
+
 // ================= EVENT SWITCH =================
 document.getElementById('eventSeg').addEventListener('click', async (e)=>{
   const btn = e.target.closest('button'); if(!btn) return;
@@ -2120,6 +2182,7 @@ document.querySelector('.topnav').addEventListener('click', (e)=>{
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+btn.dataset.view).classList.add('active');
   if(btn.dataset.view==='graphs') renderGraphs();
+  if(btn.dataset.view==='timer') computeFit();
 });
 
 // ================= ALGORITHM DATA =================
@@ -2313,6 +2376,7 @@ document.getElementById('trainMode').addEventListener('change', (e)=>{
 renderCaseGrid();
 showCase();
 newScramble();
+computeFit();
 (async function init(){
   await initSessions();
   await loadAllSolvesForCurrentSession();
@@ -2321,6 +2385,7 @@ newScramble();
   await loadCubes();
   renderSessions();
   renderHistory(); renderStats(); renderFullStats(); renderGraphs();
+  computeFit();
 })();
 
 })();
