@@ -444,9 +444,13 @@
 
   /* the timer is the biggest thing on the page: digits are sized from the stage itself */
   #view-timer .timer-stage{ container-type:size; }
+  /* one size for idle AND running (like csTimer): about a third of the window wide for a time like 11.81 */
   body #view-timer.active .timer-display, body #view-timer .timer-display{
-    font-size:calc(var(--timer-scale,1) * min(56cqh, 94cqw / (var(--chars,4) * 0.62))); line-height:1; letter-spacing:-0.02em; }
-  body.focus-mode #view-timer .timer-display{ font-size:calc(var(--timer-scale,1) * min(72cqh, 96cqw / (var(--chars,4) * 0.62))); }
+    --tfs: min(13.3vw, 38dvh, 66vw / (var(--chars,5) * 0.62));
+    font-size:calc(var(--timer-scale,1) * var(--tfs)); line-height:1; letter-spacing:-0.02em; }
+  @media (max-width:720px) and (orientation:portrait){
+    body #view-timer.active .timer-display, body #view-timer .timer-display{ --tfs: min(70vw / (var(--chars,3.2) * 0.62), 36dvh); }
+  }
   body #view-timer .timer-hint{ font-size:clamp(11px, 2.4cqh, 16px); margin-top:clamp(4px, 2cqh, 14px); }
   @media (min-width:721px){
     body #view-timer.active .insp-toggle-row{ display:none; }
@@ -526,12 +530,94 @@
   body.solving .wrap{ padding:0 !important; overflow:hidden; }
   body.solving #view-timer .timer-stage{ position:fixed !important; inset:0; z-index:1000; width:100vw; height:100vh; height:100dvh; margin:0 !important;
     border-radius:0; border-color:transparent !important; background:var(--bg) !important; min-height:0; }
-  body.solving #view-timer .timer-display{ font-size:calc(var(--timer-scale,1) * min(46cqh, 70cqw / (var(--chars,4) * 0.62))); }
   body.solving.has-bg #view-timer .timer-stage{ background:transparent !important; }
+
+  /* ===================== LIQUID GLASS (toggle + intensity in Settings → Appearance) ===================== */
+  #lgBackdrop{ position:fixed; inset:-12%; z-index:-1; pointer-events:none; display:none; overflow:hidden; opacity:var(--lg-glow,.6); }
+  #lgBackdrop i{ position:absolute; width:62vmax; height:62vmax; border-radius:50%; filter:blur(8vmax); will-change:transform; }
+  #lgBackdrop i:nth-child(1){ left:-10%; top:-18%; background:radial-gradient(circle at 35% 35%, var(--green), transparent 62%); animation:lgDrift1 38s ease-in-out infinite alternate; }
+  #lgBackdrop i:nth-child(2){ right:-14%; top:10%; background:radial-gradient(circle at 60% 40%, var(--blue2), transparent 60%); animation:lgDrift2 46s ease-in-out infinite alternate; }
+  #lgBackdrop i:nth-child(3){ left:22%; bottom:-30%; background:radial-gradient(circle at 50% 50%, #a855f7, transparent 60%); animation:lgDrift3 52s ease-in-out infinite alternate; }
+  #lgBackdrop i:nth-child(4){ right:6%; bottom:-22%; width:42vmax; height:42vmax; background:radial-gradient(circle at 50% 50%, #ff6fa8, transparent 62%); animation:lgDrift1 60s ease-in-out infinite alternate-reverse; }
+  @keyframes lgDrift1{ to{ transform:translate3d(14vmax,10vmax,0) scale(1.15); } }
+  @keyframes lgDrift2{ to{ transform:translate3d(-16vmax,12vmax,0) scale(.9); } }
+  @keyframes lgDrift3{ to{ transform:translate3d(12vmax,-14vmax,0) scale(1.2); } }
+  body.lg #lgBackdrop{ display:block; }
+  body.lg.has-bg #lgBackdrop{ display:none; }
+  @media (prefers-reduced-motion:reduce){ #lgBackdrop i{ animation:none !important; } }
+
+  body.lg :is(.card, .stat, .scramble-box, .seg, .topnav, .sheet, .shortcuts-panel, .detail, .pb-banner, .m-round, .m-puzzle, .net-wrap,
+              .dbtn, .pbtn, .re-scramble, .mini-select, .field, .ct-item, .insp-toggle-row, .hitem, .case-chip, .ct-box select, details.card){
+    background-image:linear-gradient(135deg, rgba(255,255,255,calc(var(--lg-hi,.2)*.9)) 0%, rgba(255,255,255,calc(var(--lg-hi,.2)*.18)) 38%, rgba(255,255,255,0) 62%, rgba(255,255,255,calc(var(--lg-hi,.2)*.14)) 100%);
+    border:1px solid rgba(255,255,255,var(--lg-edge,.14));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,calc(var(--lg-hi,.2)*1.35)), inset 1px 0 0 rgba(255,255,255,calc(var(--lg-hi,.2)*.6)),
+               inset 0 -1px 1px rgba(0,0,0,calc(var(--lg-shadow,.3)*.55)), 0 10px 30px -8px rgba(0,0,0,var(--lg-shadow,.3));
+  }
+  /* heavy blur only on the big, few surfaces (the long history/case lists stay cheap) */
+  body.lg :is(.card, .stat, .scramble-box, .seg, .topnav, .sheet, .shortcuts-panel, .detail, .pb-banner, .m-round, .m-puzzle, .net-wrap, .insp-toggle-row, details.card){
+    -webkit-backdrop-filter:blur(var(--lg-blur,16px)) saturate(var(--lg-sat,1.5)) brightness(1.06);
+    backdrop-filter:blur(var(--lg-blur,16px)) saturate(var(--lg-sat,1.5)) brightness(1.06);
+  }
+  body.lg :is(.dbtn, .pbtn, .re-scramble, .topnav button.active, .seg button.active){ -webkit-backdrop-filter:blur(calc(var(--lg-blur,16px)*.5)) saturate(var(--lg-sat,1.5)); backdrop-filter:blur(calc(var(--lg-blur,16px)*.5)) saturate(var(--lg-sat,1.5)); }
+  body.lg .topnav button, body.lg .seg button{ background-image:none; box-shadow:none; border-color:transparent; }
+  body.lg .topnav button.active, body.lg .seg button.active{ background-color:rgba(255,255,255,calc(var(--lg-hi,.2)*.7)); border:1px solid rgba(255,255,255,var(--lg-edge,.14)); box-shadow:inset 0 1px 0 rgba(255,255,255,calc(var(--lg-hi,.2)*1.4)), 0 4px 14px -4px rgba(0,0,0,var(--lg-shadow,.3)); }
+  body.lg.light :is(.card, .stat, .scramble-box, .seg, .topnav, .sheet, .detail, .m-round, .m-puzzle){ border-color:rgba(255,255,255,.7); }
+  body.lg.light{ --lg-shadow:.12; }
+  body.lg :is(.dbtn, .pbtn, .re-scramble, .m-round, .m-puzzle, .topnav button, .seg button){ transition:transform .35s cubic-bezier(.2,1.4,.4,1), background-color .2s ease, box-shadow .2s ease; }
+  body.lg :is(.dbtn, .pbtn, .re-scramble, .m-round, .m-puzzle, .topnav button, .seg button):active{ transform:scale(.94); }
+  body.lg #view-timer .timer-stage{ background-image:none; box-shadow:none; border-color:transparent; -webkit-backdrop-filter:none; backdrop-filter:none; }
+  body.lg #view-timer .timer-stage.holding, body.lg #view-timer .timer-stage.ready, body.lg #view-timer .timer-stage.inspecting{ border-color:transparent; }
+  body.solving.lg #view-timer .timer-stage{ background:var(--bg) !important; }
+  body.lg .sheet-backdrop{ background:rgba(0,0,0,.35); -webkit-backdrop-filter:blur(calc(var(--lg-blur,16px)*.35)); backdrop-filter:blur(calc(var(--lg-blur,16px)*.35)); }
+  @media (prefers-reduced-motion:reduce){ body.lg :is(.dbtn, .pbtn, .re-scramble, .m-round, .m-puzzle, .topnav button, .seg button){ transition:none; } }
+
+  @media (max-width:720px){ select, .mini-select{ max-width:100%; text-overflow:ellipsis; } label.toggle-row:has(select){ flex-wrap:wrap; max-width:100%; } }
+  /* ---- iPhone-style refinements ---- */
+  .lg-preview{ position:relative; height:92px; border-radius:22px; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:12px; border:1px solid var(--line);
+    background:radial-gradient(circle at 18% 30%, var(--green), transparent 55%), radial-gradient(circle at 82% 70%, #a855f7, transparent 55%), radial-gradient(circle at 60% 15%, var(--blue2), transparent 50%), #0c0e12; }
+  .lg-chip{ padding:12px 22px; border-radius:999px; color:#fff; font-weight:600; font-size:14px; letter-spacing:.01em;
+    background-color:rgba(28,32,42,var(--lg-a,.6));
+    background-image:linear-gradient(135deg, rgba(255,255,255,calc(var(--lg-hi,.2)*.9)) 0%, rgba(255,255,255,calc(var(--lg-hi,.2)*.18)) 38%, rgba(255,255,255,0) 62%, rgba(255,255,255,calc(var(--lg-hi,.2)*.14)) 100%);
+    border:1px solid rgba(255,255,255,var(--lg-edge,.14));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,calc(var(--lg-hi,.2)*1.35)), inset 0 -1px 1px rgba(0,0,0,calc(var(--lg-shadow,.3)*.55)), 0 10px 26px -8px rgba(0,0,0,var(--lg-shadow,.3));
+    -webkit-backdrop-filter:blur(var(--lg-blur,16px)) saturate(var(--lg-sat,1.5)); backdrop-filter:blur(var(--lg-blur,16px)) saturate(var(--lg-sat,1.5)); }
+  .lg-chip.lg-round{ width:46px; height:46px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:18px; }
+  .lg-slider{ display:flex; align-items:center; gap:12px; font-size:12px; color:var(--muted); }
+  .lg-slider b{ min-width:2.4em; text-align:right; color:var(--text); font-size:13px; }
+  #lgIntensity{ -webkit-appearance:none; appearance:none; flex:1; min-width:120px; height:32px; background:transparent; margin:0; width:auto; --p:60%; }
+  #lgIntensity::-webkit-slider-runnable-track{ height:12px; border-radius:999px; background:linear-gradient(90deg,#fff var(--p), rgba(255,255,255,.22) var(--p)); box-shadow:inset 0 1px 2px rgba(0,0,0,.4); }
+  #lgIntensity::-webkit-slider-thumb{ -webkit-appearance:none; width:30px; height:30px; margin-top:-9px; border-radius:50%; background:#fff; border:0; box-shadow:0 3px 10px rgba(0,0,0,.45), inset 0 -2px 3px rgba(0,0,0,.12); }
+  #lgIntensity::-moz-range-track{ height:12px; border-radius:999px; background:rgba(255,255,255,.22); }
+  #lgIntensity::-moz-range-progress{ height:12px; border-radius:999px; background:#fff; }
+  #lgIntensity::-moz-range-thumb{ width:30px; height:30px; border-radius:50%; background:#fff; border:0; box-shadow:0 3px 10px rgba(0,0,0,.45); }
+  body.lg :is(.card, .scramble-box, .detail, .insp-toggle-row, details.card){ border-radius:24px; }
+  body.lg .stat{ border-radius:20px; }
+  body.lg .net-wrap{ border-radius:18px; padding:8px; box-sizing:content-box; }
+  body.lg .hitem{ border-radius:16px; }
+  body.lg .sheet{ border-radius:28px 28px 0 0; }
+  body.lg :is(.dbtn, .pbtn, .mini-select, .field, .seg, .seg button, .m-puzzle, .re-scramble, .topnav button){ border-radius:999px; }
+  body.lg .m-round{ border-radius:50%; }
+  body.lg :is(.topnav button.active, .seg button.active){ color:var(--text); }
+  body.lg :is(.topnav button.active, .seg button.active){ background-color:color-mix(in srgb, var(--green) 30%, rgba(255,255,255,.12)); }
+  body.lg :is(.dbtn, .pbtn, .re-scramble, .m-round, .m-puzzle, .topnav button, .seg button):active{ transform:scale(1.06); filter:brightness(1.18); }
+  @media (min-width:721px){
+    body.lg .topnav{ background:none !important; border:none !important; box-shadow:none !important; -webkit-backdrop-filter:none; backdrop-filter:none; }
+    body.lg .topnav button{ background-color:var(--surface); border:1px solid rgba(255,255,255,var(--lg-edge,.14)); -webkit-backdrop-filter:blur(calc(var(--lg-blur,16px)*.6)) saturate(var(--lg-sat,1.5)); backdrop-filter:blur(calc(var(--lg-blur,16px)*.6)) saturate(var(--lg-sat,1.5));
+      background-image:linear-gradient(135deg, rgba(255,255,255,calc(var(--lg-hi,.2)*.9)), rgba(255,255,255,0) 60%); box-shadow:inset 0 1px 0 rgba(255,255,255,calc(var(--lg-hi,.2)*1.35)), 0 6px 18px -8px rgba(0,0,0,var(--lg-shadow,.3)); }
+    body.lg .topnav button.active{ background-color:color-mix(in srgb, var(--green) 32%, var(--surface)); }
+  }
+  /* floating capsule tab bar, like the iPhone */
+  @media (max-width:720px) and (orientation:portrait){
+    body.lg .topnav{ left:14px; right:14px; bottom:calc(10px + env(safe-area-inset-bottom,0px)); border-radius:34px; padding:6px; border:1px solid rgba(255,255,255,var(--lg-edge,.14)); gap:4px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,calc(var(--lg-hi,.2)*1.35)), 0 18px 40px -10px rgba(0,0,0,calc(var(--lg-shadow,.3)*1.6)); }
+    body.lg .topnav button{ min-height:52px; border-radius:28px; }
+    body.lg .wrap{ padding-bottom:calc(100px + env(safe-area-inset-bottom,0px)); }
+  }
 </style>
 </head>
 <body>
 <noscript><div style="padding:24px;font-family:sans-serif;color:#eef0f3;background:#101216;">CubeNova needs JavaScript to run. Please enable JavaScript and reload.</div></noscript>
+  <div id="lgBackdrop" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="wrap">
     <header>
       <div class="brand">
@@ -779,6 +865,12 @@
           </div>
           <div class="ct-warn" id="ctWarn"></div>
           <div class="row"><button class="dbtn" id="ctReset">reset custom colors</button></div>
+        </div>
+        <div class="ct-box" id="lgBox">
+          <label class="toggle-row"><input type="checkbox" id="lgToggle"> liquid glass</label>
+          <div class="lg-preview" id="lgPreview" aria-hidden="true"><div class="lg-chip">Liquid Glass</div><div class="lg-chip lg-round">⚙</div></div>
+          <div class="lg-slider"><span>subtle</span><input type="range" id="lgIntensity" min="0" max="100" value="60" aria-label="liquid glass intensity"><span>strong</span><b id="lgValue">60</b></div>
+          <div style="font-size:12px; color:var(--muted);">Frosted, translucent panels with glossy edges over a soft animated glow. Intensity sets blur, transparency and highlight strength. With a background image, the glass sits on top of your picture.</div>
         </div>
         <div class="ct-box" id="bgBox">
           <div class="row" style="gap:8px; flex-wrap:wrap; align-items:center;">
@@ -2584,6 +2676,33 @@ function applyTheme(){
   updateContrastWarning();
   try{ renderGraphs(); }catch(e){}
 }
+// ---- liquid glass ----
+let lgOn = false, lgIntensity = 60;
+function lgParams(){
+  const t = Math.max(0, Math.min(100, lgIntensity)) / 100;
+  return { blur: 6 + 26*t, alpha: 0.82 - 0.40*t, sat: 1.1 + 0.9*t, hi: 0.10 + 0.32*t, edge: 0.08 + 0.18*t, shadow: 0.18 + 0.22*t, glow: 0.25 + 0.55*t };
+}
+function applyLiquidGlassVars(){
+  const r = document.documentElement.style, cl = document.body.classList;
+  cl.toggle('lg', lgOn);
+  if(lgOn){
+    const q = lgParams();
+    r.setProperty('--lg-blur', q.blur.toFixed(1)+'px'); r.setProperty('--lg-sat', q.sat.toFixed(2));
+    r.setProperty('--lg-hi', q.hi.toFixed(3)); r.setProperty('--lg-edge', q.edge.toFixed(3));
+    r.setProperty('--lg-shadow', q.shadow.toFixed(3)); r.setProperty('--lg-glow', q.glow.toFixed(3));
+  } else ['--lg-blur','--lg-sat','--lg-hi','--lg-edge','--lg-shadow','--lg-glow'].forEach(k=>r.removeProperty(k));
+  { const q = lgParams(), pv = document.getElementById('lgPreview');
+    if(pv){ pv.style.setProperty('--lg-blur', q.blur.toFixed(1)+'px'); pv.style.setProperty('--lg-sat', q.sat.toFixed(2)); pv.style.setProperty('--lg-hi', q.hi.toFixed(3));
+      pv.style.setProperty('--lg-edge', q.edge.toFixed(3)); pv.style.setProperty('--lg-shadow', q.shadow.toFixed(3)); pv.style.setProperty('--lg-a', q.alpha.toFixed(3)); }
+    const rg = document.getElementById('lgIntensity'); if(rg) rg.style.setProperty('--p', lgIntensity+'%'); }
+  const tg = document.getElementById('lgToggle'); if(tg){ tg.checked = lgOn; document.getElementById('lgIntensity').value = lgIntensity; document.getElementById('lgValue').textContent = lgIntensity; }
+  const bp = document.getElementById('bgPanel'); if(bp){ bp.disabled = lgOn; bp.title = lgOn ? 'liquid glass controls panel transparency' : ''; }
+}
+async function saveLiquidGlass(){ try{ await window.storage.set('liquidglass', JSON.stringify({on:lgOn, intensity:lgIntensity}), false); }catch(e){} }
+document.getElementById('lgToggle').addEventListener('change', async (e)=>{ lgOn = e.target.checked; applyBackgroundLayer(); await saveLiquidGlass(); });
+document.getElementById('lgIntensity').addEventListener('input', (e)=>{ lgIntensity = parseInt(e.target.value,10)||0; applyBackgroundLayer(); });
+document.getElementById('lgIntensity').addEventListener('change', saveLiquidGlass);
+
 // ---- custom background image ----
 let bgImage = null;                       // data URL or null
 let bgSettings = {dim:55, blur:0, panel:80};
@@ -2596,10 +2715,15 @@ function applyBackgroundLayer(){
   const r = document.documentElement.style, cl = document.body.classList;
   const bs = document.body.style;   // body-level so it also beats the built-in body.light variable overrides
   const solids = baseSolids();
+  applyLiquidGlassVars();
   if(!bgImage){
     cl.remove('has-bg');
     ['--bg-image','--bg-overlay','--bg-blur','--panel-solid'].forEach(k=>r.removeProperty(k));
-    bs.removeProperty('--surface'); bs.removeProperty('--surface2');
+    if(lgOn){
+      const a = lgParams().alpha;
+      r.setProperty('--panel-solid', solids.surface);
+      bs.setProperty('--surface', rgbaOf(solids.surface, a)); bs.setProperty('--surface2', rgbaOf(solids.surface2, Math.min(1, a+0.1)));
+    } else { bs.removeProperty('--surface'); bs.removeProperty('--surface2'); }
   } else {
     cl.add('has-bg');
     const bg = (customEnabled ? customColors.bg : (themeMode==='light' ? '#f2f3f6' : '#101216'));
@@ -2607,8 +2731,9 @@ function applyBackgroundLayer(){
     r.setProperty('--bg-overlay', rgbaOf(bg, bgSettings.dim/100));
     r.setProperty('--bg-blur', bgSettings.blur+'px');
     r.setProperty('--panel-solid', solids.surface);
-    bs.setProperty('--surface', rgbaOf(solids.surface, bgSettings.panel/100));
-    bs.setProperty('--surface2', rgbaOf(solids.surface2, Math.min(1, bgSettings.panel/100 + 0.1)));
+    const pa = lgOn ? lgParams().alpha : bgSettings.panel/100;
+    bs.setProperty('--surface', rgbaOf(solids.surface, pa));
+    bs.setProperty('--surface2', rgbaOf(solids.surface2, Math.min(1, pa + 0.1)));
   }
   const prev = document.getElementById('bgPreview');
   if(prev){
@@ -2623,6 +2748,10 @@ function applyBackgroundLayer(){
 }
 function clampInt(v, lo, hi, dflt){ v = parseInt(v,10); return isFinite(v) ? Math.min(hi, Math.max(lo, v)) : dflt; }
 async function loadBackground(){
+  try{
+    const lg = await window.storage.get('liquidglass', false);
+    if(lg && lg.value){ const o = JSON.parse(lg.value); lgOn = o.on===true; lgIntensity = clampInt(o.intensity,0,100,60); }
+  }catch(e){}
   try{
     const img = await window.storage.get('bgimage', false);
     if(img && typeof img.value==='string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(img.value)) bgImage = img.value;
@@ -3321,7 +3450,7 @@ function isPhoneLayout(){ return window.matchMedia('(max-width:720px), (orientat
   const portraitPhone = window.matchMedia('(max-width:720px) and (orientation:portrait)');
   const sizeDigits = ()=>{
     const t = disp.textContent||'';
-    let n = Math.max(4, t.length);
+    let n = Math.max(5, t.length);
     const m = /^(\d+(?::\d+)*)(\.\d+)$/.exec(t);
     if(m && portraitPhone.matches) n = Math.max(3.2, m[1].length + 0.6*m[2].length);   // decimals are drawn at 60% size here
     if(n!==lastChars){ lastChars = n; disp.style.setProperty('--chars', n); }
