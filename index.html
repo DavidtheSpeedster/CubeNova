@@ -417,6 +417,117 @@
     body.show-diag #view-timer.active .net-wrap{ max-height:100%; }
     body.show-diag #view-timer.active .net-wrap svg{ width:auto !important; height:100% !important; max-width:100%; margin:0 auto; display:block; }
   }
+
+  /* ===================== TIMER FIRST (desktop) + REFERENCE-STYLE PHONE UI ===================== */
+  .m-topbar, .m-stats{ display:none; }
+  @media (max-width:720px) and (orientation:portrait){ .tm-dec{ font-size:.6em; letter-spacing:0; } }
+  .sheet-backdrop{ position:fixed; inset:0; z-index:90; background:rgba(0,0,0,.55); display:flex; align-items:flex-end; justify-content:center; }
+  .sheet-backdrop[hidden]{ display:none; }
+  .sheet{ width:min(560px,100%); max-height:78dvh; overflow-y:auto; background:var(--surface); border:1px solid var(--line); border-radius:20px 20px 0 0;
+    padding:10px 16px calc(18px + env(safe-area-inset-bottom,0px)); animation:sheetUp .18s ease-out; }
+  @keyframes sheetUp{ from{ transform:translateY(24px); opacity:.6; } to{ transform:none; opacity:1; } }
+  .sheet-grip{ width:42px; height:4px; border-radius:2px; background:var(--line); margin:2px auto 10px; }
+  .sheet h3{ margin:0 0 10px; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-family:'JetBrains Mono', monospace; }
+  .sheet .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(92px,1fr)); gap:8px; margin-bottom:12px; }
+  .sheet .opt{ min-height:48px; border-radius:12px; border:1px solid var(--line); background:var(--surface2); color:var(--text); font-family:'JetBrains Mono', monospace; font-size:14px; padding:8px; cursor:pointer; text-align:center; }
+  .sheet .opt.on{ border-color:var(--green); color:var(--green); }
+  .sheet .list{ display:flex; flex-direction:column; gap:8px; margin-bottom:12px; }
+  .sheet .list .opt{ text-align:left; padding:10px 14px; }
+  .sheet .sub{ font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted2); margin:6px 0; font-family:'JetBrains Mono', monospace; }
+  .pb-banner{ position:absolute; top:10px; left:50%; transform:translateX(-50%); max-width:92%; text-align:center; font-size:13.5px; line-height:1.35; padding:8px 14px;
+    border-radius:12px; color:var(--text); background:color-mix(in srgb, var(--green) 20%, var(--surface)); border:1px solid color-mix(in srgb, var(--green) 55%, transparent); z-index:2; pointer-events:none; }
+  .pb-banner b{ color:var(--green); }
+  .avg-badge{ position:absolute; right:10px; bottom:10px; font-size:11.5px; padding:4px 10px; border-radius:999px; background:var(--amber); color:#1a1205; font-weight:700; z-index:2; pointer-events:none; }
+  .timer-stage.holding{ background:color-mix(in srgb, var(--red) 16%, var(--surface)); border-color:color-mix(in srgb, var(--red) 40%, var(--line)); }
+  .timer-stage.ready{ background:color-mix(in srgb, var(--green) 16%, var(--surface)); border-color:color-mix(in srgb, var(--green) 45%, var(--line)); }
+  .timer-stage.inspecting{ background:color-mix(in srgb, var(--amber) 14%, var(--surface)); border-color:color-mix(in srgb, var(--amber) 40%, var(--line)); }
+
+  /* the timer is the biggest thing on the page: digits are sized from the stage itself */
+  #view-timer .timer-stage{ container-type:size; }
+  body #view-timer.active .timer-display, body #view-timer .timer-display{
+    font-size:calc(var(--timer-scale,1) * min(56cqh, 94cqw / (var(--chars,4) * 0.62))); line-height:1; letter-spacing:-0.02em; }
+  body.focus-mode #view-timer .timer-display{ font-size:calc(var(--timer-scale,1) * min(72cqh, 96cqw / (var(--chars,4) * 0.62))); }
+  body #view-timer .timer-hint{ font-size:clamp(11px, 2.4cqh, 16px); margin-top:clamp(4px, 2cqh, 14px); }
+  @media (min-width:721px){
+    body #view-timer.active .insp-toggle-row{ display:none; }
+    body.show-opts #view-timer.active .insp-toggle-row{ display:flex; }
+    body #view-timer.active .timer-stage{ background:transparent; border-color:transparent; }
+    body #view-timer.active .timer-stage.holding{ background:color-mix(in srgb, var(--red) 16%, transparent); border-color:color-mix(in srgb, var(--red) 40%, transparent); }
+    body #view-timer.active .timer-stage.ready{ background:color-mix(in srgb, var(--green) 16%, transparent); border-color:color-mix(in srgb, var(--green) 45%, transparent); }
+    body #view-timer.active .timer-stage.inspecting{ background:color-mix(in srgb, var(--amber) 14%, transparent); border-color:color-mix(in srgb, var(--amber) 40%, transparent); }
+    body #view-timer.active .scramble-box{ background:transparent; border-color:transparent; justify-content:center; text-align:center; }
+    body #view-timer.active .scramble-text{ text-align:center; flex:1; }
+  }
+
+  @media (max-width:720px){
+    header .brand, #headerTools{ display:none !important; }
+    .m-topbar{ display:flex; width:100%; align-items:center; gap:8px; }
+    .m-round{ flex:0 0 46px; height:46px; border-radius:14px; border:1px solid var(--line); background:var(--surface); color:var(--text); font-size:20px; cursor:pointer; }
+    .m-puzzle{ flex:1; min-width:0; height:46px; border-radius:14px; border:1px solid var(--line); background:var(--surface); color:var(--text); cursor:pointer;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.15; }
+    .m-puzzle .m-name{ font-size:16px; font-weight:700; }
+    .m-puzzle .m-name::after{ content:' ▾'; color:var(--muted); font-size:12px; }
+    .m-puzzle .m-sub{ font-size:11px; color:var(--muted); max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    #diagToggle{ display:none !important; }
+
+    body #view-timer.active .timer-layout{ display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); grid-template-rows:auto minmax(0,1fr) auto; gap:8px 10px; }
+    body #view-timer.active .scramble-box{ grid-column:1 / -1; grid-row:1; background:transparent; border-color:transparent; padding:2px 4px; }
+    body #view-timer.active .timer-stage{ grid-column:1 / -1; grid-row:2; min-height:0; background:transparent; border-color:transparent; }
+    body #view-timer.active .timer-stage.holding{ background:color-mix(in srgb, var(--red) 16%, transparent); }
+    body #view-timer.active .timer-stage.ready{ background:color-mix(in srgb, var(--green) 16%, transparent); }
+    body #view-timer.active .timer-stage.inspecting{ background:color-mix(in srgb, var(--amber) 14%, transparent); }
+    body #view-timer.active .stats{ display:none; }
+    body #view-timer.active .sidebar-diagram{ display:flex !important; grid-column:2; grid-row:3; align-items:flex-end; justify-content:center; order:0; }
+    body #view-timer.active .sidebar-diagram .net-wrap{ max-height:none; padding:0; zoom:.62; }
+    body #view-timer.active .sidebar-diagram .net-wrap svg{ width:auto !important; height:auto !important; max-width:none; }
+    body #view-timer.active .sidebar-diagram .no-diagram-note{ font-size:10px; max-width:120px; }
+    body #view-timer.active .m-stats{ display:flex; flex-direction:column; gap:3px; grid-row:3; align-self:end; font-family:'JetBrains Mono', monospace; font-size:12px; line-height:1.25; }
+    body #view-timer.active .m-left{ grid-column:1; }
+    body #view-timer.active .m-right{ grid-column:3; align-items:flex-end; }
+    .m-stats .r{ display:flex; gap:6px; color:var(--muted); }
+    .m-stats .r b{ color:var(--text); font-weight:600; }
+    .m-right .r{ justify-content:flex-end; }
+    body #view-timer.active .scramble-text{ flex:1 1 100%; font-size:calc(17px*var(--scramble-scale,1)); line-height:1.5; }
+    body #view-timer.active .scramble-btns{ display:flex; justify-content:center; gap:10px; }
+    body #view-timer.active .scramble-btns .re-scramble{ flex:0 0 44px; height:40px; background:transparent; border-color:transparent; font-size:18px; }
+    body #view-timer.active .penalty-row{ position:static; gap:10px; margin-top:14px; }
+    body #view-timer.active .pbtn{ min-width:58px; min-height:50px; border-radius:999px; font-size:15px; font-weight:700; }
+    body.show-opts #view-timer.active .insp-toggle-row{ position:fixed; left:10px; right:10px; bottom:calc(72px + env(safe-area-inset-bottom,0px)); z-index:70; max-height:62dvh; box-shadow:0 10px 40px rgba(0,0,0,.5); }
+    .pb-banner{ font-size:13px; }
+  }
+  @media (orientation:landscape) and (max-height:500px) and (max-width:1000px){
+    header .brand, #headerTools{ display:none !important; }
+    .m-topbar{ display:flex; flex:1; align-items:center; gap:8px; }
+    .m-round{ flex:0 0 38px; height:38px; border-radius:11px; border:1px solid var(--line); background:var(--surface); color:var(--text); font-size:17px; }
+    .m-puzzle{ flex:1; height:38px; border-radius:11px; border:1px solid var(--line); background:var(--surface); color:var(--text); display:flex; flex-direction:row; gap:8px; align-items:center; justify-content:center; }
+    .m-puzzle .m-name{ font-weight:700; font-size:14px; } .m-puzzle .m-name::after{ content:' ▾'; color:var(--muted); font-size:11px; } .m-puzzle .m-sub{ font-size:11px; color:var(--muted); }
+    #diagToggle{ display:none !important; }
+    body #view-timer.active .stats{ display:none; }
+    body #view-timer.active .m-stats{ display:flex; flex-direction:column; gap:2px; font-family:'JetBrains Mono', monospace; font-size:11px; grid-column:1; }
+    body #view-timer.active .m-left{ grid-row:2; } body #view-timer.active .m-right{ display:none; }
+    .m-stats .r{ display:flex; gap:6px; color:var(--muted); } .m-stats .r b{ color:var(--text); }
+    body #view-timer.active .sidebar-diagram{ display:none !important; }
+    body #view-timer.active .timer-stage{ background:transparent; border-color:transparent; }
+  }
+  @media (orientation:landscape) and (max-height:500px) and (max-width:1000px){
+    body #view-timer.active .scramble-box{ flex-wrap:nowrap; gap:8px; padding:0 4px; align-items:center; }
+    body #view-timer.active .scramble-text{ flex:1 1 auto; font-size:calc(13px*var(--scramble-scale,1)); line-height:1.35; text-align:left; max-height:20dvh; overflow-y:auto; }
+    body #view-timer.active .scramble-btns{ flex:0 0 auto; display:flex; gap:2px; }
+    body #view-timer.active .scramble-btns .re-scramble{ flex:0 0 34px; height:34px; font-size:16px; }
+    .m-round, .m-puzzle{ height:34px !important; }
+  }
+
+  /* while the timer is RUNNING everything except the digits disappears (like csTimer); it all returns on stop */
+  body.solving header, body.solving .topnav, body.solving .stats, body.solving .scramble-box, body.solving .sidebar-diagram,
+  body.solving .net-wrap, body.solving .no-diagram-note, body.solving .insp-toggle-row, body.solving .m-stats, body.solving .m-topbar,
+  body.solving .pb-banner, body.solving .avg-badge, body.solving .penalty-row, body.solving .sheet-backdrop, body.solving .timer-sidebar{ display:none !important; }
+  body.solving .timer-hint{ visibility:hidden; }
+  body.solving.phases-on .timer-hint{ visibility:visible; }
+  body.solving .wrap{ padding:0 !important; overflow:hidden; }
+  body.solving #view-timer .timer-stage{ position:fixed !important; inset:0; z-index:1000; width:100vw; height:100vh; height:100dvh; margin:0 !important;
+    border-radius:0; border-color:transparent !important; background:var(--bg) !important; min-height:0; }
+  body.solving #view-timer .timer-display{ font-size:calc(var(--timer-scale,1) * min(46cqh, 70cqw / (var(--chars,4) * 0.62))); }
+  body.solving.has-bg #view-timer .timer-stage{ background:transparent !important; }
 </style>
 </head>
 <body>
@@ -428,7 +539,7 @@
         <span class="mark">CubeNova</span>
         <span class="tag">speedcube trainer</span>
       </div>
-      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <div id="headerTools" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
         <div class="seg" id="eventSeg">
           <button data-ev="333" class="active">3×3</button>
           <button data-ev="222">2×2</button>
@@ -442,8 +553,21 @@
           <button data-ev="sq1">Sq-1</button>
         </div>
       </div>
+    
+      <div class="m-topbar" id="mTopbar">
+        <button type="button" id="mGear" class="m-round" aria-label="Settings">⚙</button>
+        <button type="button" id="mPuzzle" class="m-puzzle" aria-haspopup="dialog"><span class="m-name" id="mPuzzleName">3×3</span><span class="m-sub" id="mPuzzleSub"></span></button>
+        <button type="button" id="mMode" class="m-round" aria-label="Scramble mode" aria-haspopup="dialog">🎯</button>
+      </div>
     </header>
 
+    <div class="sheet-backdrop" id="sheet" hidden>
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+        <div class="sheet-grip"></div>
+        <h3 id="sheetTitle"></h3>
+        <div id="sheetBody"></div>
+      </div>
+    </div>
     <div class="topnav">
       <button data-view="timer" class="active"><span class="ni">🏠</span> <span class="nl">Timer</span></button>
       <button data-view="stats"><span class="ni">📊</span> <span class="nl">Stats</span></button>
@@ -474,6 +598,8 @@
         </div>
 
         <div class="timer-main">
+          <div class="m-stats m-left" id="mLeft" aria-label="solve statistics"></div>
+          <div class="m-stats m-right" id="mRight" aria-label="average statistics"></div>
           <div class="scramble-box">
             <div class="scramble-text" id="scrambleText">—</div>
             <div class="scramble-tag" id="scrambleTag" style="display:none;"></div>
@@ -483,7 +609,7 @@
               <div class="re-scramble" id="copyScramble" title="Copy scramble">📋</div>
               <div class="re-scramble" id="reScramble" title="New scramble">⟳</div>
               <div class="re-scramble phone-only" id="diagToggle" role="button" tabindex="0" aria-label="show or hide scramble preview" title="Scramble preview">👁</div>
-              <div class="re-scramble phone-only" id="optsToggle" role="button" tabindex="0" aria-label="show or hide timer options" title="Timer options">⚙</div>
+              <div class="re-scramble" id="optsToggle" role="button" tabindex="0" aria-label="show or hide timer options" title="Timer options">☰</div>
             </div>
           </div>
 
@@ -498,11 +624,13 @@
             <label class="toggle-row"><input type="checkbox" id="hideTimeToggle"> hide time while solving</label>
             <label class="toggle-row"><input type="checkbox" id="practiceToggle"> practice mode (don't save)</label>
             <label class="toggle-row"><input type="checkbox" id="splitToggle"> multi-phase splits (press Enter to mark a phase)</label>
-            <label class="toggle-row"><input type="checkbox" id="focusToggle"> fullscreen timer (hide everything while solving)</label>
+            <label class="toggle-row"><input type="checkbox" id="focusToggle"> always-fullscreen timer (no menus at all, Esc to exit)</label>
           </div>
 
           <div class="timer-stage" id="timerStage">
             <div class="focus-exit" id="focusExit" title="Exit fullscreen (Esc)">✕</div>
+            <div class="pb-banner" id="pbBanner" role="status" style="display:none;"></div>
+            <div class="avg-badge" id="avgBadge" role="status" style="display:none;"></div>
             <div class="timer-display" id="timerDisplay">0.00</div>
             <div class="sr-only" id="srLive" role="status" aria-live="polite"></div>
             <div class="timer-hint" id="timerHint">hold space or press &amp; hold here to start</div>
@@ -510,6 +638,7 @@
               <button class="pbtn" id="btnPlus2">+2</button>
               <button class="pbtn" id="btnDnf">DNF</button>
               <button class="pbtn" id="btnUndo">↩ undo</button>
+              <button class="pbtn" id="btnNote" aria-label="add a note to this solve">💬</button>
             </div>
           </div>
         </div>
@@ -702,6 +831,7 @@
           <label class="toggle-row">sidebar stat 2
             <select class="mini-select" id="statSlotBSel"></select></label>
         </div>
+        <label class="toggle-row"><input type="checkbox" id="hideSolvingToggle" checked> hide everything except the time while the timer is running</label>
         <label class="toggle-row"><input type="checkbox" id="shortcutsEnabledToggle" checked> keyboard shortcuts (Shift+/ always opens the shortcut help)</label>
       </div>
 
@@ -785,7 +915,7 @@
         <div><b>P</b><span>toggle +2 on the last solve</span></div>
         <div><b>D</b><span>toggle DNF on the last solve</span></div>
         <div><b>Enter</b><span>log a split (when multi-phase splits is on)</span></div>
-        <div><b>Esc</b><span>exit fullscreen timer mode</span></div>
+        <div><b>Esc</b><span>cancel a running solve (not saved) / exit fullscreen mode</span></div>
         <div><b>Shift+/</b><span>show/hide this panel</span></div>
       </div>
     </div>
@@ -2867,7 +2997,13 @@ let inspectionLimit=0, phase=null, inspectionStart=null, inspectionRaf=null, pen
 const HOLD_MS=350;
 document.getElementById('inspectSelect').addEventListener('change', (e)=>{ inspectionLimit = parseInt(e.target.value,10); });
 
-function setStage(cls){ stage.classList.remove('holding','ready','inspecting','insp-warn'); if(cls) cls.split(' ').forEach(c=>stage.classList.add(c)); updateFocusMode(); }
+let hideWhileSolving = true;
+function syncSolving(){
+  const on = hideWhileSolving && state==='running';
+  document.body.classList.toggle('solving', on);
+  document.body.classList.toggle('phases-on', !!splitPhasesEnabled);
+}
+function setStage(cls){ stage.classList.remove('holding','ready','inspecting','insp-warn'); if(cls) cls.split(' ').forEach(c=>stage.classList.add(c)); updateFocusMode(); syncSolving(); }
 let focusModeEnabled = false;
 function updateFocusMode(){
   document.body.classList.toggle('focus-mode', focusModeEnabled);
@@ -2878,6 +3014,9 @@ document.getElementById('focusExit').addEventListener('click', (e)=>{
   focusModeEnabled = false;
   document.getElementById('focusToggle').checked = false;
   updateFocusMode();
+});
+window.addEventListener('keydown', (e)=>{
+  if(e.code==='Escape' && state==='running'){ e.preventDefault(); resetTimerToIdle(); hint.textContent='solve cancelled — hold space or press & hold here to start'; return; }
 });
 window.addEventListener('keydown', (e)=>{
   if(e.code!=='Escape') return;
@@ -2923,6 +3062,7 @@ function beginHold(){
   if(state==='running'||state==='holding'||state==='ready') return;
   if(state==='inspecting'){ cancelAnimationFrame(inspectionRaf); phase='start-solve'; }
   else { phase = inspectionLimit>0 ? 'start-inspection' : 'start-solve'; inspectionStart=null; }
+  try{ hideBanners(); }catch(e){}
   state='holding'; setStage('holding'); hint.textContent='keep holding…'; penaltyRow.style.display='none';
   holdTimeout=setTimeout(()=>{
     state='ready'; setStage('ready');
@@ -2994,6 +3134,7 @@ function stopTimer(overrideElapsedMs){
   { const sr=document.getElementById('srLive'); if(sr) sr.textContent = 'solve '+fmt(elapsed,true)+(pendingPenaltyAnnounce()); }
   saveSolves(currentEvent); renderHistory(); renderStats(); renderFullStats(); renderGraphs();
   penaltyRow.style.display='flex'; updatePenaltyButtons();
+  try{ celebrateSolve(solvesByEvent[currentEvent]); }catch(e){}
   newScramble();
 }
 function undoLastSolve(){
@@ -3012,7 +3153,7 @@ document.getElementById('splitToggle').addEventListener('change', (e)=>{ splitPh
 document.getElementById('hideTimeToggle').addEventListener('change', (e)=>{ hideTimeWhileSolving = e.target.checked; });
 function resetTimerToIdle(){
   cancelAnimationFrame(rafId); cancelAnimationFrame(inspectionRaf); clearTimeout(holdTimeout);
-  state='idle'; phase=null; inspectionStart=null; pendingPenalty=null;
+  state='idle'; phase=null; inspectionStart=null; pendingPenalty=null; syncSolving();
   setStage(null); display.textContent='0.00'; hint.textContent='hold space or press & hold here to start';
 }
 function updatePenaltyButtons(){
@@ -3169,6 +3310,146 @@ function isPhoneLayout(){ return window.matchMedia('(max-width:720px), (orientat
     if(document.getElementById('timerStage').contains(e.target)) return;   // the stage has its own handler
     e.preventDefault(); stopTimer();
   }, {passive:false});
+})();
+
+// ================= REFERENCE-STYLE UI: sheets, mobile stats, PB banners, digit sizing =================
+(function(){
+  const $ = id=>document.getElementById(id);
+  const disp = $('timerDisplay');
+  // digits are sized from their character count so long times still fit the width
+  let lastChars = 0;
+  const portraitPhone = window.matchMedia('(max-width:720px) and (orientation:portrait)');
+  const sizeDigits = ()=>{
+    const t = disp.textContent||'';
+    let n = Math.max(4, t.length);
+    const m = /^(\d+(?::\d+)*)(\.\d+)$/.exec(t);
+    if(m && portraitPhone.matches) n = Math.max(3.2, m[1].length + 0.6*m[2].length);   // decimals are drawn at 60% size here
+    if(n!==lastChars){ lastChars = n; disp.style.setProperty('--chars', n); }
+  };
+  portraitPhone.addEventListener && portraitPhone.addEventListener('change', ()=>{ lastChars=0; sizeDigits(); });
+  new MutationObserver(sizeDigits).observe(disp,{childList:true,characterData:true,subtree:true}); sizeDigits();
+  let lastWrapped = '';
+  const splitDecimals = ()=>{
+    const t = disp.textContent;
+    if(disp.firstElementChild && t===lastWrapped) return;               // already wrapped for this text
+    const m = /^(\d+(?::\d+)*)(\.\d+)$/.exec(t);
+    if(!m){ if(disp.firstElementChild){ disp.textContent = t; } lastWrapped=''; return; }
+    lastWrapped = t;
+    disp.innerHTML = '<span class="tm-int">'+m[1]+'</span><span class="tm-dec">'+m[2]+'</span>';
+  };
+  new MutationObserver(splitDecimals).observe(disp,{childList:true,characterData:true,subtree:true}); splitDecimals();
+
+  // ---- bottom sheet ----
+  const sheet = $('sheet'), body = $('sheetBody'), title = $('sheetTitle'); let returnFocus = null;
+  function openSheet(t, build){
+    title.textContent = t; body.innerHTML = ''; build(body);
+    returnFocus = document.activeElement; sheet.hidden = false;
+    const f = body.querySelector('.opt'); if(f) f.focus();
+  }
+  function closeSheet(){ if(sheet.hidden) return; sheet.hidden = true; if(returnFocus && returnFocus.focus){ try{ returnFocus.focus(); }catch(e){} } }
+  sheet.addEventListener('click', e=>{ if(e.target===sheet) closeSheet(); });
+  window.addEventListener('keydown', e=>{ if(e.key==='Escape' && !sheet.hidden){ e.stopPropagation(); closeSheet(); } }, true);
+  window.closeSheet = closeSheet;
+  function optBtn(label, on, fn){ const b=document.createElement('button'); b.type='button'; b.className='opt'+(on?' on':''); b.textContent=label; b.addEventListener('click', fn); return b; }
+  function sub(t){ const d=document.createElement('div'); d.className='sub'; d.textContent=t; return d; }
+
+  function refreshTopbar(){
+    const act = document.querySelector('#eventSeg button.active');
+    $('mPuzzleName').textContent = act ? act.textContent.trim() : '';
+    const ses = (typeof sessions!=='undefined' && sessions.find(x=>x.id===currentSessionId));
+    $('mPuzzleSub').textContent = ses ? ses.name : '';
+  }
+  new MutationObserver(refreshTopbar).observe($('eventSeg'),{subtree:true, attributes:true, attributeFilter:['class']});
+  window.refreshTopbar = refreshTopbar;
+
+  $('mGear').addEventListener('click', ()=>{ document.querySelectorAll('.topnav button')[4].click(); });
+  $('mPuzzle').addEventListener('click', ()=>{
+    openSheet('Puzzle', b=>{
+      const g = document.createElement('div'); g.className='grid';
+      document.querySelectorAll('#eventSeg button').forEach(btn=>{
+        g.appendChild(optBtn(btn.textContent.trim(), btn.classList.contains('active'), ()=>{ btn.click(); closeSheet(); refreshTopbar(); }));
+      });
+      b.appendChild(g);
+      if(typeof sessions!=='undefined' && sessions.length>1){
+        b.appendChild(sub('Session'));
+        const l = document.createElement('div'); l.className='list';
+        sessions.forEach(se=>{ l.appendChild(optBtn(se.name, se.id===currentSessionId, async ()=>{
+          const sel = document.getElementById('sessionSelect');
+          if(sel){ sel.value = se.id; sel.dispatchEvent(new Event('change',{bubbles:true})); }
+          closeSheet(); setTimeout(refreshTopbar,150);
+        })); });
+        b.appendChild(l);
+      }
+    });
+  });
+  $('mMode').addEventListener('click', ()=>{
+    openSheet('Scramble mode', b=>{
+      const l = document.createElement('div'); l.className='list';
+      [['random','Normal — full random state'],['cross','Cross solved'],['cross1','Cross + 1 pair solved'],['cross2','Cross + 2 pairs solved'],['cross3','Cross + 3 pairs solved'],['f2l','F2L solved (last layer)']].forEach(([v,lab])=>{
+        l.appendChild(optBtn(lab, scramblePrefs.stage===v, async ()=>{
+          const ev = document.querySelector('#eventSeg button[data-ev="333"]'); if(ev && currentEvent!=='333') ev.click();
+          await setTrainStage(v); closeSheet();
+        }));
+      });
+      b.appendChild(l);
+      b.appendChild(sub('Cross color'));
+      const g = document.createElement('div'); g.className='grid';
+      ['white','yellow','green','blue','orange','red'].forEach(c=>g.appendChild(optBtn(c, scramblePrefs.cross===c, async ()=>{ await setCrossColor(c); closeSheet(); })));
+      b.appendChild(g);
+      const note = document.createElement('div'); note.className='sub'; note.textContent = 'Applies to 3×3 scrambles';
+      b.appendChild(note);
+    });
+  });
+
+  // ---- phone stats columns (mirror the full-stats numbers) ----
+  const mkRow = (l,v)=>'<div class="r"><span>'+l+'</span><b>'+v+'</b></div>';
+  window.syncMobileStats = function(){
+    const g = id=>{ const e=$(id); return e ? e.textContent.trim() : '–'; };
+    $('mLeft').innerHTML  = mkRow('Deviation',g('fStddev'))+mkRow('Mean',g('fMean'))+mkRow('Best',g('fBest'))+mkRow('Count',g('fCount'));
+    $('mRight').innerHTML = mkRow('Ao5',g('fAo5'))+mkRow('Ao12',g('fAo12'))+mkRow('Ao50',g('fAo50'))+mkRow('Ao100',g('fAo100'));
+  };
+  const _rfs = renderFullStats; renderFullStats = function(){ _rfs.apply(this, arguments); syncMobileStats(); };
+  syncMobileStats();
+
+  // ---- personal-best / best-average celebrations ----
+  let bannerTimer = null;
+  window.hideBanners = function(){ $('pbBanner').style.display='none'; $('avgBadge').style.display='none'; if(bannerTimer){ clearTimeout(bannerTimer); bannerTimer=null; } };
+  function bestAvgBefore(list, n){ // best rolling ao-n over `list` (effective times; DNF = Infinity), or null
+    if(list.length<n) return null; let best = Infinity, found = false;
+    for(let i=n;i<=list.length;i++){ const w=list.slice(i-n,i); const a=average(w); if(a!==null && a!==undefined){ found = true; if(a<best) best=a; } }
+    return found ? best : null;
+  }
+  window.celebrateSolve = function(S){   // S = all solves incl. the new one
+    if(S.length<2) return;
+    const last = S[S.length-1], prev = S.slice(0,-1);
+    const t = effectiveTime(last); if(t===Infinity) return;
+    const prevBest = Math.min.apply(null, prev.map(effectiveTime));
+    let html = '';
+    if(prevBest!==Infinity && t<prevBest) html = '🏆 <b>New personal best!</b><br>'+fmt(prevBest-t,true)+' faster than before';
+    else if(prevBest===Infinity) html = '🏆 <b>New personal best!</b>';
+    let badge = '';
+    for(const n of [5,12]){
+      const now = S.length>=n ? average(S.slice(-n).map(effectiveTime)) : null;
+      const before = bestAvgBefore(prev.map(effectiveTime), n);
+      if(now!==null && now!==undefined && now!==Infinity && before!==null && now<before){ badge = 'New best ao'+n+'!'; }
+    }
+    if(!html && !badge) return;
+    const pb=$('pbBanner'), ab=$('avgBadge');
+    if(html){ pb.innerHTML = html; pb.style.display='block'; }
+    if(badge){ ab.textContent = badge; ab.style.display='block'; }
+    if(bannerTimer) clearTimeout(bannerTimer);
+    bannerTimer = setTimeout(hideBanners, 5000);
+  };
+
+  // ---- note button on the penalty row ----
+  $('btnNote').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const S = solvesByEvent[currentEvent]; if(lastSolveIndex===null || !S[lastSolveIndex]) return;
+    const v = prompt('Note for this solve (leave blank to remove):', S[lastSolveIndex].note||''); if(v===null) return;
+    if(v.trim()) S[lastSolveIndex].note = v.trim(); else delete S[lastSolveIndex].note;
+    saveSolves(currentEvent); renderHistory();
+  });
+  refreshTopbar();
 })();
 
 // ================= ARIA SYNC =================
@@ -3895,11 +4176,13 @@ function applyCustomization(){
   document.getElementById('statSlotASel').value = String(statSlotA);
   document.getElementById('statSlotBSel').value = String(statSlotB);
   document.getElementById('shortcutsEnabledToggle').checked = shortcutsEnabled;
+  document.getElementById('hideSolvingToggle').checked = hideWhileSolving;
+  syncSolving();
   renderStats();
   computeFit();
 }
 async function saveCustomization(){
-  try{ await window.storage.set('customization', JSON.stringify({timerSize, scrambleSize, statSlotA, statSlotB, shortcutsEnabled}), false); }catch(e){}
+  try{ await window.storage.set('customization', JSON.stringify({timerSize, scrambleSize, statSlotA, statSlotB, shortcutsEnabled, hideWhileSolving}), false); }catch(e){}
 }
 async function loadCustomization(){
   ['statSlotASel','statSlotBSel'].forEach(id=>{
@@ -3915,6 +4198,7 @@ async function loadCustomization(){
       if(AVG_WINDOWS.includes(c.statSlotA)) statSlotA = c.statSlotA;
       if(AVG_WINDOWS.includes(c.statSlotB)) statSlotB = c.statSlotB;
       if(typeof c.shortcutsEnabled==='boolean') shortcutsEnabled = c.shortcutsEnabled;
+      if(typeof c.hideWhileSolving==='boolean') hideWhileSolving = c.hideWhileSolving;
     }
   }catch(e){}
   applyCustomization();
@@ -3926,6 +4210,7 @@ function bindCustomization(){
   on('statSlotASel', t=>{ statSlotA = parseInt(t.value,10); });
   on('statSlotBSel', t=>{ statSlotB = parseInt(t.value,10); });
   on('shortcutsEnabledToggle', t=>{ shortcutsEnabled = t.checked; });
+  on('hideSolvingToggle', t=>{ hideWhileSolving = t.checked; });
 }
 bindCustomization();
 
@@ -3948,6 +4233,7 @@ computeFit();
   renderSessions();
   renderHistory(); renderStats(); renderFullStats(); renderGraphs();
   renderCaseGrid(); updateDrillStatus();
+  if(window.refreshTopbar) window.refreshTopbar();
   updateBackupReminder();
   computeFit();
 })();
