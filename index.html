@@ -12,9 +12,21 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CubeNova">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23101216'/%3E%3Cg fill='%2335d68a'%3E%3Crect x='5' y='5' width='6' height='6' rx='1.5'/%3E%3Crect x='13' y='5' width='6' height='6' rx='1.5' opacity='.7'/%3E%3Crect x='21' y='5' width='6' height='6' rx='1.5' opacity='.5'/%3E%3Crect x='5' y='13' width='6' height='6' rx='1.5' opacity='.7'/%3E%3Crect x='13' y='13' width='6' height='6' rx='1.5'/%3E%3Crect x='21' y='13' width='6' height='6' rx='1.5' opacity='.7'/%3E%3Crect x='5' y='21' width='6' height='6' rx='1.5' opacity='.5'/%3E%3Crect x='13' y='21' width='6' height='6' rx='1.5' opacity='.7'/%3E%3Crect x='21' y='21' width='6' height='6' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
+<meta name="color-scheme" content="dark light">
+<link rel="canonical" href="https://davidthespeedster.github.io/CubeNova/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CubeNova — speedcubing timer">
+<meta property="og:description" content="Free speedcubing timer: WCA-style scrambles, stats and graphs, and an OLL/PLL/F2L/CLL/EG-1 trainer. Works offline and installs as an app.">
+<meta property="og:url" content="https://davidthespeedster.github.io/CubeNova/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CubeNova — speedcubing timer">
+<meta name="twitter:description" content="Free speedcubing timer with WCA-style scrambles, stats, graphs and algorithm trainers. Works offline.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
   :root{
     --bg: #101216; --surface: #1b1f27; --surface2: #22262f; --line: #2a2f3a;
@@ -542,7 +554,7 @@
   @keyframes lgDrift1{ to{ transform:translate3d(14vmax,10vmax,0) scale(1.15); } }
   @keyframes lgDrift2{ to{ transform:translate3d(-16vmax,12vmax,0) scale(.9); } }
   @keyframes lgDrift3{ to{ transform:translate3d(12vmax,-14vmax,0) scale(1.2); } }
-  body.lg #lgBackdrop{ display:block; }
+  body.lg.lg-glow #lgBackdrop{ display:block; }
   body.lg.has-bg #lgBackdrop{ display:none; }
   @media (prefers-reduced-motion:reduce){ #lgBackdrop i{ animation:none !important; } }
 
@@ -584,12 +596,12 @@
   .lg-chip.lg-round{ width:46px; height:46px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:18px; }
   .lg-slider{ display:flex; align-items:center; gap:12px; font-size:12px; color:var(--muted); }
   .lg-slider b{ min-width:2.4em; text-align:right; color:var(--text); font-size:13px; }
-  #lgIntensity{ -webkit-appearance:none; appearance:none; flex:1; min-width:120px; height:32px; background:transparent; margin:0; width:auto; --p:60%; }
-  #lgIntensity::-webkit-slider-runnable-track{ height:12px; border-radius:999px; background:linear-gradient(90deg,#fff var(--p), rgba(255,255,255,.22) var(--p)); box-shadow:inset 0 1px 2px rgba(0,0,0,.4); }
-  #lgIntensity::-webkit-slider-thumb{ -webkit-appearance:none; width:30px; height:30px; margin-top:-9px; border-radius:50%; background:#fff; border:0; box-shadow:0 3px 10px rgba(0,0,0,.45), inset 0 -2px 3px rgba(0,0,0,.12); }
-  #lgIntensity::-moz-range-track{ height:12px; border-radius:999px; background:rgba(255,255,255,.22); }
-  #lgIntensity::-moz-range-progress{ height:12px; border-radius:999px; background:#fff; }
-  #lgIntensity::-moz-range-thumb{ width:30px; height:30px; border-radius:50%; background:#fff; border:0; box-shadow:0 3px 10px rgba(0,0,0,.45); }
+  .lg-range{ -webkit-appearance:none; appearance:none; flex:1; min-width:120px; height:32px; background:transparent; margin:0; width:auto; --p:60%; }
+  .lg-range::-webkit-slider-runnable-track{ height:12px; border-radius:999px; background:linear-gradient(90deg,#fff var(--p), rgba(255,255,255,.22) var(--p)); box-shadow:inset 0 1px 2px rgba(0,0,0,.4); }
+  .lg-range::-webkit-slider-thumb{ -webkit-appearance:none; width:30px; height:30px; margin-top:-9px; border-radius:50%; background:#fff; border:0; box-shadow:0 3px 10px rgba(0,0,0,.45), inset 0 -2px 3px rgba(0,0,0,.12); }
+  .lg-range::-moz-range-track{ height:12px; border-radius:999px; background:rgba(255,255,255,.22); }
+  .lg-range::-moz-range-progress{ height:12px; border-radius:999px; background:#fff; }
+  .lg-range::-moz-range-thumb{ width:30px; height:30px; border-radius:50%; background:#fff; border:0; box-shadow:0 3px 10px rgba(0,0,0,.45); }
   body.lg :is(.card, .scramble-box, .detail, .insp-toggle-row, details.card){ border-radius:24px; }
   body.lg .stat{ border-radius:20px; }
   body.lg .net-wrap{ border-radius:18px; padding:8px; box-sizing:content-box; }
@@ -613,6 +625,17 @@
     body.lg .topnav button{ min-height:52px; border-radius:28px; }
     body.lg .wrap{ padding-bottom:calc(100px + env(safe-area-inset-bottom,0px)); }
   }
+  /* ---- iOS 27-style refinements: adaptive contrast, tinted/clear styles, calmer tab bar ---- */
+  body.lg.lg-readable :is(.card, .stat, .scramble-box, .topnav, .sheet, .detail, .pb-banner, .net-wrap, .hitem, .case-chip, .m-round, .m-puzzle){ text-shadow:0 1px 2px rgba(0,0,0,.28); }
+  body.lg.lg-readable.light :is(.card, .stat, .scramble-box, .topnav, .sheet, .detail, .pb-banner, .net-wrap, .hitem, .case-chip, .m-round, .m-puzzle){ text-shadow:0 1px 1px rgba(255,255,255,.55); }
+  body.lg.lg-readable :is(.card, .stat, .scramble-box, .sheet, .detail){ -webkit-backdrop-filter:blur(var(--lg-blur,16px)) saturate(var(--lg-sat,1.5)) brightness(.96) contrast(1.04); backdrop-filter:blur(var(--lg-blur,16px)) saturate(var(--lg-sat,1.5)) brightness(.96) contrast(1.04); }
+  body.lg.lg-tinted :is(.card, .stat, .scramble-box, .sheet, .detail, .topnav, .pb-banner, .net-wrap, details.card){ background-color:color-mix(in srgb, var(--green) 9%, var(--surface)); }
+  body.lg .topnav button.active{ box-shadow:inset 0 1px 0 rgba(255,255,255,.35), inset 0 0 12px rgba(255,255,255,.08), 0 3px 10px -4px rgba(0,0,0,.4); }
+  @media (max-width:720px) and (orientation:portrait){ body.lg .topnav{ padding:5px; } body.lg .topnav button{ min-height:48px; font-size:11px; } }
+  #updToast{ position:fixed; left:50%; transform:translateX(-50%); bottom:calc(84px + env(safe-area-inset-bottom,0px)); z-index:3000; display:flex; align-items:center; gap:12px; padding:10px 12px 10px 16px;
+    background:var(--surface2); color:var(--text); border:1px solid var(--line); border-radius:999px; font-size:13px; box-shadow:0 10px 30px -8px rgba(0,0,0,.5); max-width:calc(100vw - 24px); }
+  #updToast button{ border:0; border-radius:999px; padding:7px 14px; font:inherit; font-weight:600; cursor:pointer; background:var(--green); color:#0b1a12; }
+  :focus-visible{ outline:2px solid var(--blue2); outline-offset:2px; }
 </style>
 </head>
 <body>
@@ -772,7 +795,7 @@
         <button data-cat="PLL">PLL <span style="color:var(--muted2)">· 21</span></button>
         <button data-cat="F2L">F2L <span style="color:var(--muted2)">· 41</span></button>
         <button data-cat="OLL2">2×2 OLL <span style="color:var(--muted2)">· 7</span></button>
-        <button data-cat="PLL2">2×2 PLL <span style="color:var(--muted2)">· 3</span></button>
+        <button data-cat="PLL2">2×2 PLL <span style="color:var(--muted2)">· 2</span></button>
         <button data-cat="CLL">CLL <span style="color:var(--muted2)">· 40</span></button>
         <button data-cat="EG1">EG-1 <span style="color:var(--muted2)">· 40</span></button>
       </div>
@@ -869,8 +892,16 @@
         <div class="ct-box" id="lgBox">
           <label class="toggle-row"><input type="checkbox" id="lgToggle"> liquid glass</label>
           <div class="lg-preview" id="lgPreview" aria-hidden="true"><div class="lg-chip">Liquid Glass</div><div class="lg-chip lg-round">⚙</div></div>
-          <div class="lg-slider"><span>subtle</span><input type="range" id="lgIntensity" min="0" max="100" value="60" aria-label="liquid glass intensity"><span>strong</span><b id="lgValue">60</b></div>
-          <div style="font-size:12px; color:var(--muted);">Frosted, translucent panels with glossy edges over a soft animated glow. Intensity sets blur, transparency and highlight strength. With a background image, the glass sits on top of your picture.</div>
+          <div class="lg-slider"><span>subtle</span><input type="range" id="lgIntensity" class="lg-range" min="0" max="100" value="60" aria-label="liquid glass intensity"><span>strong</span><b id="lgValue">60</b></div>
+          <div class="lg-slider"><span>solid</span><input type="range" id="lgTrans" class="lg-range" min="0" max="100" value="70" aria-label="liquid glass transparency"><span>clear</span><b id="lgTransValue">70</b></div>
+          <label class="toggle-row"><input type="checkbox" id="lgGlow"> colored glow behind the glass</label>
+          <label class="toggle-row"><input type="checkbox" id="lgReadable"> keep text readable (adaptive contrast)</label>
+          <label class="toggle-row">glass style <select id="lgStyle" aria-label="liquid glass style"><option value="clear">clear</option><option value="tinted">tinted</option></select></label>
+          <div style="font-size:12px; color:var(--muted);">Frosted, translucent panels with glossy edges. Intensity sets blur, gloss, shadow and glow strength; transparency sets how see-through panels are. The colored glow is off by default and is hidden whenever a background image is set. Readable mode keeps panels from getting too clear for text and adds a soft text shadow.</div>
+        </div>
+        <div class="ct-box" id="aboutBox">
+          <div style="font-weight:600;">About CubeNova <span style="color:var(--muted); font-weight:400;">v15</span></div>
+          <div style="font-size:12px; color:var(--muted); line-height:1.5;">A free speedcubing timer. <b>Privacy:</b> your solves, settings and background image are stored only in this browser on this device. There are no accounts, no tracking and nothing is uploaded; the only outside request is for the page fonts. Use the backup export in Settings to move your data between devices. Scrambles are generated on your device and follow WCA-style formats.</div>
         </div>
         <div class="ct-box" id="bgBox">
           <div class="row" style="gap:8px; flex-wrap:wrap; align-items:center;">
@@ -1058,7 +1089,16 @@ if (!window.storage) {
 // Register the service worker for offline support + installability (no-op if unavailable, e.g. file://).
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
+    const hadController = !!navigator.serviceWorker.controller;
     navigator.serviceWorker.register('./sw.js').catch(() => {});
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if(!hadController || document.body.classList.contains('solving')) return;   // first install, or mid-solve: stay quiet
+      if(document.getElementById('updToast')) return;
+      const t = document.createElement('div'); t.id = 'updToast'; t.setAttribute('role','status');
+      t.innerHTML = '<span>A new version of CubeNova is ready.</span><button type="button">Reload</button>';
+      t.querySelector('button').addEventListener('click', () => location.reload());
+      document.body.appendChild(t);
+    });
   });
 }
 
@@ -2677,14 +2717,16 @@ function applyTheme(){
   try{ renderGraphs(); }catch(e){}
 }
 // ---- liquid glass ----
-let lgOn = false, lgIntensity = 60;
+let lgOn = false, lgIntensity = 60, lgTransparency = 70, lgGlow = false, lgStyle = 'clear', lgReadable = true;
 function lgParams(){
-  const t = Math.max(0, Math.min(100, lgIntensity)) / 100;
-  return { blur: 6 + 26*t, alpha: 0.82 - 0.40*t, sat: 1.1 + 0.9*t, hi: 0.10 + 0.32*t, edge: 0.08 + 0.18*t, shadow: 0.18 + 0.22*t, glow: 0.25 + 0.55*t };
+  const t = Math.max(0, Math.min(100, lgIntensity)) / 100, tr = Math.max(0, Math.min(100, lgTransparency)) / 100;
+  let alpha = 0.80 - 0.66*tr;
+  if(lgReadable) alpha = Math.max(alpha, 0.24);   // readability floor: panels never get so clear that text washes out
+  return { blur: 6 + 26*t, alpha, sat: 1.1 + 0.9*t, hi: 0.10 + 0.32*t, edge: 0.08 + 0.18*t, shadow: 0.18 + 0.22*t, glow: 0.25 + 0.55*t };
 }
 function applyLiquidGlassVars(){
   const r = document.documentElement.style, cl = document.body.classList;
-  cl.toggle('lg', lgOn);
+  cl.toggle('lg', lgOn); cl.toggle('lg-glow', lgOn && lgGlow); cl.toggle('lg-tinted', lgStyle==='tinted'); cl.toggle('lg-readable', lgReadable);
   if(lgOn){
     const q = lgParams();
     r.setProperty('--lg-blur', q.blur.toFixed(1)+'px'); r.setProperty('--lg-sat', q.sat.toFixed(2));
@@ -2695,13 +2737,22 @@ function applyLiquidGlassVars(){
     if(pv){ pv.style.setProperty('--lg-blur', q.blur.toFixed(1)+'px'); pv.style.setProperty('--lg-sat', q.sat.toFixed(2)); pv.style.setProperty('--lg-hi', q.hi.toFixed(3));
       pv.style.setProperty('--lg-edge', q.edge.toFixed(3)); pv.style.setProperty('--lg-shadow', q.shadow.toFixed(3)); pv.style.setProperty('--lg-a', q.alpha.toFixed(3)); }
     const rg = document.getElementById('lgIntensity'); if(rg) rg.style.setProperty('--p', lgIntensity+'%'); }
-  const tg = document.getElementById('lgToggle'); if(tg){ tg.checked = lgOn; document.getElementById('lgIntensity').value = lgIntensity; document.getElementById('lgValue').textContent = lgIntensity; }
+  const tg = document.getElementById('lgToggle'); if(tg){ tg.checked = lgOn; document.getElementById('lgIntensity').value = lgIntensity; document.getElementById('lgValue').textContent = lgIntensity;
+    document.getElementById('lgTrans').value = lgTransparency; document.getElementById('lgTransValue').textContent = lgTransparency;
+    const tp = document.getElementById('lgTrans'); if(tp) tp.style.setProperty('--p', lgTransparency+'%');
+    document.getElementById('lgGlow').checked = lgGlow; document.getElementById('lgReadable').checked = lgReadable;
+    document.getElementById('lgStyle').value = lgStyle; }
   const bp = document.getElementById('bgPanel'); if(bp){ bp.disabled = lgOn; bp.title = lgOn ? 'liquid glass controls panel transparency' : ''; }
 }
-async function saveLiquidGlass(){ try{ await window.storage.set('liquidglass', JSON.stringify({on:lgOn, intensity:lgIntensity}), false); }catch(e){} }
+async function saveLiquidGlass(){ try{ await window.storage.set('liquidglass', JSON.stringify({on:lgOn, intensity:lgIntensity, transparency:lgTransparency, glow:lgGlow, style:lgStyle, readable:lgReadable}), false); }catch(e){} }
 document.getElementById('lgToggle').addEventListener('change', async (e)=>{ lgOn = e.target.checked; applyBackgroundLayer(); await saveLiquidGlass(); });
 document.getElementById('lgIntensity').addEventListener('input', (e)=>{ lgIntensity = parseInt(e.target.value,10)||0; applyBackgroundLayer(); });
 document.getElementById('lgIntensity').addEventListener('change', saveLiquidGlass);
+document.getElementById('lgTrans').addEventListener('input', (e)=>{ lgTransparency = parseInt(e.target.value,10)||0; applyBackgroundLayer(); });
+document.getElementById('lgTrans').addEventListener('change', saveLiquidGlass);
+document.getElementById('lgGlow').addEventListener('change', async (e)=>{ lgGlow = e.target.checked; applyBackgroundLayer(); await saveLiquidGlass(); });
+document.getElementById('lgReadable').addEventListener('change', async (e)=>{ lgReadable = e.target.checked; applyBackgroundLayer(); await saveLiquidGlass(); });
+document.getElementById('lgStyle').addEventListener('change', async (e)=>{ lgStyle = e.target.value==='tinted' ? 'tinted' : 'clear'; applyBackgroundLayer(); await saveLiquidGlass(); });
 
 // ---- custom background image ----
 let bgImage = null;                       // data URL or null
@@ -2750,7 +2801,7 @@ function clampInt(v, lo, hi, dflt){ v = parseInt(v,10); return isFinite(v) ? Mat
 async function loadBackground(){
   try{
     const lg = await window.storage.get('liquidglass', false);
-    if(lg && lg.value){ const o = JSON.parse(lg.value); lgOn = o.on===true; lgIntensity = clampInt(o.intensity,0,100,60); }
+    if(lg && lg.value){ const o = JSON.parse(lg.value); lgOn = o.on===true; lgIntensity = clampInt(o.intensity,0,100,60); lgTransparency = clampInt(o.transparency,0,100,70); lgGlow = o.glow===true; lgStyle = o.style==='tinted' ? 'tinted' : 'clear'; lgReadable = o.readable!==false; }
   }catch(e){}
   try{
     const img = await window.storage.get('bgimage', false);
@@ -3674,19 +3725,17 @@ const F2L = [
 ["Case 41","R U' R' U y' R' U2 R U2' R' U R"]
 ].map((x,i)=>({id:i+1,name:x[0],alg:x[1]}));
 
-// 2x2 OLL (7 cases): pure corner-orientation algorithms — since a 2x2 has no edges at all,
-// these are the same geometric corner-turns as the "OCLL" subset of the 3x3 OLL set above
-// (ids 21,22,24,25,26,27,28), reused here under their 2x2-appropriate shape names.
+// 2x2 OLL (7 cases): pure corner-orientation algorithms using only R, U and F turns.
+// Each was checked on the app's own 2x2 engine (first layer kept, last layer oriented).
 const OLL2 = [
-  ["Sune", OLL[26].alg], ["Antisune", OLL[25].alg], ["H", OLL[20].alg],
-  ["Pi", OLL[21].alg], ["T", OLL[23].alg], ["L", OLL[24].alg], ["U", OLL[27].alg]
+  ["Sune","R U R' U R U2 R'"], ["Antisune","R U2 R' U' R U' R'"], ["H","R2 U2 R U2 R2"],
+  ["Pi","R U2 R2 U' R2 U' R2 U2 R"], ["T","R U R' U' R' F R F'"], ["L","F R' F' R U R U' R'"], ["U","F R U R' U' F'"]
 ].map((x,i)=>({id:i+1,name:x[0],alg:x[1]}));
 
-// 2x2 PLL (3 cases): pure corner-permutation algorithms — reusing the 3x3 PLL entries that are
-// themselves pure corner cycles (Aa/Ab 3-cycles, E diagonal double-swap), which apply identically
-// to a 2x2's corners.
+// 2x2 PLL (2 cases): up to a U turn (AUF) a 2x2 last layer has only two unsolved permutations.
+// Both algorithms were checked on the app's own 2x2 engine (first layer kept, last layer oriented).
 const PLL2 = [
-  ["Adjacent 3-cycle (A)", PLL[4].alg], ["Adjacent 3-cycle (B)", PLL[5].alg], ["Diagonal swap (E)", PLL[6].alg]
+  ["Adjacent swap","R U' R F2 R' U R F2 R2"], ["Diagonal swap","R2 U' R U F R2 F U' R' U F'"]
 ].map((x,i)=>({id:i+1,name:x[0],alg:x[1]}));
 
 // CLL (40 cases): 2x2 "Corners of the Last Layer" — orients + permutes the last layer in one look.
