@@ -2,7 +2,7 @@
 // Strategy: the page itself (index.html) is NETWORK-FIRST so returning visitors always get the newest
 // deployed version when online, with the cached copy as the offline fallback. Everything else is
 // stale-while-revalidate. Bump CACHE_NAME on each release to evict old caches.
-const CACHE_NAME = 'cubenova-v17';
+const CACHE_NAME = 'cubenova-v21';
 const APP_SHELL = [
   './',
   './index.html',
