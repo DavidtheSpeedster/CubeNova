@@ -6,8 +6,8 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#010103",
-  "theme_color": "#101216",
+  "background_color": "#00020c",
+  "theme_color": "#00020c",
   "categories": [
     "sports",
     "utilities"
@@ -34,6 +34,101 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "id": "./",
+  "lang": "en",
+  "dir": "ltr",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Timer",
+      "short_name": "Timer",
+      "description": "Open the timer",
+      "url": "./?tab=timer",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Stats",
+      "short_name": "Stats",
+      "description": "See your averages and goal",
+      "url": "./?tab=stats",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Learn algorithms",
+      "short_name": "Learn",
+      "description": "Practise OLL, PLL, F2L and more",
+      "url": "./?tab=learn",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "short_name": "Settings",
+      "description": "Themes, timer controls and backup",
+      "url": "./?tab=settings",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/wide-timer.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Timer with live stats"
+    },
+    {
+      "src": "screenshots/wide-stats.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Stats, goal tracker and distribution"
+    },
+    {
+      "src": "screenshots/narrow-timer.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Timer on a phone"
+    },
+    {
+      "src": "screenshots/narrow-learn.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Algorithm trainers"
     }
   ]
 }
