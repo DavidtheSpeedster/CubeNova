@@ -4,11 +4,13 @@
 //   deployed version when the connection is good, and the saved copy at once when it is offline or very slow.
 // - Everything else is stale-while-revalidate. Fonts are saved at install time so the look is identical offline.
 // Bump CACHE_NAME on each release to evict old caches.
-const CACHE_NAME = 'cubenova-v39';
+const CACHE_NAME = 'cubenova-v47';
 const FONT_CSS = 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap';
 const APP_SHELL = [
   './',
   './index.html',
+  './about.html',
+  './privacy.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
