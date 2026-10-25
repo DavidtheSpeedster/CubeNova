@@ -877,6 +877,33 @@
   .gd-fig.pyra{ max-width:340px; width:100%; }
   .ai-pre{ max-height:220px; overflow:auto; font-size:11.5px; line-height:1.4; padding:8px; border-radius:8px; background:var(--line); white-space:pre-wrap; word-break:break-word; margin:8px 0 0; }
   .ai-imp{ margin:8px 0; }
+  .sv-pal{ display:flex; gap:8px; flex-wrap:wrap; margin:8px 0; align-items:center; }
+  .sv-pal button{ width:42px; height:42px; border-radius:12px; border:2px solid rgba(255,255,255,.22); cursor:pointer; font:700 13px 'JetBrains Mono',monospace; padding:0; }
+  .sv-pal button[aria-pressed="true"]{ outline:3px solid var(--blue2); outline-offset:2px; }
+  .sv-pal button.erase{ background:transparent; color:var(--muted); border-style:dashed; font-size:11px; }
+  .sv-net{ --sv:34px; display:grid; gap:12px 14px; margin:10px 0; justify-content:start; grid-template-columns:repeat(4,max-content); grid-template-areas:". u . ." "l f r b" ". d . ."; }
+  .sv-face{ display:block; }
+  .sv-face .cap{ font-size:11px; color:var(--muted); margin:0 0 4px; max-width:calc(var(--sv)*3 + 6px); line-height:1.25; }
+  .sv-grid{ display:grid; gap:3px; grid-template-columns:repeat(var(--n),var(--sv)); }
+  .sv-st{ width:var(--sv); height:var(--sv); border-radius:7px; border:1px solid rgba(255,255,255,.28); font:700 12px 'JetBrains Mono',monospace; cursor:pointer; padding:0; background:var(--surface2); color:var(--muted); }
+  .sv-st.empty{ border-style:dashed; }
+  @media (max-width:640px){ .sv-net{ --sv:44px; grid-template-columns:repeat(2,max-content); grid-template-areas:"u f" "r b" "d l"; } }
+  .sv-chips{ display:flex; flex-wrap:wrap; gap:6px 10px; margin:6px 0; font-size:12px; }
+  .sv-chips span{ display:inline-flex; align-items:center; gap:5px; }
+  .sv-chips i{ width:11px; height:11px; border-radius:3px; display:inline-block; border:1px solid rgba(255,255,255,.3); }
+  .sv-chips .bad{ color:var(--amber); font-weight:700; }
+  .sv-sol{ font:600 17px/1.6 'JetBrains Mono',monospace; word-spacing:6px; margin:6px 0; overflow-wrap:anywhere; }
+  .vc-cv{ display:block; width:100%; max-width:480px; aspect-ratio:1/0.86; border-radius:14px; background:radial-gradient(ellipse at 50% 35%, rgba(60,120,255,.16), rgba(0,0,0,0) 70%); border:1px solid var(--line); touch-action:none; cursor:grab; outline:none; user-select:none; -webkit-user-select:none; }
+  .vc-cv:focus-visible{ outline:2px solid var(--blue2); outline-offset:2px; }
+  .vc-cv:active{ cursor:grabbing; }
+  .vc-time{ font:700 34px/1.1 'JetBrains Mono',monospace; margin:8px 0 2px; }
+  .vc-meta{ font-size:12.5px; color:var(--muted); min-height:18px; }
+  .vc-pad{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; max-width:480px; margin:10px 0; }
+  .vc-pad.six{ grid-template-columns:repeat(6,minmax(0,1fr)); }
+  .vc-pad button{ min-height:40px; padding:0 4px; font:600 14px 'JetBrains Mono',monospace; }
+  .vc-hist{ font:500 13px/1.6 'JetBrains Mono',monospace; word-spacing:5px; overflow-wrap:anywhere; max-height:96px; overflow:auto; color:var(--muted); margin-top:6px; }
+  .vc-keys{ font-size:12px; color:var(--muted); line-height:1.7; }
+  .vc-keys kbd{ font:600 11px 'JetBrains Mono',monospace; padding:1px 5px; border:1px solid var(--line); border-radius:4px; background:var(--surface2); color:var(--text); }
   .gd-fig.pyra svg{ width:100%; height:auto; }
   .gd-figs.many .gd-fig{ max-width:118px; }
   @media (max-width:520px){ .ts-st{ width:18px; height:18px; flex:0 0 18px; } .ts-view{ gap:10px; } }
@@ -1227,8 +1254,64 @@
           <button class="dbtn" id="xcShow" type="button">show the best solution</button>
         </div>
         <div id="xcStatus" class="detail-sub" aria-live="polite" style="margin-top:8px;"></div>
+        <div id="xcPick" style="margin-top:8px;" hidden></div>
         <div id="xcSolution" style="margin-top:8px;"></div>
         <div id="xcStats" style="margin-top:10px;"></div>
+      </details>
+      <details class="card" id="vcCard">
+        <summary style="cursor:pointer; font-weight:600;">🧊 Virtual cube · turn it with your mouse, finger or keyboard</summary>
+        <div class="gd-intro">A cube you can solve on screen, from 2×2 up to 7×7. Drag a sticker to turn that layer, or drag the empty space to look around. Press &ldquo;timer&rsquo;s scramble&rdquo; to get the same scramble as the timer, or &ldquo;new scramble&rdquo; for a fresh one. The clock starts with your first move and stops when the cube is solved.</div>
+        <div class="row" style="gap:8px; flex-wrap:wrap; align-items:center; margin:8px 0;">
+          <select class="mini-select" id="vcPuzzle" aria-label="cube size"><option value="2">2×2</option><option value="3" selected>3×3</option><option value="4">4×4</option><option value="5">5×5</option><option value="6">6×6</option><option value="7">7×7</option></select>
+          <button class="dbtn" id="vcNew" type="button">new scramble</button>
+          <button class="dbtn" id="vcTimerScr" type="button">timer&rsquo;s scramble</button>
+          <button class="dbtn" id="vcReset" type="button">reset</button>
+          <button class="dbtn" id="vcUndo" type="button">undo</button>
+          <button class="dbtn" id="vcFlip" type="button">look from behind</button>
+        </div>
+        <canvas class="vc-cv" id="vcCanvas" tabindex="0" role="img" aria-label="Virtual cube. Drag a sticker to turn a layer. Click the cube, then use the keyboard keys listed below."></canvas>
+        <div class="vc-time" id="vcTime" aria-live="off">0.00</div>
+        <div class="vc-meta" id="vcMeta" aria-live="polite"></div>
+        <div id="vcStages" style="margin-top:6px;"></div>
+        <div id="vcPad" class="vc-pad" role="group" aria-label="move buttons"></div>
+        <div class="row" style="gap:8px; flex-wrap:wrap; align-items:center; margin:0 0 10px;">
+          <input class="field" id="vcAlg" type="text" placeholder="or type moves, e.g. R U R' U' or 3Rw2" aria-label="moves to play on the cube" autocomplete="off" spellcheck="false" style="flex:1 1 220px; min-width:0;">
+          <button class="dbtn" id="vcDo" type="button">play these moves</button>
+        </div>
+        <div class="row" style="gap:12px; flex-wrap:wrap; align-items:center;">
+          <label style="display:inline-flex; gap:6px; align-items:center;"><input type="checkbox" id="vcTimeOn" checked> time my solve</label>
+          <label style="display:inline-flex; gap:6px; align-items:center;" id="vcWideWrap"><input type="checkbox" id="vcWide"> wide turns on the buttons</label>
+          <label style="display:inline-flex; gap:6px; align-items:center;">speed <select class="mini-select" id="vcSpeed" aria-label="turn speed"><option value="0">instant</option><option value="90" selected>fast</option><option value="190">normal</option></select></label>
+          <button class="dbtn" id="vcAdd" type="button" hidden>add to my session</button>
+          <button class="dbtn" id="vcSave" type="button" hidden>save this solve</button>
+        </div>
+        <div class="vc-hist" id="vcHist" aria-label="your moves"></div>
+        <div id="vcSaved" style="margin-top:8px;"></div>
+        <details style="margin-top:8px;"><summary style="cursor:pointer; font-size:13px;">keyboard keys</summary>
+          <div class="vc-keys">Click the cube first so it has the keyboard.<br>
+          <kbd>j</kbd> U &nbsp; <kbd>f</kbd> U&rsquo; &nbsp; <kbd>i</kbd> R &nbsp; <kbd>k</kbd> R&rsquo; &nbsp; <kbd>h</kbd> F &nbsp; <kbd>g</kbd> F&rsquo; &nbsp; <kbd>d</kbd> L &nbsp; <kbd>e</kbd> L&rsquo; &nbsp; <kbd>s</kbd> D &nbsp; <kbd>l</kbd> D&rsquo; &nbsp; <kbd>w</kbd> B &nbsp; <kbd>o</kbd> B&rsquo;<br>
+          <kbd>u</kbd> Rw &nbsp; <kbd>m</kbd> Rw&rsquo; &nbsp; <kbd>r</kbd> Lw &nbsp; <kbd>v</kbd> Lw&rsquo; &nbsp; <kbd>y</kbd> x &nbsp; <kbd>b</kbd> x&rsquo; &nbsp; <kbd>;</kbd> y &nbsp; <kbd>a</kbd> y&rsquo; &nbsp; <kbd>p</kbd> z &nbsp; <kbd>q</kbd> z&rsquo; &nbsp; <kbd>Backspace</kbd> undo<br>
+          Dragging an inner layer of a 4×4 or bigger is written like R[2] (the 2nd layer from R).</div>
+        </details>
+      </details>
+      <details class="card" id="solverCard">
+        <summary style="cursor:pointer; font-weight:600;">🧩 Cube solver · enter your colours, get a solution</summary>
+        <div class="gd-intro">Pick a colour, then tap the stickers of your scrambled cube to paint them. Hold the cube the way you enter it and turn the faces exactly as the solution says. Everything is worked out on your device and nothing is sent anywhere. The 2×2 answer is a proven shortest solution. The 3×3 answer is a short solution from a fast search, and it is not proven to be the shortest possible.</div>
+        <div class="row" style="gap:8px; flex-wrap:wrap; align-items:center; margin:8px 0;">
+          <select class="mini-select" id="svPuzzle" aria-label="which puzzle"><option value="3">3×3</option><option value="2">2×2</option></select>
+          <button class="dbtn" id="svExample" type="button">fill with an example</button>
+          <button class="dbtn" id="svClear" type="button">clear</button>
+        </div>
+        <div id="svPalette" class="sv-pal" role="group" aria-label="colours to paint with"></div>
+        <div id="svNet" class="sv-net"></div>
+        <div id="svCount" class="sv-chips" aria-live="polite"></div>
+        <div class="row" style="gap:8px; flex-wrap:wrap; align-items:center;">
+          <button class="dbtn primary" id="svSolve" type="button">solve it</button>
+          <input class="field" id="svScr" type="text" placeholder="or paste a scramble, e.g. R U R' U'" aria-label="scramble to load" autocomplete="off" spellcheck="false" style="flex:1 1 200px; min-width:0;">
+          <button class="dbtn" id="svLoad" type="button">load scramble</button>
+        </div>
+        <div id="svStatus" class="detail-sub" aria-live="polite" style="margin-top:8px;"></div>
+        <div id="svOut" style="margin-top:8px;"></div>
       </details>
       <details class="card" id="advCard">
         <summary style="cursor:pointer; font-weight:600;">Advanced practice session</summary>
@@ -1313,7 +1396,7 @@
           <div style="font-size:12px; color:var(--muted);">Frosted, translucent panels with glossy edges. Intensity sets blur, gloss, shadow and glow strength; transparency sets how see-through panels are. The colored glow is off by default and is hidden whenever a background image is set. Readable mode keeps panels from getting too clear for text and adds a soft text shadow.</div>
         </div>
         <div class="ct-box" id="aboutBox">
-          <div style="display:flex; align-items:center; gap:10px; font-weight:600;"><img src="data:image/png;base64,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" width="44" height="44" alt="" style="border-radius:10px; flex:0 0 auto;"><span>About CubeNova <span style="color:var(--muted); font-weight:400;">v64</span><span style="display:block; color:var(--muted); font-weight:400; font-size:12px;">CubeNova by davidthespeedster · davidthespeedster.github.io/CubeNova</span></span></div>
+          <div style="display:flex; align-items:center; gap:10px; font-weight:600;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAIAAABt+uBvAAA2TklEQVR42pWdd5xc5XX3v+e5907fXlV2VRESIEQVSBRjUwwGG2Js44b767gljuPELXYSx0ls8rrELa6v4w42Bhe66UKAJEAV1PuupO27Mzv93vuc94+ZXW0VeD/72c/szJ25c89zznlO+Z3fFRGHmX4UZOzvxGdmPGz6qwpMfi9jHzj2vEw4ycS3y4R3TPwZf/eEt007Wl7u6814FdMvcPzDBXFk9pd5+U+XiRcz+TqVWX9m/TxFZNY36ik+VifJ/VSLOv1r6EyXNPZXnFcsi1Of9aTCKSozn676jAKIiCgioCJjqzV2vI4vk6IqaPVf1ckCkspTMov0K++Ryao2XRWma98kAck0K5DZbW029ZaZ1erkg8rJVAQxiIMYxICgioIde6OCCGMSw1RlhNrxX8FOWHUd17vZvvkpv+pfbmIzuo/pFz393DLDYuiYXhgVF+OgEFrUgoCHxPESRFNE4uLF1XEBCa36RYpZSgWCAhQhAHDBEVBsgA1FQ9SO6dDJ8+pJldHpnusV2N2kY2TcSZ/Cy87mAmc6eIqQRY2DuKgSBmDEraO2g9alzFnGnCU6p1Oa26iv05qkJKLEDEbQUIOClHKMZLSvV453ceSwHjkgxw7r0HF0BHwigihhGRuI2tl3BSbaoI4JTk5pX5NsYbZd7BRO52V9UNX+K0YUloUIsbnMuYDFl7H4Iu04g9YkKYiCAwoB2DLi4wQ4gudKPKI1LglIIhEAzSDdI+zay+YtbN6g+zZT7EYCXMX6UrG+qUt2qk15ug3OsuXNZGLyl+vkZIUzalwQ3FqZ82oWXKWLr2TuAmrAIIU8Q/u0f58MHmLwKJk+zWekVNIgwIIIjkskRjxJfZPMmc/8Dl26RJYt1oVzaAYH+pBte9n4tN53O91bwRcto4oNJotGT+FbOWUQM7OTPqVbeYWqJIhRVTSQSIO6NebKn+mZr9IsDG2T4+v02NPSu5XMMaUIHiSJ1hCtIRLDjeFGAMKQwKdUpFiknIcAIsSb6FwqZ5/L6gv03LM5vUH2DfGhW/TQDqK1FEYI07ie2AANp+vRXxK4TLnA2TXoL7I7ADGoqgZ4KWlfRe18PfiEBCHL30PvJu3bCCWAaBu1c0i1SLxOjSeoWkFDqGzngnHUODieiOAYQqvFLJlBhnooDINI43wuvli3PMeJzXhR8Rq58LN6eCNH/oTJixGsD3aCd+YVBsOcwsRezvvO+syYdxa1Pk5UWs+lbh7pI9q/S2yoNoAARJJLqOkkWqNSluKwlkYo5/BL2LC601f2eITxUMBxcSNEa0jUk2wgUY+GZPvp20/mMFjcGEDgy2lv5+afsPVefeZbZDbiqVh/msW9zGXO4jXEmR6cyiyimTmaEFP5Ktp4pjSuIHtE+7aLLVUPi7STWo5Xiz+k5RMU+whyVDZt42E8jKkK5eRHCpjxk4mi1qKK4xGro7admhaMMnSQ/t0EObxafMOVX+Oq90nXsD71PXb8EGcQsRKWZ3TY073y9PB/kg/SmQKY2VKbSS+JUetLtJG2SzTI0repcv0CxDoluVwRil1aPEKYA8G4iDMWBQIGkbGlkrFAkZMHVJ6sRpUQhlgfIF5HQ6ckasn1ad9e/ID4Ut7xB1oXYpEdj+jj/0JuG65IWAKdcuEzxjQzZk8OYmSyLGTa30mB04TvDoIGUn8WzRcytIXBrWItAl6r1F6I16y5nYxuFb9fEDEeYkTH04XxGHL6UsjkfythdIiGYDEGI/g5Ro6QPka0VlrOwBjS+ynD8mvIF+g4XRa9lhOHyOwTz8OGp46Yp5x/4mOnsjIyUzAjswQ5YzmBRWDOa3CTHH+I8rCYCKjET5foAvK7NPciYVYkglSiHR33MWN6MR7Nm5OSrzweT0ROqtiYWCvCAoyLhoweI3McETRgYC+tFzJ/CdkyiQZWvEFGhrXveVxPqrmMTNmLZEx1mUU/qgJisoK8TJggBg3UTcq86zR3VAY2IYI4ihXAFinuxeZEIiIyQb2l+jnj4hADBnHAVCVinLFMbfzXjElTJkUgaiFEFeOhIaVRjAMBe++Tkk/HxYiDKstfR95y4hkcI1gmZNFStd+ZY7nxB5NMTF5JVUIM1tdYM3OvpH+DZA9ivLFNCAWxJcRDDFidajATlKUikap0KrJwq7/GRTxM5V/nZGY7tpagYx85Jn0xqAUVLXHkz3J4nbSupG4+RZ8lr5YgTvc6HBnTo1Pl3lMuvCqg6X5amcE/qBixPok5tF/KsUelNIDxUDtJLauXMcURygTLMlVx4CDO2F7mYSJiImJccHGjODEkiolUxYSZegky0fr1pLzcGOkDsuu3IjHmrsVXFqyRIMKxdeI4UAm4Jl2vTLOhqU5apx03g8cSg/WJt9O2lu6HCEZFXJ1wMgHBKFY0HC8zjZmHIJXsrKIdUVRxorg1GBcTxYmLF1ebxJ1P7QphHmGcaAwnirgTNEgmlx4nCN2M6RrgxhE4eB9D++m4AhNn7hoKJXqfFcdRDWdzslNMTKZrkMyy7YGgIZF6mXc5XX+WIIe4Ew8UUHFQX4xLZI7ashAopqI7KpXKnIcTgwQ2IjUrSC7GFjGeRFKYGuKnNVz85poL31Vqvd5efLVpWqVDLQQJiXkipqpuYiYsY8VCnWpRKQyxIRYshBAaTC2DO+XYM9J2IYlm2i9j4CAj23FcmZDZzqgQEwQyU8l1piKGYlztvF6OP0lpEONWqjBjUYtBQ9Rq4iyJzWF0s/rDFVvTyqsVxXGSlBPEOph/qdiCDj8tYtUkcVqTSy7qWHOZq6Xc4d1h3qSd9vIF58RaWv0tPdn1L5DeLrJPgj7rpwlGsUVskSBPkEdDnATJduo6pW6BplolmlKgXJBcWkdG6D0kRPSKf2HhpQwP8ec3kt4oppLZTo2RZ0rZZkk1JuYpVdfT+TodepHsUaS6a1Y/W1yxJTUxWfwJLYxIzy8Is4hbDSMrVV0TgwR+uyy/mvZz6dqoI89JJKmm2Zl7/uK1l9XX+ANbn8h27TSUHSfw3ETIomLH+clXX1A7f86J9cMDf97E4CYJX6TUpcV+tCTxZm0+jwWvkY6LaF6stSIx1IMIxJAEqjBakr7j+txzrH+aJddz9jUcfoEnb8b2iQaVCsmpC2HVmvRsFaPqrmx9bV2DhtK/CfGq23lFNVC1gTRfwtK/pftP2v0rxAimKp3KHmQilCG1Sq78kHjWbrifIENiDg1nzjlvzdwFNcU9j/dvXy9hzvVEbaBWbVA2rnVMTeCeaZasmnvjFTULmvb/4UTX/Q+TfkFaamlfqy0XEGvCDpPeLkM7NH1I8kMahJio1LTRtkCXncO5F9JksHBihB/dRb6Fc9/AC99l16fEUaw/vpnMVo2dKqBpCa6ggSY7SMyn/1ngZIFNPLVFwXDuF0mdwdZ/0tHdSKSqXBWzMh6hYiOy8iZOv56jW+TQVlJt2nJOcsVFi5a3x/q2HH/mT6WRY9GYp2rVBmqttaGgaq0NS+DHG1dmcgtiZ3Re9uV3De/2d2zN9W0eZXg7I8/Ss4HhHZSGQSECUYyHxDG14ueQJIsv4c3v0UvW4IKBL/6UPmXF23n2rQzci3FEA2YqJcuUSHp6jHQyUjAeLRcYr4aWc4UIhZ5qPmVLZuFF5g2/1N7juulDUu4XE0EDEaNiqluVH9C43Hnjp2TeErvuLjM6Ytsu1LNvlHOuOPe0RrvtrgMP/dih6HpGQ19tiA1VA2ygYWCDkjFeJF4/2rOjfPh3Xuv8wc7LzZHR2gUO8/PB83eGz99Jdj9uBDeFm8SN4Lq4Dg54wty1JOo5+og8s1Ga5nPGUsSy+iz++HvSe5j/RnrvQ/Mz7uATd6pTRdKCqIakFtO0itf+koVv0Z3fk2IfBKqhzP2CrPgku29jx3fFRFRVMOKmFIt4INiIXPge568+YLdsZuNjWrdMl98454abFp7dVHzxwSPf+kjgtrUtOSPM9fiFDGrBasXT20DVRmMptcHIwWcdT+o/8j+FWz8z6EZGaiPF3YORE33h2iuKp18uGZ++YZyIeFEAG6IWGxAWyB9n7nXULSK9gW2HZPVltNTT4hDUcf/XSSWIL2bkGTGOzF4Ck9k0aCwvsHh1pBbKeZ/Tlg556h/kyO8xnrpLZe7/YhK65Vbt3yImji2K10SkScMsAqFP6nS56DPUtOqjtzPqa8eVyavetvL1Z8cPPTL4m2/ETuyoaUmMHnhkqHt/oq4jWVsX+sWwXMCGoK4XjUQT2f4DuWPb6i57p/nIXX1L1pQGQpulXHAKbfXU1Ed27nFyYfnCa1l4sRl1tC+H6xKJjGm/wZbpW8+yDxKJ0bdRaOXK1fhKXQ0Pb2Hg1yRPI8xT7q2EaTqLGZ2Mg6amXZUGZ6JDFl6r571bTuziib8GxdRK3Uc1/6j0fwmxiAUjyRUYT0vH0ACMzLlOFt+ivc/L4fVae6asesuit924oH1g6NffGFh3nzFFa4uqWtu2KOL5ffvXl0YH6prnRRO1xriOGw1LucEjW9V1697/m8yrPpnJJxn2xTcUkSI6YovFaHHBwlRNvHbv5jBsiV57c9Ml5xa6ojpYwjMYp5pIizK0nTM/xomnKUZ47bVEDakoj2+hbyuFrYQhWhRCTpajpiauUzurE5L1EK9Wa07j2p8zf4X84Vbd+0sxUVUVLQMqMbRIdCnxFRS2UepCXNw6ml8jsSZGXiDSoG1Xpq6+pf2CWmf9HcOPP0xY8GKOhqGqRa0NfceNerGa3n3ri5keL96oSlDOY4sC8z/5TNecNfTlxYvoBDWvrp3vE43G5uLe8S+5Q0cb/vZzwzTrrh554Nfa/xRehjCNlikNc9anyXQz3M0vbmd+LcBHvsXGr1MrsuYz+vR/SfYQ4ujkXtCkXGymXqBgjBKV017P6lul+0XW/b0AWKm6GCuiNL2F+BkM30swgIkRqSe5gmBA8ns1ttisfEvrO2+pN3vyt3+zsPlZN4pxRcMQtVqtWqiAWj832CVGkrXNidqWVH1bvKY1KOVGB3s0dZ4k2zUPpRDfUIIylC0lSyQi6WPBT9+ru3/XPKdZNr7A5ueDthZd/UZx5nN8NzYNFgkJyiQWM9orf3UjTQkUuX893X+Wyz+tr/2YdO2k9wUcd7z7OCUXMzJzrUgVg/F01buIwvbvalio1EYVQcsamUPjDZQO0fcDNI8TxYnipMTvwvpaf3nkNR/RzgtsfsTfupsTe9yUi1obBKqhqtXQR60Xifv54d6962PJupYF57vx+iDw/XIR47ac9urkia360zX6zDfEgvXIhxRC8gG+K+Kx+Rf8ZHV9enPr6VdYP7SmOyk7Gh69LXrP57UhzlVfkZpzsCAepT6KaWIJkhEMWMgOgmHPPZKxnP0BFQ9rx6tTU5TIndE5IUZsmYWrdcl5MtzHvrtBVFU0EDEkzxSvWdPrCQaRKOMhj1iVTveMG+pvusHN99pHfjl8x+Nm7VvbVn9I9t5VyPRWYygN3UgMGw51bQ1LuaaOlTYMR/oOEgZiHMRoYaQ4eCS+4IL2MBzZ8IXi7t/K5V/T1rUESAQdPa4Pfjx2/IH6BRdKtKGUHdRK7BQGEndS4fbIU88WWq/R5TeGL+wh7MMWyJ2gbT4NSQySKWjvUZyIdj3Fvk0suFhaztW+TWI8UZ2eu07d5scUy0Etr/kCp6+UjT9n152YiFgfr0FrzifMM/o8toBEMYKJiJeCGuIrmm76UOO1a9nwR/3z7REZqpvXHOy8d3DvlnjrqlRNwgYFI7jRRDHTO3h0cyzZ2DD3jFx6oJgfFXWkthXHERuabMauubGQiuruTXVL1jr5Y+UXvkmuX7C6+9ey7kP19kT94sv8MAgKaUFVQ7WhaqhhEAS+U1Mbt/254wGxGvIH8GLkkYvX6g2XIMjmw/zu50QGCUYxUc68nuE+uh8T46FWp3po3BlqQCJqA6lZrKuuwwq7f68ghCSXqttI9kUJRhBPq/7exU2oXx8/63UNb3qbkz3m//Q2M9onNVEb+DZbblhybnK0p+eFH6QaO2pb5peKudzgLj8/0Lro/HLZH+zZb1SZe0kQBuF7/0ZOHIx984PBq95RvuVT0S/cFEg4dHhDqnlp3bzGkRe/xUvfj0Wo67zAiTUXMr2VXNlaH63CP2zgO4lU4NeU7fmnv+vWA3f+exAqNsDPs3Z1tX771Ca1PWgAIoce1Ewgi29i45cquatMgAtp9fKmOyBxxJZYfiULm2T/Ibo3YaIklqAB6edAVbxqii8uxnOkufamD9dffEnhmYfszg1uTEjGCf1K+6CU6TVecsF51x/b/kCm9yXERYPOs67KDPWU8yNuNE4uG6w427/lU9Q6JjDB5e8vf+575kdfYrCb+mYTBvnhw5iIAlqee+H7RczgwQ3GSwLWWlUrglqrqm7D/OJQY6LlvM7PvLe2Pdj/3X14hlLRdJwrl58fWnWGy/axJ3BLhD4moplDdG/SjrXScIYObhHjqdopEY+Z1vcQFQMJVl1FnXLoCfUzOFEtHCW3V8QgrqCV+o44HiFyyTvabnjP4N0PyN7n3ZSrAtZqZUk1tFY19LHlqv5qEEk2qbiFTJ8biRH6xFL+Gz8sx3Z4v/2JXbKw9PHv6bYTzro7SdVqEGDQUAObii++NjHnvCOb/pDuSdd3XGKMBOUcGoAN/ZJ4Ead2Sb6/s/nVb5v3b3+3u6Zu+92Ph4Wj4hkCTb7hDV5rgpiY+zfpiZ14PjZARFA5/DARaFtTLdpMquNO0KCT4baAVeIdnLkaEfatA8Tm1YaVCoacDME9jCdOqmPN5ZnNI21LVg0fTuvoAVdQtarWhoEg0WRdYbh74KUn4x3LGxatKPV2Z/c8Vc6P1LcuGU2fcPPp8hs+zZH98S+/Oeg8S695n/z4N6ZrO8VRHAe1QSHizr+6bslZJr3bKdYGTZ3DXZuyfdGmzrMj8czo4LHQhrGGOaV8A/lliz/+7uzCZdtfCOLnuexaB1nKrtO2svbNNw4F6g6V7C/uIJIhKJ5sTB9fTwltvVR2fv9kj3jMymSiiclY1ZnQMv8MXdxBvszRbUIlXnFOIuzGWg7iRG05dtbcXOTNLU9/Y15T56WZY1Ie2uuCDQI3GjeiQ/s2Whtr+cCP8le9fdQzbpmWR28f+dVHY6mG2oa5o5FEWBiNf/WtSMkc3+H95/vl6DbRjPGwRSuJC+rOfZ3RE+G+P/qlbFlwvFjDotWj2cHj+x+rq2loWXyxRFI9u4aTK17d/r5bDx9JZB4vs9IjOzC6+XE8tBy0ffBj8Tl1sSjy9T/lj+6WRE6LpfE6OsO7GCnReCHShKanQxzN1M2/0opZupJ2I4OH6D+s4ohOgPlVy8MuTlyJIeHzT3btLHsrP7A8m2iM16+KtZ/lE4vVNpczJ3q3rYutuKnuK8/2vvadw1kKvf7oYNB/8dtq/3F9GK9Pd21L1bbE1v86LKVDY9QGzv4/GvqMUwiKydjSjzZf8V4yG/x996CBRKLieGFQLPfsSGi5ZsVVo5G6E7seHzyhtTe9t/Y9f/3io25mty9zDEkp3PdoOLIfv5i66PVtb7pJHBIbDhZ/9XvqLcW+k6BHcSn0y9ABqV1EvANrxzMNOdkCn1JaFYEoS5dTqwweVD+NcaiiC8ZgURicBEEcM4cV7yp29fTtyjz7YuSs910Uzu+MuEvnLzujZ/vj2eGg6cO/LX/8f07E2oITvuSh5FAwYW+5L3mG85FnY6vfPbz/qViqLtnU4RjHiHESdQZCO79u9SdSC5pym78b9G6XSEytVRuqDVFwPD9zIjJ0uKGxs5AujDhLh+dds/+3vbYYSIOrCWV7QXY8gBRN3fzOf/p3E5PYSGnoX75jTUkKu1XD8eYPYtAy6b0adUguAMvUli5mpkSshgULiAuHd4KVk0XpKtoQJ0EJmXsJV32W0rHMtnvqRrqyOR79ve24ZU3pnHN2PbKt/VXXpL70RM+qazI9gYyEFBzNQR7yUHIZCUbSXv6673o3fK+/e2c5NxKpmetE64JiLnDn1Z3zJsk+nX3+hxJmjRdR61sN1IaV9A2I17YW0sey+55I1NVK9y+Kz+yXhEPc1QZh96CREzK6QdXt/OzX48s6HeTEP/+gcKRbZL+WhqhUKSb6ldEjOJDq0AndzXE/7U7tn1kkWsfSJbLlMHd9D+MS2gkq5og4lPNc8DeseY3+7vsyuC20Md21Jbb2zOIhXX93mGhZVIy9L7t0dbqz1u4ICFEVKkCU8ZaDNfjlUiFanvcBov8+OniIwUNAov2cjjXv6Hn+p0bVicU18BWLWrUKVkPfjaUc46R7dnnR2tpFa0tDB/LFUGobVDzqIxw5TLLezN8XdO1p+cBtzW94vety7Gv3DDy0Xur6dHg3xhVbKSEqSNWecscQSLTLdMDTuIlVdzERrJKop6NdH/yTpg+I41TabDJeflVl+ecw8/QHH6X3eTyLpjOb1ycjSgITOPm7722s/XFNf9r/yp2RZhHrkg4pQh4KUICikg8hKsWC/vmDUuiKtSyJL7nMqZ/jD+1PH3g+1X6+Gicsl1TGY8AQtfHaVlvOp4+/lGhYYOLNwz0HCukTJJeoW0tNksFuCtY93w1++Hf1V79v3kc/5UXo/9/1XT/8ldQO6chGxBUNx4vQMh4SFgZQiDVXcAATevYVMOGk1qCgaKqOCJIZrSDGmADkwK2XeR/V4a266W9wLMlaSkPo0Oj+/ZHCEPWuWph3WmFoU6zmiU7dF/znR4ztMkmPTEgJSlAM8Y1EPbrW6y/Oihz5af3rvsMt2/1r15m3vcjZ7+3Z/rPRIT969t9SsyD0XZyIterEauN1Hdm+/aXR/lTbikIhlx3uNl4MG1CzlFSE7HEyedOZDf7p/JqmJQu+9MN4isHbnzvwle9KzaBmNoBIpZc/3aWUM1g00gBGdeqrZnozSOJJAhjOTcTLqwZ4zaTO0d476P0tbopggMJRDUuy8MZyujfz6G+kVVSVuhUlbT7+1P0l3d/Zbs233qHHHjVNHgVLKcTxRMv6xGfk95el2jsjt+5ML/5osRgPioEfNAZrv+W+5d5M330DG38bf9VXnPPek2OJO/cSiS8cOrrFjTdG6jpHBrrKxazjJYybUBvQeDr5nGRHTOR5+91Lkyuumf/V3yTqnf5fPb/3S9+WZI9mN1VwM6qV1dapyP8gL4pEE5XaxpS+qZk2VSFEEpTQQnHCYVbcenWSOrKO0lGcBDYEQ2Bk5ceINODvz939S/PMXklZonGbWoIdHj1+KD18qH1Bc/y3H7NbfuLMcd06T3o26O3neC/+V8313w7e8HjWW2bzZcTiGAg1Xw7arzfv2UZ7qvcnX4wtvG7Vv367bM7O9x6r7bzQt5LuPyhijBvDiWBcKy7RZskNMnKnvesd8bXvaP+Pb9fWy7H/eWL/f35boofJb8aWKyssiGiAuDiJiaMhFUSWON7JXGvMVU/NxcbeYrQEfgBW1RFAXNSneBhxq211N0k5Kme+l3i9bv9njGsSBSLDbLvHnHmTrbvAH7g90nxO8cSWUqavftFis+6LvlvyEsns3e9OLrmcK/+YTSyzoyGiOO5Y51pwXXzfRtt586+dkUd673wku32ef3xLau684aPPhcVBx4uLOGI83CQaqKTQGHs+o7tvj1//yaZ/+mqN+F23PXz8zrsk+qLm91SS0moTWMvitWI8yv0TEoexvUvsBMDFSYVxp3fi1S/LaMXRj8FENRQbIB4iYHDjBDEWvJ6Fa/XBD+K6CLavy7g5WXimbvgx89doz+1iXBNJ2lKm/+iL9XM6y4/832xhqOOD/zPU/uFcH+R9jIOKjE+qGHDAcagPkmvchL1q5NmHs+s+Ep3TNHxkUMtp40YruCkVx3hx3LgNMvLseyn1xd/55YZPfCZ64viRb9w//Ox2iWzW/D40HBu2CkQckqvU5qR4aAqKWhwXB9WgEgdN6SOa6cggKRXIUgGQjh0qWtkTxcWJQoLUSln7QX3mm2gGKpMAqs+s13mnMe90dnzfL+YwDk5EHFdERvqOWvqNV9/fuyzfbE2NYg3jEDIDLuKBi7NCGq5zvaf25j5755ylZScx7A/tJ8wbAbVjcbyYWGOYPUZYUPLRT/+u4VOfcZ9+6tgnvzW87ai4T2vh4BhcRrBF3EatfY2GBSnsrxZFT6JDIBJXz2qQh1CmTSlNNjFVUC2kGYVYbaU2JBNGC0RcdWsopeTqf2D/owxvI+ISFBCDI3piuwxkdf5lrBoK7vt96BdNtD4ojogYjA1KpfqF7YmjD/X8dKt931+b2pQ9EkpMtJJFO2iS5FqTqCnn/u+TbN8UsrV3XZqghHiEJVUVx6leVaQmSB8IBnbJvJXRL/yu9txl5f/+Ws9jL1lnhZTv1kJ31Sdg1ZYktpTUxZpeJ/5RJAKhTBxNAxIpEkbKgxCOB4bjSmSmmphAcUTSSKJdTxaPpIJBUCdOyeH8W6lr1s2/pGEeQQkBrDiWoQM6sI9SyIIbWXhzbs8fxYlIJKWg1hovke/vyqQ31Y08637/u05Tf+wCR11MUjQpLKHzZlMz0Jf93O/kpXvL2XtLXRvC9CENfUGrKEy1iuDGwqHdwcBO86oPON/bHm9pyn/4DQOPbNAbPkXmaS33VyGRtoAqtZfiNTP4O/G7kMg46G3M1Vh1Err3TrP7cRE7lk6d3OeYmmqoIkgxrUNpajomDeOJIC5EqFksV39In/oh8RpwUR9F1KoGUjomh54k7lC2zLnCCsXMgKgaN44gjhcGBT87PJrZkSw+K9/5dY0ZaHudsYtt/RV60TUm+N2u9NfuMgMP5nseCoaPoCVssTI4paBY3IgYCQdeVMczn/iDfv5H5uk7Mu87P1tolTferof2kz6MEbD4aWIdtN1CMMLoBggQZ3wmbULuYHDqzCW36kMftzt/iIlWspCJm/0UDVIRQ3mYTD+tKyEyNtgF4uBEKQlX/rWWM+x7lDnnU0ojpupkQ1+lwJ47JNOPY6g5XTou8C/8x0K6zxAaJ17Bm7uuh+9nh/dGdcPIDx+uS+c/fKtZNUd33/bS4AOP2JHf546so5gW9bG+2hCksrDiJSllbPow597MN/facy7jn9/kf+1vwvP/Rc69TQfL7H8YKWHzBBlpvYbW1zH8mORfRLxq4j5BQaoXZVwxSb3lNt79VbK9FdynTsb5mmnJh1Wbk0NPcfhZHDOhUWYIhZblctlfyQt/QnyalxPmqvqsKhoiVoe28fCHUZ/mc3W0qANFe8bnS6WAMGe8lNoQDYwbFRtke7aa4tMH1+c2HpINP+7Pbr0v6PplqWen2LyGxQowBVXFipcwbozsMY0n5W/v5rO/44U/yt+sYvt2edvD1L9GR4vkujj+AowiHh3v1Eg9Xf9PSj1a8dNeY2X0cwJOQRGjoaW+Q/Mxll8jDSsJy+P52QQU22TANjbEcfSBD/HMf0tyTsXsVQTjEQhr36RNLgc3EI877csqmdJYNKBiy7gOh++Spz5JbT2JTkZ3QGN42t+XNYk/UkmsxPEQMWJKvVvt3ic3P2NLG5+0XfeG6SNQ1LCEDbQyI+dEQGz2uBaH5ZpP8t+HtWOB/tsN3PF9cmk965M2Xc9IHzWt0rOJ/GHi7cx7E6M76b4DVSUk0kZ8EUGOsMgEwHW1bqOhNp2OG2f/Ph0+gHHHtOtkj8xMg+Ar6mPLGhRYcNPYPiaiIsl2WXstvtVcH1q27UuonVPBu5wEm4VlnDg7v82u3zD/ajKHEEu5pEs+4rvzbJC3ODgxQUTV2Kw9sS8mRgrHNNcPAWEZDREwjhhPMyewvlzwJm7bpW/5V371Mb76UbGLcIsajjJ4iGKRSB0RjxMPQxnr0/UrhjchLlqSussltlALh9QWmDBYyYTSoMy9kFA5+hJBPzKlwaxMrwdVgx2QOVex7EPVMFREg1DnLdcF88ES8Sh241q56ENoGeNOaPkrlZDy2U8welRslkr8Ui6y6H1EW/3METfeiPEQFJVyrlwK1akMsoaIYFxsQGmEUkZXXceXNvMPd7LrHj69ir5GVn1Uu+918Ey8lfgccKhfIsfv0WNP4TjkDhIWUJ9oh3R8RjUks0EIpQr1n4TvUVXxGrTtYvLC4WchPzkRE6Zo0IQXrDgNuvCt1C6j9nTVSsir0rmMpFDrMncBmueF7+qr3ycrblE/q6pq3DFUvAL4g7rjf7ScxxicBOrjF6ThgjA/WB7cbSI1OFERKOW0XJJULSYGij8q5bREYnLp+/jyDr7wR0YO6N8t4b67ufoOmk/j8Y+ayDynZZVxEyQWUTtXev+kT30WfLCIS5Cm9RaWfE1HniDzNCYy06h9xaX6NJ1F4nTpL3L06SpeY9qAiztZNGOAeRVyAzpHZe71ZHZjXFBtbCIOIFe+WZ//uT7/PRZexnvvkPtW8eyXtTw69jGV3MqozZLrIZakEEEcVStODY3Ly+3XOQd/ZhpOx7hqA+P7hFnNd4nrs+giLno7V7yHtho23cvf38iJAa7+Bguv1yc/Ly/92My53ERimtltJc7ci+m/Tzf9B7aACEEODIu/THS+7P0Y/nFMDJ1lZEwcwdc512AcjmzU4Z04bmWoazxTlSnDLBPg9A62LG4rC69G6uTQLzFCCCsu5VVryfgsWirDRfY8wkt3i3V1zSfl7A9LTQdhiF+B5gZogDiUB4jW0nYZpREAW5DsPlpep6WA3ifwfXKjdF5AtCRLz+MdX9dbPi0rL2LzXXztr7j/R6z8gLzzHi1H+cPb5ej9bvtqCBArXjRMnUksyabbkCLiU+4n0iYdHyd/WA5/HlvARFB/eh51chzbbeLsr5Boku3fY+CRSuuZU4M4dRwPLi7J83jtvURq5KGrdHAdmnAueJN+/yd2MKAshI789pt6939Q7MepkxVvkoVXa7SZYobhYwzvIbOX7AFyPWph5RelkNHhXZT6TeYJbXgVDYsk5cuc+eHiq1h8AQvqJYX2puWR73PffzPSywUf4Pr/0EiL/P7ruu0HRrtN3VJFxPHC+hXx+mWF7iNaOEy5B5sjGCK5kprVMng/+d2YeHVwagbWkDEdtyWd+xYu/Q1BRh66nPxL49MepxrJPAkOcmJq41z4PVbcLC/+TJ9/L5E6I23xn/whd/ZyunwJjbqOHDzC07/l+fs5tEX99FjEHVeMEIAPipsi3kDbhTS00ryQ5hbpPM/Wd1DfQC1OHJPF7tuoT/7MPvlrCctc/h6u/7zWz5XndvPE73T/F8V1TM0iVWu8RBCbl1rxFgb7s/sfEB1SfwRblJpVKjEGHxJbwMRRv5oeqS/iImZ89mBcJ1RDzv8DS65n/+288C5xvGrkNQ2vOGni8CT017io0dYbuOLXUi7ow2slv1c1njzzhuQvftTnxjjuU0YcDxey0DtIfxcjfeSGKeawlkicRL3EG0g0k2y00XriLg5EwMPzcEt4xw7bF54uPfWHoGsDqSTX3cprP0x9I5v79L7bObKZ8g4pbpf4XDWOceM23hZberNTCLN77oURgjQo8YWUeiW7Q40nlUY1Ilg0xGvExPAHJgvIQX2tW8tFjxFx5JnrdGjcvvRUU89TSrHqRIQ6vfQOOi+Tbd/TbR+RaIOW3Mbz3lT3lc8PLZubTsNISC7EN6gLk5U6rHQvqr0l8Yh4RIV43qdryN/+UmHT+vLeHSGDnL9Cbr6Ri6/RMjzdxQMPyO71Sp/QbYqHbOiTaBc3ZmMtidNuJmfzBx6ENOEoKG4dhaMEQyIeGqBWxcGWBCF5lto8xaMVCOJE+1JbYsWvWPh26X2QLTdWxt+mM1gwZVZjim9S42KRuW/US39OsSCPXarZF/FqKEdiNSvb3vyOxI1XF0+bl4tJ3qdcJCxZG1qsGsFxiBiJqMR9iZSMGVaO50v7BnM7uoq7tpV69liOc9qZvHq1XH0Ry5rIoHdtlQfv00ObkWHiKoUDEg6aWLMt9JOYa6PN8dNu1nxQPPQ4VMY1CoJVP13xxDJ2hWrLEltMzcWafUEKe8YGhManBhxsWWvWctYjeI5sv4GRhzFRxuDk8rIaNIGFR9TxUI81t7PoOtl1hz7/NkxcHEeJ4Te5yTPrll1cs+Ls6KL5TnujV5dyYlHB4EuY1WAgLJwol47l80cH88eOF4eOEQyS8lnYwDnL5exl0tlutcDOoyYXk2Rd+JXvYO4hIqhK4YBIWd0acRwKA1p3lrf0jZrL+11PIXn8UWwRLREW0bC6Y2KwBUDmf5Doadr9bUpHq0CUiaQilVnJJX+k7QYG75Tdb60MLOo0No9J0z6zDAZVnZk0Xqqvvg8T4cnX0/sgThIx4iVVagkbsG3QijsHr0WcejVJ1MUKoY+UcAMSMeoStDVLZwftKYmHmh3QniOyd51u/Rktf2uu/rBzccz/0g8Z/QV+RkqHxTHWRMREnEjClkbclZ8IMyNhz0ahpNVRnxK2jFYm40MQwrzE2ln5Hc31sPsfxBYrSNPJA9outqQNb2fBT2GYvVdK/iWMp+OV2ZnmMWbASU/YzlSMS+6ARJqZu1biqzj6KzQY65dZcX2J5iQ6Il4P5hCyH9mN2S3OHokcNPUZGkUaHJJgB+l+is2/57Ef6aDhuI/vkZzP4F0sXpM8f37p2V4G7pHyQXGjtmILXsrEmjS20NqE7XsOyoR5bGlMOoFUUhO12IJ03iSrf8CRX7HvP6Va3LCTV91AgNvG/J8QaePEv8vI3ZioajhlRmwKYNo9JV1YJbFydddtzH2tzl0pZ/6rbv97TBJbrrJQhHkkDc7Y4KRU4J5oQDpQK9gAW8Fu5nEMuLS+nvY3cvgZZBmxVp6+K7zsXPIbJOzFS9qgKI6HOJJodedfW+zezuAWKBLk0TJaxvrV2TTHo1RAjFz+Hak9T5+6VdM7pVL9mSwdrYw8qtWW/8BbzuiT0v9txJ28uzGJsmnM6E4O9c44wFkZh5IgLbnDLLmF5tUM72RkO8agAeqjZWwRWyDMEWYkzBCkCUckHNVwlKCfaC2JRsIeTFChmpDjL8m8TurXkjlO7WnMuza5JOFvf9FmXsQfwTgiLsm5ZsHrwoGjmjuCLRAWsGVsCS2hPigmSjmQ+Wvlbbcz0sef30yxV0wUcZVgmld1VMvUvpemf8QO0/1u/CMijkwwrOncD9WgQCbPasxEU6WYiGb2IC5Lr5CwRo78GnFEragVDQUrGogGYgMqDwBbFFRarpFIM5kX0fJYYiyolaObWLychrWSHSFVt+g1NemNB8Luh0RCwKTmmo5rw/7Dmt6HLREW0BK2VFUfEVTE99yb/0Fu/Jze/1Xd+EWwlWERbLYK0DxZ1nDQsiRfQ/v/IjH6PyWj94hEwE5n39NpUxlTfZDMOK2K4sYZfElSy3XnNyR3UKol3ooy+pPLuKrqU3uWzH+nFo4y8EQ1L6t+Z4uIWCvdm1i2UlLn4mvtqlhu876g+yk0J8m5TttldvAouS60TFhEy9gS1kd9xMEfJdJmbvmhc85pwTdu5fD9GE9Sq3BqtHhYbEkm2YQooThN2vRviCH9cxm6reK/mRIbz8L6MJV5YZbRTRH1iTQyuB3jkO+SiVij2ALCUTTEOGigxpPOt9J0EV23k9mO8U4KX8ZSZYP4Zbo3mZWrNbawfokt7jlW3v+wSdSZhovC4SMUT1SNt+J31K/w5+APStMV5tU/0e514c/+D/leidRJ45VqC4xurtbUq04npDpSDBqS+70Mf0f87YoK/kyaMLE/MVlAMnMEOZHSDxGDnyYxl3gHToRij1S3BouT1JqV4vdjS8Q7mXsj5X459L8SZDARUT1JnSATJx2MlMty9Dk9c3Xdqpby3sFi9y6TmhsOH8YfRIMx6fhoBQldIszI4r9n4Qd186fZ9/9wPbAS7aB4mNzu6pRs1VRCcWoqSVl1t9EyydMxKSn36OT0c/p4z8zzYjOydkyavhcjxQFSi4k2EWQJRqWSRwQj2CL1F4oG6tYyskXS2xAP48ikrpFMYgNQxUAxy6FdZvmZYU+hvP8lsnsI0qiPrTjjinQgzGESsuQ23Brd9n7ye8VNSqVlVu7TYBTxhAo8wYJKbJkihKNSoSLSQGpOl2gzmc0iLpNpHmWqiU2MlmcJFKcRio4h+sRRSbHwZgqD9D4JBbFlUKyvbormy8gfJrMLcUSciUg3lfEe8zhFgFNpZItG1GnGcykOIH4Vg6bjvxYtEOmUxjeRe0GHH8BEhEr2dJJNsrJUqj4mIfEV+Ce0fFzEqc5r155GslNPPHZyUn0cDXUq31Lhy6vq2yS+wdl4URFXxFFJyvL3k+/Xg7/FpZIlVssFLWuINtD/rJSGqowJlc6fyEkql4qYxiVVbRxJNbqrYJiqrHYWQrw5RBaSfV6CAZwEY+Pck6yk4qEinUTmUdxNMIy4KiLWp+EsTc7l2MMT68sypbwzOz3sbLnYVFbWca1T4wpGicmqvyNU3fYtpIjrYsuoxZZIdtJ6npT66HmBCtGJcbTagJQqPmSivCYSWCiTmHCwYhJKlHI3UE3Zq8wmFaEYUNVQTILk2ajV3BZRH+NV4lhpu0i9OrofnuJJXo5N6uRRk7g7mGR7UwtrY9ZSbStxfJ20nSvnfJiBQ+RP4CWocEqWBknvI9nOvDUSSZAf0LCIGow3SRxMHBTVKh+p6MnHlQe2TDiCuBUAZWVSv6pETgxbBpHEChJnaOkwhZ2IiPGwvqLScTUiHHts3H/PzCQ5Va0mmd7M2/xMTDoyVeJOhBOPS2jl2v+itoNDBwlDPA83iuMyeoT0EWo76biIRBN+ntIoFdITxxvrf0z3ADrpQaWIZZwqys2Wq42H+FxqV5FcgddC4jS0xOhzBMPVNbA+sSZZcJ1mjtC3qdp6nlZpnpyBVl31mKXJhLxslmz+5ShsUTGYKEGempXyzm+xuEPv+gnPP04wAkNQxAnRAm6SltOlcZHakPQxRrrJD1VWHuNWGZWmKu6YD7IVxjIfwERJNEtNJ9EmCqNkDlA8pm4DtljpgFdrPSBt51O7mGPrNN+L8UTtKXgUX5aJeYoPkolMxzNSneqkEElwomINNqnXfpQPfcw4oe7bT2+P7t7FY/cwehApISWMQ6qNhkVS04LjUsxotp/cMKUsfp7Qx9qT6ItKTOB4eDGitZJoJNEALqUs2R4yXeqnBVRcNEAEiYj1FUuyTeZcQmlYu9eh4XijQk9FMTkDv4lM72pM052T7MN6qggAxKhxxcQpQ9NqPvIJveVqEjCI7DrOnx9g3f16dCukwUcsjkesnlQrNU1E6nAjWMWGIiGqWIsRrCgqxiABpTz5Ec32ku/Hz4KtKn+lDCgGGyiKl5K5FxNt0BMbZLRLxZEqLEQm9lQn7lxjrFmi6ClZhMSRU5JGM41kXCdtjWiFMddLEHiEKU57Fbe8U191KQ0eeThakBc28dxDuvsphg5hc1WTqZiYE8GJ4EZwvEq+Jmo1LBFUfotoaex4QPAapPkCnIR2/0HEQ30itbSeQ3IuQ7vp36owPlwpp6J+lhnJt2ei1p6FDXg29uiZzK2CPzMYDzcqRRcaWXox196k519KSyMWMsixNAe2c/A5urbSv1dzffhZrD+huK8TSjlaRQg6MSL1kurU+pXSfDGtqzV1mrjCc5/W3d+Utgtp6GRwD/3bsWO7+yz10xmpn2e7xlMxcc7mg15WTGNMdhE1EUoCSWk6nfMu55xX6/yziScBCpBFhkYY6NbBLkkf19wAhSEp59SW0VDE4ETVrZF4M6l5pDpIdGpiDp5bPX0AAXLsQd3wLnFiFHqqWb4YHcOHnZLmV8b6yzobE+cr6Wq8DKvnNMZxPVm4E0GMGg/jSWg0AGqkbRlLLmTRam05i2QHjlvtC1Xai2WoFJd1AqJiHN6lEELRkusnfYiBjXLiQR18FINYvxIiVWZNZ7zlwKSi/Qzsc6ciRNQpPmg2BvuZGNmnOKNpkZOIYsQ4alxw8EPUQpRYszQupGGZ1i6hZgGJObgNYmqUKOJVImPUl7Cg/qiUBskfZ/QwmYOaOUT2MKUTomlAnajYymSKyinvwDAe+OnknUdOwb86I2X7K+VEfkUcypMkhRhljKUuVCrMtQgSwYmLm1AnIU5MTQQRNBRbJMwT5DTIEhaq0BYEY6oklWon9mpmYWGdeG8EPQUHzinVZ/I2Pxu/8isT1pS7UVTRasIkLtsqHV41X5WTgHcdzzAmindskLaSuFbujTChuH7qe6G8Aobwl78Jx6xOeja6ZH2ZO0TIZLdVzc0npDxVAOCYFEVlEu5rLE6v2I5OvimITv86M9m+zPLqKRihdYIxTrkDx+RU42XvvTKLhcvkc0zMb3VCjD7jGWZ0bq+QG3vmrXkm6xsvy+vkYtAMB+uEOyf8BZTt+jK37zjFHSwqiznuI+WUVPyvxGJ09nsBzbycExdylrvjzMCxqeMjZLwCZzwx8ZVTZmkTU09OBvU6oWcgM7TqXhGFujKBWHf8GZ1VOjLhm4ybsM6enjNlqPcVEU2+Eoc9GzRiyr0bXu7tcgoB/UXK9go33Jd9y9TOqs5U7Zi8LuM5HqcoJM0euZ8qg5nlJZ2prDVreXA2RdJTftXZAuP/D6jTNUHEI5+EAAAAAElFTkSuQmCC" width="44" height="44" alt="" style="border-radius:10px; flex:0 0 auto;"><span>About CubeNova <span style="color:var(--muted); font-weight:400;">v68</span><span style="display:block; color:var(--muted); font-weight:400; font-size:12px;">CubeNova by davidthespeedster · davidthespeedster.github.io/CubeNova</span></span></div>
           <div style="font-size:12px; color:var(--muted); line-height:1.5;">A free speedcubing timer. <b>Privacy:</b> your solves, settings and background image are stored only in this browser on this device. There are no accounts, no tracking and nothing is uploaded unless you choose the optional AI coach (it sends a summary of your numbers to Anthropic with your own key, only when you press its button); the only other outside request is for the page fonts, which are saved for offline use. Use the backup export in Settings to move your data between devices. Scrambles are generated on your device and follow WCA-style formats.</div>
           <button type="button" id="tourBtn" class="pbtn" style="margin-top:8px;">❓ Show the quick tour</button>
           <div style="font-size:12px; margin-top:8px;"><a href="about.html" target="_blank" rel="noopener">About CubeNova</a> · <a href="privacy.html" target="_blank" rel="noopener">Privacy policy</a></div>
@@ -6638,6 +6721,7 @@ const PYRA_LL={"BC+ BD+ CD+":[],"CD- BC- BD+":["R' L R L'"],"BD- CD- BC+":["B L'
       goal_seconds: goals[ev] ? aiSec(goals[ev]) : null,
       last_times_seconds: S.slice(-30).map(x=>x.penalty==='DNF' ? 'DNF' : aiSec(effectiveTime(x))),
       observations: tips.filter(t=>!/^Today/.test(t.title)).map(t=>({title:t.title, evidence:t.evidence})) };
+    if(ev==='333'){ try{ const pt=await xcSummary(); if(pt) o.planning_trainer=pt; }catch(e){} }
     if(ev==='333'){ try{ const a=ptAnalyse(), m={}; let any=false; PT_STAGES.forEach(k=>{ if(a.byStage[k].n>=5){ m[k]=aiSec(a.byStage[k].mean); any=true; } }); if(any) o.trainer_stage_means_seconds=m; }catch(e){} }
     return o;
   }
@@ -6849,7 +6933,7 @@ function XSOLVER(){
         if(tries%6===0) await new Promise(r=>setTimeout(r,0));
       }
       if(!found){ setS('Could not find a scramble that fits. Try "any length".'); return; }
-      XC.last={moves:found.moves, mode, level, colour, rot:rr.rot, front:rr.front, res:found.res};
+      XC.last={moves:found.moves, mode, level, colour, rot:rr.rot, front:rr.front, res:found.res}; renderXcPick();
       const reg=(await store.get('xctrain'))||[]; reg.push({s:found.moves.join(' '), m:mode, l:found.res.len, ts:Date.now()}); await store.set('xctrain', reg.slice(-300));
       if($('xcSession').checked){ let ses=sessions.find(x=>x.name==='Planning trainer'); if(!ses){ ses={id:'s'+Date.now(), name:'Planning trainer'}; sessions.push(ses); await saveSessions(); } if(currentSessionId!==ses.id) await setCurrentSession(ses.id); }
       $('xcSolution').textContent='';
@@ -6860,13 +6944,14 @@ function XSOLVER(){
         if(typeof WCA3!=='undefined' && WCA3) WCA3.refresh=false;
         pushHistoryAndShow('333', found.moves);
       },250);
-      setS('Scramble sent to the timer. Come back here and press "show the best solution" after your attempt.');
+      setS('Scramble sent to the timer. Come back here after your attempt'+(mode==='xcross'?', choose the pair you would build, then':' and')+' press "show the best solution".');
     }catch(e){ setS((e&&e.message)||'Something went wrong.'); }
     finally{ XC.busy=false; btnNew.disabled=false; }
   }
   function xcShow(){
     const host=$('xcSolution'); host.textContent=''; const L=XC.last;
     if(!L){ host.appendChild(el('div','coach-adv','Press "new scramble on the timer" first.')); return; }
+    if(L.mode==='xcross' && !L.pick && !L.revealed){ L.revealed=true; renderXcPick(); }
     const r=L.res, front=XC_NAME[L.front]||'';
     host.appendChild(el('div','coach-adv', (L.rot ? 'After the scramble, turn the whole cube with '+L.rot+' ' : 'Keep the cube as it is ')+'so '+L.colour+' is on the bottom'+(front?' and '+front+' is in front':'')+'. All moves below are in that hold.'));
     const tip=el('div','coach-tip');
@@ -6876,6 +6961,44 @@ function XSOLVER(){
     host.appendChild(tip);
     host.appendChild(el('div','detail-sub','These are best possible solutions in the half-turn metric. Your own plan can differ and still be good.'));
   }
+  // ---- pair-choice drill (XCross only): which pair would you build with the cross? ----
+  const XC_SLOT_ORDER=['FR','BR','BL','FL'];
+  function xcSlotLens(res){ const m={}; if(res && res.best){ m[res.best.slot]=res.len; (res.others||[]).forEach(o=>{ m[o.slot]=o.len; }); } return m; }   // slots the solver gave up on (more than 11 moves) are simply missing
+  function xcPickDo(slot){
+    const L=XC.last; if(!L || L.mode!=='xcross' || L.pick || L.revealed) return;
+    const lens=xcSlotLens(L.res), bestLen=L.res.len, bestSlot=L.res.best.slot, exact=typeof lens[slot]==='number', len=exact ? lens[slot] : 12;
+    L.pick={slot, len, exact, best:bestSlot, bestLen, lens, diff:len-bestLen};
+    renderXcPick();
+    store.get('xcpick').then(reg=>{ reg=reg||[]; reg.push({s:L.moves.join(' '), c:slot, b:bestSlot, d:L.pick.diff, ts:Date.now()}); return store.set('xcpick', reg.slice(-300)); }).then(renderXcStats);
+  }
+  function renderXcPick(){
+    const host=$('xcPick'); if(!host) return; host.textContent='';
+    const L=XC.last, on=!!(L && L.mode==='xcross'); host.hidden=!on; if(!on) return;
+    const lenTxt=(v,exact)=> exact===false ? '12+ moves' : v+' move'+(v===1?'':'s');
+    if(L.pick){
+      const p=L.pick, tip=el('div','coach-tip');
+      tip.appendChild(el('b','', p.diff===0 ? 'Good pick: the '+XC_SLOT[p.slot]+' pair is as short as it gets ('+lenTxt(p.len,p.exact)+').'
+        : 'You chose the '+XC_SLOT[p.slot]+' pair ('+lenTxt(p.len,p.exact)+'). The best is the '+XC_SLOT[p.best]+' pair ('+lenTxt(p.bestLen)+'), '+(p.exact?p.diff:'at least '+p.diff)+' move'+(p.diff===1?'':'s')+' shorter.'));
+      const row=XC_SLOT_ORDER.map(k=>({k, v:typeof p.lens[k]==='number'?p.lens[k]:null})).sort((a,b)=>(a.v===null?99:a.v)-(b.v===null?99:b.v));
+      tip.appendChild(el('div','coach-ev','All four pairs with the cross: '+row.map(r=>XC_SLOT[r.k]+' '+(r.v===null?'12+':r.v)).join(' · ')));
+      host.appendChild(tip); return;
+    }
+    if(L.revealed){ host.appendChild(el('div','coach-adv','You looked at the solution first, so this scramble is not counted in the pair-choice drill.')); return; }
+    host.appendChild(el('div','coach-adv','Before you look at the answer: which pair would you build together with the cross?'));
+    const row=el('div','row'); row.style.cssText='gap:8px; flex-wrap:wrap; margin-top:6px;';
+    XC_SLOT_ORDER.forEach(k=>{ const b=btn(XC_SLOT[k], ()=>xcPickDo(k)); b.dataset.slot=k; row.appendChild(b); });
+    host.appendChild(row);
+  }
+  // numbers from the planning trainer for the current session (used by the stats line and the optional AI summary)
+  async function xcSummary(){
+    const reg=(await store.get('xctrain'))||[], map=new Map(reg.map(r=>[r.s,r])), S=(solvesByEvent['333']||[]), per={};
+    S.forEach(sv=>{ const r=map.get((sv.scramble||[]).join(' ')); if(!r || sv.penalty==='DNF') return; const a=per[r.m]||(per[r.m]={t:[],l:[]}); a.t.push(effectiveTime(sv)); a.l.push(r.l); });
+    const out={}; let any=false;
+    Object.keys(per).forEach(k=>{ const a=per[k]; out[k]={attempts:a.t.length, mean_seconds:aiSec(mean(a.t)), mean_optimal_moves:Math.round(10*mean(a.l))/10}; any=true; });
+    const picks=(await store.get('xcpick'))||[];
+    if(picks.length){ out.pair_choice={picks:picks.length, best_pair_pct:Math.round(100*picks.filter(x=>x.d===0).length/picks.length), mean_extra_moves:Math.round(10*picks.reduce((a,x)=>a+Math.max(0,x.d),0)/picks.length)/10}; any=true; }
+    return any ? out : null;
+  }
   async function renderXcStats(){
     const host=$('xcStats'); if(!host) return; host.textContent='';
     const reg=(await store.get('xctrain'))||[], map=new Map(reg.map(r=>[r.s,r])), S=(solvesByEvent['333']||[]);
@@ -6883,11 +7006,495 @@ function XSOLVER(){
     S.forEach(sv=>{ const r=map.get((sv.scramble||[]).join(' ')); if(r && sv.penalty!=='DNF') agg[r.m].push(effectiveTime(sv)); });
     const parts=Object.keys(agg).filter(k=>agg[k].length).map(k=>{ const a=agg[k]; return XC_LABEL[k]+': '+a.length+' attempt'+(a.length===1?'':'s')+' · mean '+ms2s(mean(a))+' · best '+ms2s(Math.min(...a)); });
     host.appendChild(el('div','detail-sub', parts.length ? 'This session: '+parts.join('   |   ') : 'No planning attempts in the current session yet.'));
+    const picks=(await store.get('xcpick'))||[];
+    if(picks.length){ const good=picks.filter(x=>x.d===0).length, extra=picks.reduce((a,x)=>a+Math.max(0,x.d),0)/picks.length;
+      host.appendChild(el('div','detail-sub','Pair choice (last '+picks.length+' pick'+(picks.length===1?'':'s')+'): the best pair '+Math.round(100*good/picks.length)+'% of the time · on average '+(Math.round(extra*10)/10)+' moves longer than the best')); }
   }
+  // ---------- virtual cube (2x2 to 7x7): a 3D cube drawn on a canvas, turned by drag, buttons or keys ----------
+  // The model works on the same 6*n*n sticker array and the same move notation as the app's cube engines.
+  function VCMODEL(n){
+    const FACE_L='URFDLB', NORMAL=[[0,1,0],[1,0,0],[0,0,1],[0,-1,0],[-1,0,0],[0,0,-1]];
+    const lat=i=>2*i-(n-1), total=6*n*n, pos=[], nrm=[], cen=[], key={};
+    function gp(f,r,c){ const a=lat(c), b=lat(r); switch(f){ case 0: return [a,n,b]; case 3: return [a,-n,-b]; case 2: return [a,-b,n]; case 5: return [-a,-b,-n]; case 4: return [-n,-b,a]; default: return [n,-b,-a]; } }
+    for(let f=0;f<6;f++) for(let r=0;r<n;r++) for(let c=0;c<n;c++){ const i=f*n*n+r*n+c, p=gp(f,r,c), N=NORMAL[f], cc=[p[0]-N[0],p[1]-N[1],p[2]-N[2]]; pos[i]=p; nrm[i]=N; cen[i]=cc; key[cc.join(',')+'|'+N.join(',')]=i; }
+    const layerOf=(i,a)=>(cen[i][a]+n-1)/2;
+    const rq=(v,a)=>a===0?[v[0],-v[2],v[1]]:a===1?[v[2],v[1],-v[0]]:[-v[1],v[0],v[2]];   // one right-handed quarter turn about +x, +y or +z
+    function solved(){ const o=new Array(total); for(let f=0;f<6;f++) for(let k=0;k<n*n;k++) o[f*n*n+k]=FACE_L[f]; return o; }
+    function turn(cube,axis,layers,q){
+      q=((q%4)+4)%4; if(!q) return cube; const inL={}; layers.forEach(l=>{ inL[l]=1; }); const out=cube.slice();
+      for(let i=0;i<total;i++){ if(!inL[layerOf(i,axis)]) continue; let c=cen[i], N=nrm[i]; for(let k=0;k<q;k++){ c=rq(c,axis); N=rq(N,axis); } out[key[c.join(',')+'|'+N.join(',')]]=cube[i]; }
+      return out;
+    }
+    const RS={R:-1,L:1,U:-1,D:1,F:-1,B:1,M:1,E:1,S:-1,x:-1,y:-1,z:-1}, AX={R:0,L:0,U:1,D:1,F:2,B:2,M:0,E:1,S:2,x:0,y:1,z:2}, SIDE={R:1,U:1,F:1,L:-1,D:-1,B:-1};
+    function parse(token){
+      let i=0; while(i<token.length && token[i]>='0' && token[i]<='9') i++;
+      const digits=token.slice(0,i), raw=token[i]; if(!raw) return null; i++;
+      let wide=false; if(token[i]==='w'){ wide=true; i++; }
+      const mod=token.slice(i); let cnt=1; if(mod[0]==='2') cnt=2; else if(mod[0]==="'") cnt=3;
+      if('RLUDFB'.includes(raw.toUpperCase())){ const lower=raw===raw.toLowerCase() && raw!==raw.toUpperCase(); let depth=1; if(digits) depth=parseInt(digits,10); else if(wide||lower) depth=2; return {letter:raw.toUpperCase(),depth,cnt,wide:depth>1}; }
+      return {letter:raw,depth:1,cnt,wide:false};
+    }
+    function tokenMove(token){
+      const t=parse(token); if(!t || !(t.letter in RS)) return null; const L=t.letter, axis=AX[L]; let layers=[];
+      if(SIDE[L]){ const d=Math.max(1,Math.min(t.depth,n)); for(let k=0;k<d;k++) layers.push(SIDE[L]>0?n-1-k:k); }
+      else if(L==='x'||L==='y'||L==='z'){ for(let k=0;k<n;k++) layers.push(k); }
+      else if(n%2===1) layers=[(n-1)/2];
+      return {axis, layers, q:(((RS[L]*t.cnt)%4)+4)%4, whole:(L==='x'||L==='y'||L==='z'), name:token};
+    }
+    function applyAlg(cube,str){ let c=cube; str.replace(/[()]/g,'').split(/\s+/).filter(Boolean).forEach(tk=>{ const m=tokenMove(tk); if(m) c=turn(c,m.axis,m.layers,m.q); }); return c; }
+    function isSolved(cube){ for(let f=0;f<6;f++){ const a=cube[f*n*n]; for(let k=1;k<n*n;k++) if(cube[f*n*n+k]!==a) return false; } return true; }
+    const PL=['R','U','F'], MI=['L','D','B'];
+    function nameOf(axis,layer,q){   // a single layer turned by q right-handed quarter turns
+      let letter, rs, tag=''; const up=n-1-layer, dn=layer;
+      if(up===0){ letter=PL[axis]; rs=-1; } else if(dn===0){ letter=MI[axis]; rs=1; }
+      else if(n%2===1 && layer===(n-1)/2){ letter=['M','E','S'][axis]; rs=[1,1,-1][axis]; }
+      else if(up<=dn){ letter=PL[axis]; rs=-1; tag='['+(up+1)+']'; } else { letter=MI[axis]; rs=1; tag='['+(dn+1)+']'; }
+      const cw=(((q*rs)%4)+4)%4; return letter+tag+(cw===2?'2':cw===3?"'":'');
+    }
+    // 3x3 only: which sticker groups belong to the cross, the first two layers and the last layer (used for the stage split)
+    const cubies={}; for(let i=0;i<total;i++){ const k=cen[i].join(','); (cubies[k]=cubies[k]||[]).push(i); }
+    const fIdx=N=>NORMAL.findIndex(v=>v[0]===N[0]&&v[1]===N[1]&&v[2]===N[2]), nzc=c=>c.filter(v=>v!==0).length, stageLists={};
+    function lists(fi){
+      if(stageLists[fi]) return stageLists[fi]; const N=NORMAL[fi], cross=[], f2l=[];
+      Object.keys(cubies).forEach(k=>{ const c=k.split(',').map(Number), d=c[0]*N[0]+c[1]*N[1]+c[2]*N[2], z=nzc(c);
+        if(z===2 && d===2) cross.push(k); else if(z===2 && d===0) f2l.push(k); else if(z===3 && d===2) f2l.push(k); });
+      return stageLists[fi]={cross,f2l};
+    }
+    function stage3(cube,fi){
+      if(n!==3) return null; const L=lists(fi), ok=list=>list.every(k=>cubies[k].every(i=>cube[i]===cube[fIdx(nrm[i])*9+4]));
+      const cross=ok(L.cross), f2l=cross&&ok(L.f2l), of=(fi+3)%6; let ll=true; for(let k=0;k<9;k++) if(cube[of*9+k]!==cube[of*9+4]) ll=false;
+      return {cross,f2l,oll:f2l&&ll};
+    }
+    return {n,total,pos,nrm,cen,layerOf,solved,turn,tokenMove,applyAlg,isSolved,nameOf,stage3};
+  }
+  // CFOP stage split for a finished 3x3 solve: cross, F2L, OLL, PLL (found from the cube itself, so whole-cube turns are fine)
+  function VCSTAGES(M,scr,moves){
+    if(M.n!==3 || !moves.length) return null;
+    let cube=M.applyAlg(M.solved(),scr.join(' ')); const st=[cube];
+    moves.forEach(m=>{ cube=M.turn(cube,m.axis,m.layers,m.q); st.push(cube); });
+    const last=moves.length; if(!M.isSolved(st[last])) return null;
+    const faceOf=(c,col)=>{ for(let f=0;f<6;f++) if(c[f*9+4]===col) return f; return -1; };
+    let ci=-1, col=null;
+    for(let i=0;i<=last && ci<0;i++) for(let f=0;f<6;f++) if(M.stage3(st[i],f).cross){ ci=i; col=st[i][f*9+4]; break; }
+    if(ci<0) return null;
+    const at=(i)=>i===0?0:moves[i-1].at; if(moves.some(m=>typeof m.at!=='number')) return null;
+    const first=(from,key)=>{ for(let i=from;i<=last;i++){ const f=faceOf(st[i],col); if(f>=0 && M.stage3(st[i],f)[key]) return i; } return last; };
+    const fi=first(ci,'f2l'), oi=first(fi,'oll'), idx=[0,ci,fi,oi,last], names=['Cross','F2L','OLL','PLL'], rows=[];
+    for(let s=0;s<4;s++){ const a=idx[s], b=idx[s+1]; let mv=0; for(let k=a;k<b;k++) if(!moves[k].whole) mv++; rows.push({name:names[s],a,b,ms:at(b)-at(a),moves:mv}); }
+    return {colour:col,rows,total:at(last)};
+  }
+  const VC_EV={2:'222',3:'333',4:'444',5:'555',6:'666',7:'777'}, VC_N={'222':2,'333':3,'444':4,'555':5,'666':6,'777':7};
+  const VC_COL={U:'#f4f5f7',R:'#d93a30',F:'#1f9d57',D:'#f4cf1c',L:'#f58b1f',B:'#2d66e0'};
+  const VC={ n:3, model:null, geo:null, cube:null, hist:[], queue:[], anim:null, yaw:-0.62, pitch:0.5, polys:[], drag:null, raf:0, w:0, h:0, dpr:1,
+    t:{st:'idle',t0:0,ms:0}, moves:0, scr:null, fromTimer:false, added:false, replayId:0, saved:false };
+  const VC_CNAME={U:'white',R:'red',F:'green',D:'yellow',L:'orange',B:'blue'};
+  function vcRecs(){ return store.get('vcsolves').then(r=>Array.isArray(r)?r:[]); }
+  function vcRecon(rec){
+    const M=VCMODEL(rec.n), mv=rec.mv.map(m=>({axis:m.a,layers:m.l,q:m.q,whole:!!m.w,name:m.k,at:m.at})), sc=rec.scr, sec=(rec.time/1000).toFixed(2);
+    const head='Scramble: '+sc.join(' ')+'\nTime: '+sec+' s \u00b7 '+rec.mv.filter(m=>!m.w).length+' moves\n\n';
+    const an=rec.n===3?VCSTAGES(M,sc,mv):null;
+    if(!an) return head+'Solution: '+mv.map(m=>m.name).join(' ');
+    return head+an.rows.map(r=>{ const t=mv.slice(r.a,r.b).map(m=>m.name).join(' '); return (t||'(already done)')+' // '+r.name.toLowerCase()+' ('+(r.ms/1000).toFixed(2)+' s, '+r.moves+' moves)'; }).join('\n');
+  }
+  function vcStagesRender(rec){
+    const host=$('vcStages'); host.textContent=''; if(!rec) return;
+    const M=VCMODEL(rec.n), mv=rec.mv.map(m=>({axis:m.a,layers:m.l,q:m.q,whole:!!m.w,name:m.k,at:m.at})), an=rec.n===3?VCSTAGES(M,rec.scr,mv):null; if(!an) return;
+    const tip=el('div','coach-tip'); tip.appendChild(el('b','','Your solve by stage \u00b7 cross on '+VC_CNAME[an.colour]));
+    const tbl=document.createElement('table'); tbl.style.cssText='width:100%; max-width:480px; border-collapse:collapse; font:500 13px "JetBrains Mono",monospace; margin-top:6px;';
+    const row=(cells,hd)=>{ const tr=document.createElement('tr'); cells.forEach((c,i)=>{ const td=document.createElement(hd?'th':'td'); td.textContent=c; td.style.cssText='text-align:'+(i?'right':'left')+'; padding:3px 6px; border-bottom:1px solid var(--line); font-weight:'+(hd?'600':'500')+';'; tr.appendChild(td); }); tbl.appendChild(tr); };
+    row(['stage','time','moves','share'],true);
+    an.rows.forEach(r=>row([r.name,(r.ms/1000).toFixed(2)+' s',String(r.moves),an.total>0?Math.round(100*r.ms/an.total)+'%':'-']));
+    tip.appendChild(tbl); tip.appendChild(el('div','coach-ev','Stages are found from the cube itself, so they fit CFOP solves. A different method still adds up to the same total, but the split may not match your steps.'));
+    host.appendChild(tip);
+  }
+  function vcRecOfCurrent(){
+    if(VC.t.st!=='done' || !VC.scr) return null;
+    return {id:Date.now(), ts:Date.now(), n:VC.n, time:VC.t.ms, scr:VC.scr.slice(), mv:VC.hist.map(m=>({k:m.name,a:m.axis,l:m.layers.slice(),q:m.q,w:m.whole?1:0,at:m.at}))};
+  }
+  async function vcSavedRender(){
+    const host=$('vcSaved'); host.textContent=''; const recs=await vcRecs(); if(!recs.length) return;
+    host.appendChild(el('div','detail-sub','Saved solves (the latest 30)'));
+    recs.slice().reverse().forEach(rec=>{
+      const r=el('div','row'); r.style.cssText='gap:6px; flex-wrap:wrap; align-items:center; margin:4px 0; font-size:13px;';
+      r.appendChild(el('span','',rec.n+'\u00d7'+rec.n+' \u00b7 '+(rec.time/1000).toFixed(2)+' s \u00b7 '+rec.mv.filter(m=>!m.w).length+' moves \u00b7 '+new Date(rec.ts).toLocaleDateString()));
+      const rp=btn('replay',()=>vcReplay(rec)), cp=btn('copy',()=>svCopy(vcRecon(rec),cp)), dl=btn('delete',async()=>{ const all=await vcRecs(); await store.set('vcsolves',all.filter(x=>x.id!==rec.id)); vcSavedRender(); });
+      [rp,cp,dl].forEach(b=>{ b.classList.add('dbtn'); r.appendChild(b); }); host.appendChild(r);
+    });
+  }
+  function vcReplay(rec){
+    if(VC.n!==rec.n){ $('vcPuzzle').value=String(rec.n); vcInit(rec.n); }
+    vcSetScramble(rec.scr,false); const id=++VC.replayId; VC.t={st:'idle',t0:0,ms:0}; VC.scr=null; $('vcTime').textContent='0.00'; $('vcMeta').textContent='Replaying your solve\u2026';
+    rec.mv.forEach(m=>{ setTimeout(()=>{ if(VC.replayId!==id) return; vcMove({axis:m.a,layers:m.l,q:m.q,whole:!!m.w,name:m.k},false); },Math.max(0,m.at)+400); });
+    const end=(rec.mv.length?rec.mv[rec.mv.length-1].at:0)+1200+(parseInt($('vcSpeed').value,10)||0);
+    setTimeout(()=>{ if(VC.replayId!==id) return; $('vcMeta').textContent='Replay finished \u00b7 '+(rec.time/1000).toFixed(2)+' s'; $('vcTime').textContent=(rec.time/1000).toFixed(2); vcStagesRender(rec); },end);
+  }
+  function vcInit(n){
+    VC.n=n; const M=VC.model=VCMODEL(n), geo=[];
+    for(let i=0;i<M.total;i++){ const N=M.nrm[i], k=N[0]?0:N[1]?1:2, a=[0,1,2].filter(x=>x!==k), U=[0,0,0], V=[0,0,0]; U[a[0]]=1; V[a[1]]=1; geo.push({P:M.pos[i].map(v=>v/n), N, U, V, k}); }
+    VC.geo=geo; VC.cube=M.solved(); VC.hist=[]; VC.queue=[]; VC.anim=null; VC.moves=0; VC.scr=null; VC.fromTimer=false; VC.added=false; VC.saved=false; VC.replayId++; VC.t={st:'idle',t0:0,ms:0}; if($('vcStages')) $('vcStages').textContent='';
+    vcPad(); vcInfo(); vcInvalidate();
+  }
+  function vcView(v){ const cy=Math.cos(VC.yaw), sy=Math.sin(VC.yaw), cp=Math.cos(VC.pitch), sp=Math.sin(VC.pitch); const x=v[0]*cy+v[2]*sy, z=-v[0]*sy+v[2]*cy, y=v[1]; return [x, y*cp-z*sp, y*sp+z*cp]; }
+  const VC_D=8;
+  function vcProj(p){ const s=VC.S/(VC_D-p[2]); return [VC.w/2+p[0]*s, VC.h/2-p[1]*s, p[2]]; }
+  function vcRotA(v,a,cs,sn){ return a===0?[v[0],v[1]*cs-v[2]*sn,v[1]*sn+v[2]*cs]:a===1?[v[0]*cs+v[2]*sn,v[1],-v[0]*sn+v[2]*cs]:[v[0]*cs-v[1]*sn,v[0]*sn+v[1]*cs,v[2]]; }
+  function vcDraw(){
+    const cv=$('vcCanvas'); if(!cv || !VC.w) return; const ctx=cv.getContext('2d'); ctx.setTransform(VC.dpr,0,0,VC.dpr,0,0); ctx.clearRect(0,0,VC.w,VC.h);
+    VC.S=Math.min(VC.w,VC.h)*VC_D*0.29; const M=VC.model, n=VC.n, polys=[]; let ang=0, A=null, cs=1, sn=0;
+    if(VC.anim){ A=VC.anim; const e=Math.min(1,(performance.now()-A.t0)/A.dur), ease=e<.5?2*e*e:1-Math.pow(-2*e+2,2)/2; ang=A.target*ease; cs=Math.cos(ang); sn=Math.sin(ang); }
+    const inA=new Set(A?A.mv.layers:[]);
+    const tf=(v,rot)=>vcView(rot?vcRotA(v,A.mv.axis,cs,sn):v);
+    for(let i=0;i<M.total;i++){
+      const g=VC.geo[i], rot=!!A && inA.has(M.layerOf(i,A.mv.axis));
+      const C=tf(g.P,rot), Nv=tf(g.N,rot); if(Nv[0]*(0-C[0])+Nv[1]*(0-C[1])+Nv[2]*(VC_D-C[2]) <= 0) continue;   // faces turned away from the camera are skipped
+      const Uv=tf(g.U,rot), Vv=tf(g.V,rot), hb=1/n, hs=hb*0.86;
+      const quad=(h)=>[[1,1],[1,-1],[-1,-1],[-1,1]].map(s=>vcProj([C[0]+(s[0]*Uv[0]+s[1]*Vv[0])*h, C[1]+(s[0]*Uv[1]+s[1]*Vv[1])*h, C[2]+(s[0]*Uv[2]+s[1]*Vv[2])*h]));
+      const base=quad(hb*1.01);
+      polys.push({z:C[2],pts:base,fill:'#0c0f15',stroke:'#0c0f15'});
+      polys.push({z:C[2]+0.0005,pts:quad(hs),fill:VC_COL[VC.cube[i]],stroke:'rgba(0,0,0,.35)',hit:i,hb:base});
+    }
+    if(A && !A.mv.whole){   // dark cut faces so the turning slice does not show a hole
+      const lo=Math.min(...A.mv.layers), hi=Math.max(...A.mv.layers), ax=A.mv.axis, a=[0,1,2].filter(x=>x!==ax);
+      [[lo,lo>0],[hi+1,hi<n-1]].forEach(([pl,on])=>{ if(!on) return; const d=-1+2*pl/n;
+        [false,true].forEach(rot=>{ const cap=[[1,1],[1,-1],[-1,-1],[-1,1]].map(s=>{ const p=[0,0,0]; p[ax]=d; p[a[0]]=s[0]; p[a[1]]=s[1]; return vcProj(vcView(rot?vcRotA(p,ax,cs,sn):p)); });
+          const cc=vcView(rot?vcRotA((()=>{ const p=[0,0,0]; p[ax]=d; return p; })(),ax,cs,sn):(()=>{ const p=[0,0,0]; p[ax]=d; return p; })());
+          polys.push({z:cc[2]-0.0001,pts:cap,fill:'#0c0f15',stroke:'#0c0f15'}); }); });
+    }
+    polys.sort((p,q)=>p.z-q.z);
+    ctx.lineJoin='round'; ctx.lineWidth=1;
+    for(const p of polys){ ctx.beginPath(); ctx.moveTo(p.pts[0][0],p.pts[0][1]); for(let k=1;k<4;k++) ctx.lineTo(p.pts[k][0],p.pts[k][1]); ctx.closePath(); ctx.fillStyle=p.fill; ctx.fill(); ctx.strokeStyle=p.stroke; ctx.stroke(); }
+    VC.polys=polys.filter(p=>p.hit!==undefined).reverse();
+  }
+  function vcResize(){
+    const cv=$('vcCanvas'); if(!cv) return; const r=cv.getBoundingClientRect(); if(!r.width) return;
+    VC.dpr=Math.min(3,window.devicePixelRatio||1); VC.w=r.width; VC.h=r.height; cv.width=Math.round(r.width*VC.dpr); cv.height=Math.round(r.height*VC.dpr); vcInvalidate();
+  }
+  function vcInvalidate(){ if(VC.raf) return; VC.raf=requestAnimationFrame(vcTick); }
+  function vcTick(){
+    VC.raf=0; const now=performance.now();
+    if(VC.anim && now-VC.anim.t0>=VC.anim.dur){ const it=VC.anim; VC.anim=null; vcCommit(it); vcPump(); }
+    vcDraw();
+    if(VC.t.st==='run'){ $('vcTime').textContent=(((now-VC.t.t0)/1000)).toFixed(2); }
+    if(VC.anim || VC.t.st==='run') vcInvalidate();
+  }
+  function vcPump(){
+    if(VC.anim || !VC.queue.length) return; const it=VC.queue.shift(), base=parseInt($('vcSpeed').value,10)||0;
+    if(!base || !VC.w){ vcCommit(it); vcPump(); return; }
+    const half=it.mv.q===2, dur=base*(half?1.5:1)/(1+VC.queue.length*0.7); VC.anim=Object.assign({},it,{t0:performance.now(), dur, target:(it.mv.q===3?-1:it.mv.q)*Math.PI/2}); vcInvalidate();
+  }
+  function vcCommit(it){
+    const mv=it.mv, M=VC.model; VC.cube=M.turn(VC.cube,mv.axis,mv.layers,mv.q);
+    if(it.user){ mv.at=(VC.t.st==='run'||VC.t.st==='done')?performance.now()-VC.t.t0:null; VC.hist.push(mv); if(!mv.whole) VC.moves++;
+      if(VC.t.st==='run' && M.isSolved(VC.cube)){ VC.t.ms=performance.now()-VC.t.t0; VC.t.st='done'; mv.at=VC.t.ms; $('vcTime').textContent=(VC.t.ms/1000).toFixed(2); vcStagesRender(vcRecOfCurrent()); }
+      else if(VC.t.st==='ready' && M.isSolved(VC.cube) && VC.moves>0){ VC.t.st='idle'; } }
+    vcInfo(); vcInvalidate();
+  }
+  function vcMove(mv,user){
+    if(!mv) return;
+    if(user && VC.t.st==='ready' && $('vcTimeOn').checked){ VC.t.st='run'; VC.t.t0=performance.now(); $('vcTime').textContent='0.00'; }
+    VC.queue.push({mv,user}); vcPump(); vcInvalidate();
+  }
+  function vcInfo(){
+    const meta=$('vcMeta'), hist=$('vcHist'), tm=VC.t; hist.textContent=VC.hist.map(m=>m.name).join(' ');
+    let s;
+    if(tm.st==='done'){ const tps=VC.moves/(tm.ms/1000); s='Solved in '+VC.moves+' move'+(VC.moves===1?'':'s')+' \u00b7 '+(isFinite(tps)?tps.toFixed(2):'0')+' turns per second'; }
+    else if(tm.st==='run') s='Solving\u2026 '+VC.moves+' move'+(VC.moves===1?'':'s');
+    else if(tm.st==='ready') s=$('vcTimeOn').checked ? 'Scrambled. The clock starts with your first move.' : 'Scrambled. The clock is off.';
+    else s=VC.moves? VC.moves+' move'+(VC.moves===1?'':'s') : 'Press \u201cnew scramble\u201d or \u201ctimer\u2019s scramble\u201d, then turn the cube.';
+    meta.textContent=s;
+    const add=$('vcAdd'); const can= tm.st==='done' && VC_EV[VC.n]===currentEvent && !activeRound && !VC.added && VC.scr; add.hidden=!can;
+    $('vcSave').hidden=!(tm.st==='done' && VC.scr && !VC.saved);
+    $('vcUndo').disabled=!VC.hist.length; $('vcWideWrap').style.display=VC.n>=3?'':'none';
+  }
+  function vcUndo(){ const m=VC.hist.pop(); if(!m) return; if(!m.whole) VC.moves=Math.max(0,VC.moves-1); VC.queue.push({mv:{axis:m.axis,layers:m.layers,q:(4-m.q)%4,whole:m.whole,name:m.name},user:false}); vcPump(); vcInfo(); }
+  function vcClear(){ VC.replayId++; VC.queue=[]; VC.anim=null; VC.hist=[]; VC.moves=0; VC.t={st:'idle',t0:0,ms:0}; VC.added=false; VC.saved=false; $('vcTime').textContent='0.00'; $('vcStages').textContent=''; }
+  function vcSetScramble(tokens,fromTimer){
+    vcClear(); const M=VC.model; VC.cube=M.applyAlg(M.solved(),tokens.join(' ')); VC.scr=tokens.slice(); VC.fromTimer=!!fromTimer; VC.t={st:'ready',t0:0,ms:0}; vcInfo(); vcInvalidate();
+  }
+  function vcRandom(){
+    const n=VC.n, ev=VC_EV[n]; let t=null;
+    try{ if(n===2) t=two2RandomStateScramble()||two2FallbackScramble(9); else if(n===3) t=generateScramble(20); else t=generateBigCubeScramble(n,scrambleLenFor(ev)).map(displayToken); }catch(e){ t=null; }
+    return t&&t.length?t:null;
+  }
+  const VC_KEYS={j:'U',f:"U'",i:'R',k:"R'",h:'F',g:"F'",d:'L',e:"L'",s:'D',l:"D'",w:'B',o:"B'",u:'Rw',m:"Rw'",r:'Lw',v:"Lw'",y:'x',b:"x'",';':'y',a:"y'",p:'z',q:"z'"};
+  function vcPad(){
+    const host=$('vcPad'), odd=VC.n%2===1 && VC.n>=3; host.textContent=''; host.className='vc-pad six';
+    const add=(t,rot,label)=>{ const b=el('button','dbtn',t); b.type='button'; b.dataset.tok=t; if(rot) b.dataset.rot='1'; b.setAttribute('aria-label',label+' '+t); host.appendChild(b); };
+    ['U',"U'",'D',"D'",'R',"R'",'L',"L'",'F',"F'",'B',"B'"].forEach(t=>add(t,false,'turn'));
+    ['x',"x'",'y',"y'",'z',"z'"].forEach(t=>add(t,true,'rotate the whole cube'));
+    if(odd) ['M',"M'",'E',"E'",'S',"S'"].forEach(t=>add(t,true,'turn the middle layer'));
+    host.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ let t=b.dataset.tok; if(!b.dataset.rot && $('vcWide').checked && VC.n>=3) t=t.replace(/^([URFDLB])/,'$1w'); const mv=VC.model.tokenMove(t); if(mv) vcMove(Object.assign({},mv,{name:t}),true); }));
+  }
+  // pointer: drag a sticker to turn its layer, drag empty space to look around
+  function vcPt(e){ const r=$('vcCanvas').getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top]; }
+  function vcInPoly(p,q){ let ins=false; for(let i=0,j=3;i<4;j=i++){ if(((q[i][1]>p[1])!==(q[j][1]>p[1])) && (p[0]<(q[j][0]-q[i][0])*(p[1]-q[i][1])/(q[j][1]-q[i][1])+q[i][0])) ins=!ins; } return ins; }
+  function vcHit(p){ for(const q of VC.polys) if(vcInPoly(p,q.hb)) return q.hit; return -1; }
+  function vcDragTurn(i,dx,dy){
+    const M=VC.model, g=VC.geo[i], len=Math.hypot(dx,dy); if(!len) return;
+    const c=vcProj(vcView(g.P)); let best=null;
+    [0,1,2].filter(a=>a!==g.k).forEach(a=>{ const e=[0,0,0]; e[a]=1; const P=g.P, N=g.N, v=[e[1]*N[2]-e[2]*N[1], e[2]*N[0]-e[0]*N[2], e[0]*N[1]-e[1]*N[0]];   // in-face direction a sticker moves for a right-handed turn about axis a
+      const q=vcProj(vcView([P[0]+v[0]*0.2,P[1]+v[1]*0.2,P[2]+v[2]*0.2])), sx=q[0]-c[0], sy=q[1]-c[1], sl=Math.hypot(sx,sy); if(sl<1e-6) return;
+      const sc=(dx*sx+dy*sy)/(len*sl); if(!best||Math.abs(sc)>Math.abs(best.sc)) best={a,sc}; });
+    if(!best) return; const layer=M.layerOf(i,best.a), q=best.sc>0?1:3;
+    vcMove({axis:best.a,layers:[layer],q,whole:false,name:M.nameOf(best.a,layer,q)},true);
+  }
+  function vcWire(){
+    const cv=$('vcCanvas');
+    cv.addEventListener('pointerdown',e=>{ e.preventDefault(); try{ cv.setPointerCapture(e.pointerId); }catch(_){} cv.focus({preventScroll:true}); const p=vcPt(e), hit=vcHit(p); VC.drag={x0:p[0],y0:p[1],hit,done:false,yaw0:VC.yaw,pitch0:VC.pitch}; });
+    cv.addEventListener('pointermove',e=>{ const d=VC.drag; if(!d) return; const p=vcPt(e), dx=p[0]-d.x0, dy=p[1]-d.y0;
+      if(d.hit<0){ VC.yaw=d.yaw0+dx*0.011; VC.pitch=Math.max(-1.45,Math.min(1.45,d.pitch0+dy*0.011)); vcInvalidate(); }
+      else if(!d.done && Math.hypot(dx,dy)>12){ d.done=true; vcDragTurn(d.hit,dx,dy); } });
+    const end=()=>{ VC.drag=null; }; cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+    cv.addEventListener('dblclick',()=>{ VC.yaw=-0.62; VC.pitch=0.5; vcInvalidate(); });
+    cv.addEventListener('keydown',e=>{ if(e.ctrlKey||e.metaKey||e.altKey) return;
+      if(e.key==='Backspace'){ e.preventDefault(); vcUndo(); return; }
+      const t=VC_KEYS[e.key.toLowerCase()]; if(!t) return; e.preventDefault(); if(e.repeat) return;
+      const mv=VC.model.tokenMove(t); if(mv) vcMove(Object.assign({},mv,{name:t}),true); });
+    if(window.ResizeObserver) new ResizeObserver(vcResize).observe(cv); else window.addEventListener('resize',vcResize);
+    $('vcCard').addEventListener('toggle',()=>{ if($('vcCard').open){ vcResize(); vcInvalidate(); } });
+    $('vcPuzzle').addEventListener('change',()=>vcInit(parseInt($('vcPuzzle').value,10)||3));
+    $('vcNew').addEventListener('click',()=>{ const t=vcRandom(); if(t) vcSetScramble(t,false); else $('vcMeta').textContent='Could not make a scramble. Try again.'; });
+    $('vcTimerScr').addEventListener('click',()=>{
+      const n=VC_N[currentEvent];
+      if(!n){ $('vcMeta').textContent='The timer is on '+(EVENT_LABELS[currentEvent]||currentEvent)+', which the virtual cube cannot show. Switch the timer to a 2×2 to 7×7 first.'; return; }
+      if(n!==VC.n){ $('vcPuzzle').value=String(n); vcInit(n); }
+      vcSetScramble(currentScrambleMoves.slice(),true); });
+    $('vcReset').addEventListener('click',()=>{ vcClear(); VC.cube=VC.model.solved(); VC.scr=null; vcInfo(); vcInvalidate(); });
+    $('vcUndo').addEventListener('click',vcUndo);
+    const doMoves=()=>{ const toks=$('vcAlg').value.replace(/[\u2019\u2018`\u00b4]/g,"'").replace(/[()]/g,' ').trim().split(/\s+/).filter(Boolean); if(!toks.length) return;
+      const mvs=toks.map(t=>VC.model.tokenMove(t)), bad=toks.find((t,i)=>!mvs[i]); if(bad){ $('vcMeta').textContent='I could not read \u201c'+bad+'\u201d. Use moves like R, U\u2019, F2, Rw, 3Rw, M, x.'; return; }
+      toks.forEach((t,i)=>vcMove(Object.assign({},mvs[i],{name:t}),true)); $('vcAlg').value=''; };
+    $('vcDo').addEventListener('click',doMoves); $('vcAlg').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); doMoves(); } });
+    $('vcFlip').addEventListener('click',()=>{ VC.yaw+=Math.PI; vcInvalidate(); });
+    $('vcTimeOn').addEventListener('change',()=>{ if(!$('vcTimeOn').checked && VC.t.st==='run'){ VC.t.st='idle'; } vcInfo(); });
+    $('vcSpeed').addEventListener('change',vcInfo);
+    $('vcSave').addEventListener('click',async()=>{ const rec=vcRecOfCurrent(); if(!rec||VC.saved) return; VC.saved=true; const all=await vcRecs(); all.push(rec); await store.set('vcsolves',all.slice(-30)); $('vcSave').hidden=true; $('vcMeta').textContent='Solve saved. Find it under \u201cSaved solves\u201d below the keyboard keys.'; vcSavedRender(); });
+    $('vcAdd').addEventListener('click',()=>{
+      const ev=VC_EV[VC.n]; if(VC.t.st!=='done'||ev!==currentEvent||activeRound||VC.added||!VC.scr) return;
+      solvesByEvent[ev].push({time:VC.t.ms, penalty:null, scramble:VC.scr.slice(), ts:Date.now()}); VC.added=true;
+      saveSolves(ev); renderHistory(); renderStats(); renderFullStats(); renderGraphs();
+      if(VC.fromTimer){ try{ newScramble(); }catch(e){} }
+      $('vcMeta').textContent='Added to your session. It shows in the timer\u2019s history and stats.'; $('vcAdd').hidden=true; });
+  }
+  vcWire(); vcInit(3); vcSavedRender();
+
+  // ---------- cube solver: enter the colours of a scrambled cube, get a solution ----------
+  // Runs in a worker built from the embedded two-phase source (3x3) plus a small exact 2x2 solver.
+  function SOLVERW(){
+    var D2=null;
+    var CFL=[[8,9,20],[6,18,38],[0,36,47],[2,45,11],[29,26,15],[27,44,24],[33,53,42],[35,17,51]];
+    function same(a,b){ var i; for(i=0;i<8;i++){ if(a.cp[i]!==b.cp[i]||a.co[i]!==b.co[i]) return false; } for(i=0;i<12;i++){ if(a.ep[i]!==b.ep[i]||a.eo[i]!==b.eo[i]) return false; } return true; }
+    function diagnose(st){
+      var i, seenC={}, seenE={}, dup=false, so=0, sf=0, msgs=[];
+      for(i=0;i<8;i++){ if(seenC[st.cp[i]]) dup=true; seenC[st.cp[i]]=1; so+=st.co[i]; }
+      for(i=0;i<12;i++){ if(seenE[st.ep[i]]) dup=true; seenE[st.ep[i]]=1; sf+=st.eo[i]; }
+      if(dup) return 'The same corner or edge appears twice, so some stickers are in the wrong place. Compare each piece with your cube.';
+      if(so%3!==0) msgs.push('A corner looks twisted: its colours do not add up. A real cube cannot have a single twisted corner, so check the corner stickers.');
+      if(sf%2!==0) msgs.push('An edge looks flipped: its colours do not add up. A real cube cannot have a single flipped edge, so check the edge stickers.');
+      if(!msgs.length) msgs.push('Two edges (or two corners) look swapped. That cannot happen on a real cube, so look for two pieces entered in each other\u2019s places.');
+      return msgs.join(' ');
+    }
+    var BADPIECE='These stickers cannot belong to a real cube: some corner or edge has a colour combination that does not exist (for example two stickers of one colour on the same piece, or opposite colours together). Check the stickers you entered against the cube.';
+    function mapCentres(cols){
+      var map={}, i, f=[];
+      for(i=0;i<6;i++){ var c=cols[i*9+4]; if(map[c]!==undefined) return {error:'Two centres have the same colour, but every face has its own centre colour.'}; map[c]=i; }
+      for(i=0;i<54;i++) f.push(map[cols[i]]);
+      return {f:f};
+    }
+    function cubieFrom3(cols){
+      if(!cols||cols.length!==54) return {error:'The 3\u00d73 needs 54 stickers.'};
+      var m=mapCentres(cols); if(m.error) return m;
+      var st=TP.fromFacelets(m.f); if(!st) return {error:BADPIECE};
+      if(!TP.isSolvable(st)) return {error:diagnose(st)};
+      return {st:st};
+    }
+    function out3(st,sol,t0){
+      var chk=TP.applySeq(st,sol);
+      if(!same(chk,TP.ident())) return {error:'The solver produced a sequence that does not solve this cube, so it was discarded. Please report this.'};
+      return {moves:sol.map(TP.moveName), len:sol.length, ms:Date.now()-t0};
+    }
+    function solve3(d){
+      var c=cubieFrom3(d.cols); if(c.error) return c;
+      var t0=Date.now(), sol=TP.solveBest(c.st,25,d.ms||1200);
+      if(!sol) sol=TP.solve(c.st,26,8000);
+      if(!sol) return {error:'The search ran out of time. Press the button again.'};
+      return out3(c.st,sol,t0);
+    }
+    function improve3(d){
+      var c=cubieFrom3(d.cols); if(c.error) return c;
+      var t0=Date.now(); if(d.len<=1) return {none:true, ms:0};
+      var sol=TP.solveBest(c.st,d.len-1,d.ms||6000);
+      if(!sol || sol.length>=d.len) return {none:true, ms:Date.now()-t0};
+      return out3(c.st,sol,t0);
+    }
+    function scr(d){
+      var seq=[], i; for(i=0;i<d.tokens.length;i++){ var m=TP.parseMove(d.tokens[i]); if(!(m>=0)) return {error:'Could not read the move '+d.tokens[i]+'.'}; seq.push(m); }
+      return {f:TP.toFacelets(TP.applySeq(TP.ident(),seq))};
+    }
+    // ---- exact 2x2: the down-left-back corner stays put, moves U R F (9 moves), breadth-first distance table ----
+    function build2(){
+      if(D2) return D2;
+      var SL=[0,1,2,3,4,5,7], IDS=[0,1,2,3,4,5,7], PM=[0,1,2,3,4,5,-1,6], NP=5040, NT=729, MV=TP.MOVES.slice(0,9), i,j,m;
+      function rankP(a){ var r=0,x,y; for(x=0;x<7;x++){ var c=0; for(y=x+1;y<7;y++) if(a[y]<a[x]) c++; r=r*(7-x)+c; } return r; }
+      function unrankP(r){ var dg=[],x,y; for(x=6;x>=0;x--){ var rad=7-x; dg[x]=r%rad; r=(r-dg[x])/rad; } var pool=[0,1,2,3,4,5,6], a=[]; for(x=0;x<7;x++){ a.push(pool.splice(dg[x],1)[0]); } return a; }
+      function perm7(cp8){ var a=[],k; for(k=0;k<7;k++) a.push(PM[cp8[SL[k]]]); return a; }
+      function cpFrom(p7){ var cp=[0,1,2,3,4,5,6,7],k; for(k=0;k<7;k++) cp[SL[k]]=IDS[p7[k]]; return cp; }
+      function twistOf(co8){ var t=0,k; for(k=0;k<6;k++) t=t*3+co8[SL[k]]; return t; }
+      function coFrom(t){ var co=[0,0,0,0,0,0,0,0], s=0, k; for(k=5;k>=0;k--){ co[SL[k]]=t%3; s+=t%3; t=(t-t%3)/3; } co[7]=(3-s%3)%3; return co; }
+      function mk(cp,co){ return {cp:cp.slice(), co:co.slice(), ep:[0,1,2,3,4,5,6,7,8,9,10,11], eo:[0,0,0,0,0,0,0,0,0,0,0,0]}; }
+      var idc=[0,1,2,3,4,5,6,7], z8=[0,0,0,0,0,0,0,0], pm=new Uint16Array(NP*9), tm=new Uint16Array(NT*9);
+      for(i=0;i<NP;i++){ var cp=cpFrom(unrankP(i)); for(m=0;m<9;m++) pm[i*9+m]=rankP(perm7(TP.mul(mk(cp,z8),MV[m]).cp)); }
+      for(j=0;j<NT;j++){ var co=coFrom(j); for(m=0;m<9;m++) tm[j*9+m]=twistOf(TP.mul(mk(idc,co),MV[m]).co); }
+      var N=NP*NT, dist=new Uint8Array(N).fill(255), q=new Int32Array(N), qh=0, qt=0, hist=[1];
+      dist[0]=0; q[qt++]=0;
+      while(qh<qt){ var s=q[qh++], r=(s/NT)|0, t=s-r*NT, dd=dist[s]; for(m=0;m<9;m++){ var n=pm[r*9+m]*NT+tm[t*9+m]; if(dist[n]===255){ dist[n]=dd+1; q[qt++]=n; hist[dd+1]=(hist[dd+1]||0)+1; } } }
+      D2={pm:pm,tm:tm,dist:dist,hist:hist,perm7:perm7,rankP:rankP,twistOf:twistOf,NT:NT};
+      return D2;
+    }
+    function solve2(d){
+      var cols=d.cols, i, j, g=[], POS=[0,2,6,8], t0=Date.now();
+      if(!cols||cols.length!==24) return {error:'The 2\u00d72 needs 24 stickers.'};
+      var cnt=[0,0,0,0,0,0]; for(i=0;i<24;i++) cnt[cols[i]]++;
+      for(i=0;i<6;i++) if(cnt[i]!==4) return {error:'Each colour must appear exactly 4 times on a 2\u00d72.'};
+      for(i=0;i<54;i++) g.push(-2);
+      for(i=0;i<6;i++) for(j=0;j<4;j++) g[i*9+POS[j]]=cols[i*4+j];
+      var adj=[{},{},{},{},{},{}], k;
+      for(k=0;k<8;k++){ var a=g[CFL[k][0]], b=g[CFL[k][1]], c=g[CFL[k][2]]; adj[a][b]=adj[a][c]=adj[b][a]=adj[b][c]=adj[c][a]=adj[c][b]=1; if(a===b||b===c||a===c) return {error:BADPIECE}; }
+      function opp(c){ var o=[],x; for(x=0;x<6;x++) if(x!==c && !adj[c][x]) o.push(x); return o.length===1 ? o[0] : -1; }
+      var cD=g[33], cL=g[42], cB=g[53], cU=opp(cD), cR=opp(cL), cF=opp(cB);
+      if(cU<0||cR<0||cF<0) return {error:'These colours cannot belong to a real 2\u00d72: the colour pairs that sit on opposite faces do not work out. Check the stickers you entered.'};
+      var seen={}, face=[cU,cR,cF,cD,cL,cB]; for(i=0;i<6;i++){ if(seen[face[i]]) return {error:'These colours cannot belong to a real 2\u00d72: two faces would end up with the same colour.'}; seen[face[i]]=1; }
+      var map={}; for(i=0;i<6;i++) map[face[i]]=i;
+      for(i=0;i<54;i++) g[i]= g[i]===-2 ? ((i/9)|0) : map[g[i]];
+      var st=TP.fromFacelets(g); if(!st) return {error:'These stickers cannot belong to a real 2\u00d72: some corner has a colour combination that does not exist. If your cube is a mirror-image colour scheme, tell me and I will add support.'};
+      var seenC={}, so=0; for(i=0;i<8;i++){ if(seenC[st.cp[i]]) return {error:'The same corner appears twice, so some stickers are in the wrong place. Compare each corner with your cube.'}; seenC[st.cp[i]]=1; so+=st.co[i]; }
+      if(so%3!==0) return {error:'A corner looks twisted: the corner colours do not add up. A real 2\u00d72 cannot have a single twisted corner, so check the corner stickers.'};
+      var T=build2(), r=T.rankP(T.perm7(st.cp)), t=T.twistOf(st.co), dd=T.dist[r*T.NT+t];
+      if(dd===255) return {error:'This position is not reachable on a real 2\u00d72. Check the corner stickers.'};
+      var sols=[], path=[];
+      (function walk(r,t,rem){ if(sols.length>=3) return; if(rem===0){ sols.push(path.map(TP.moveName)); return; }
+        for(var m=0;m<9 && sols.length<3;m++){ var r2=T.pm[r*9+m], t2=T.tm[t*9+m]; if(T.dist[r2*T.NT+t2]===rem-1){ path.push(m); walk(r2,t2,rem-1); path.pop(); } } })(r,t,dd);
+      for(i=0;i<sols.length;i++){ var seq=sols[i].map(TP.parseMove), fin=TP.applySeq(st,seq), id=TP.ident(), okc=true; for(j=0;j<8;j++){ if(fin.cp[j]!==id.cp[j]||fin.co[j]!==id.co[j]) okc=false; } if(!okc) return {error:'The solver produced a sequence that does not solve this cube, so it was discarded. Please report this.'}; }   // only the corners matter on a 2x2 (the edges of the model are not real pieces)
+      return {moves:sols[0], alts:sols.slice(1), len:dd, ms:Date.now()-t0};
+    }
+    self.onmessage=function(e){
+      var d=e.data, r;
+      try{
+        if(d.type==='init'){ TP.build(); postMessage({type:'ready'}); return; }
+        if(d.type==='solve3') r=solve3(d); else if(d.type==='improve3') r=improve3(d); else if(d.type==='solve2') r=solve2(d);
+        else if(d.type==='scramble') r=scr(d); else if(d.type==='hist2') r={hist:build2().hist}; else r={error:'Unknown request.'};
+      }catch(err){ r={error:'Something went wrong inside the solver: '+((err&&err.message)||err)}; }
+      r.id=d.id; postMessage(r);
+    };
+  }
+  const SV_PAL=[['white','#f4f5f7','W','#15171c'],['red','#d93a30','R','#ffffff'],['green','#1f9d57','G','#ffffff'],['yellow','#f4cf1c','Y','#15171c'],['orange','#f58b1f','O','#15171c'],['blue','#2d66e0','B','#ffffff']];
+  const SV_FACES=['U','R','F','D','L','B'], SV_AREA=['u','r','f','d','l','b'];
+  const SV_CAP=['Up (top face, front edge at the bottom)','Right','Front','Down (bottom face, front edge at the top)','Left','Back'];
+  const SV={ n:3, cols:[], sel:0, send:null, pend:new Map(), id:0, readyP:null, busy:false, last:null };
+  function svReset(){ const k=SV.n*SV.n; SV.cols=new Array(6*k).fill(-1); if(SV.n===3) for(let f=0;f<6;f++) SV.cols[f*9+4]=f; SV.last=null; }
+  function svStart(){
+    if(SV.readyP) return SV.readyP;
+    SV.readyP=new Promise((res,rej)=>{
+      const src=document.getElementById('twophase-src').textContent+'\n('+SOLVERW.toString()+')();';
+      const onMsg=(e)=>{ const m=e.data; if(m.type==='ready'){ res(); return; } const q=SV.pend.get(m.id); if(q){ SV.pend.delete(m.id); q.res(m); } };
+      try{
+        const w=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})));
+        w.onmessage=onMsg; w.onerror=()=>rej(new Error('The solver could not start.')); SV.send=m=>w.postMessage(m);
+      }catch(e){
+        try{ const box={}, run=new Function('self','postMessage',src); run(box, m=>setTimeout(()=>onMsg({data:m}),0)); SV.send=m=>setTimeout(()=>box.onmessage({data:m}),0); }catch(e2){ rej(e2); return; }
+      }
+      SV.send({type:'init'});
+    });
+    SV.readyP.catch(()=>{ SV.readyP=null; });
+    return SV.readyP;
+  }
+  function svCall(msg){ return svStart().then(()=>new Promise(res=>{ const id=++SV.id; SV.pend.set(id,{res}); SV.send(Object.assign({id},msg)); })); }
+  function svPaintBtn(b,i){ const c=SV.cols[i]; if(c<0){ b.className='sv-st empty'; b.style.background=''; b.style.color=''; b.textContent=''; } else { b.className='sv-st'; b.style.background=SV_PAL[c][1]; b.style.color=SV_PAL[c][3]; b.textContent=SV_PAL[c][2]; }
+    const k=SV.n*SV.n, f=Math.floor(i/k), p=i%k, nm=['up','right','front','down','left','back'][f]; b.setAttribute('aria-label', nm+' face, row '+(Math.floor(p/SV.n)+1)+', column '+(p%SV.n+1)+': '+(c<0?'empty':SV_PAL[c][0])); }
+  function svCounts(){
+    const host=$('svCount'); host.textContent=''; const need=SV.n===3?9:4, cnt=[0,0,0,0,0,0]; let empty=0;
+    SV.cols.forEach(c=>{ if(c<0) empty++; else cnt[c]++; });
+    SV_PAL.forEach((p,i)=>{ const s=el('span', cnt[i]===need?'':'bad'); const sw=el('i'); sw.style.background=p[1]; s.appendChild(sw); s.appendChild(document.createTextNode(p[0]+' '+cnt[i]+'/'+need)); host.appendChild(s); });
+    if(empty){ host.appendChild(el('span','', empty+' empty')); }
+  }
+  function svRender(){
+    const net=$('svNet'); net.textContent=''; net.style.setProperty('--n',SV.n); const k=SV.n*SV.n;
+    for(let f=0;f<6;f++){
+      const blk=el('div','sv-face'); blk.style.gridArea=SV_AREA[f]; blk.appendChild(el('div','cap',SV_CAP[f]));
+      const g=el('div','sv-grid');
+      for(let p=0;p<k;p++){ const i=f*k+p, b=el('button','sv-st'); b.type='button'; svPaintBtn(b,i);
+        b.addEventListener('click',()=>{ SV.cols[i]=SV.sel; svPaintBtn(b,i); svCounts(); SV.last=null; $('svOut').textContent=''; $('svStatus').textContent=''; });
+        g.appendChild(b); }
+      blk.appendChild(g); net.appendChild(blk);
+    }
+    svCounts();
+  }
+  function svRenderPalette(){
+    const host=$('svPalette'); host.textContent='';
+    SV_PAL.forEach((p,i)=>{ const b=el('button','',p[2]); b.type='button'; b.style.background=p[1]; b.style.color=p[3]; b.setAttribute('aria-label','paint '+p[0]); b.setAttribute('aria-pressed',SV.sel===i?'true':'false'); b.addEventListener('click',()=>{ SV.sel=i; svRenderPalette(); }); host.appendChild(b); });
+    const e=el('button','erase','erase'); e.type='button'; e.setAttribute('aria-label','erase a sticker'); e.setAttribute('aria-pressed',SV.sel===-1?'true':'false'); e.addEventListener('click',()=>{ SV.sel=-1; svRenderPalette(); }); host.appendChild(e);
+  }
+  function svRandomScramble(){ const faces=SV.n===3?'URFDLB':'URF', o=[]; let last=''; const len=SV.n===3?20:11; while(o.length<len){ const f=faces[Math.floor(Math.random()*faces.length)]; if(f===last) continue; last=f; o.push(f+['',"'",'2'][Math.floor(Math.random()*3)]); } return o; }
+  function svParse(text){
+    const toks=text.replace(/[\u2019\u2018`\u00b4]/g,"'").trim().split(/\s+/).filter(Boolean).map(t=>t.replace(/^([URFDLB])2'$/,'$12'));
+    if(!toks.length) return {error:'Type or paste a scramble first.'};
+    const bad=toks.find(t=>!/^[URFDLB][2']?$/.test(t)); if(bad) return {error:'I can read the moves U R F D L B with \u2019 or 2 (for example R U\u2019 F2). I could not read \u201c'+bad+'\u201d.'};
+    return {toks};
+  }
+  async function svApplyScramble(toks){
+    const st=$('svStatus'); st.textContent='Preparing the solver (about a second, once per visit)\u2026';
+    try{ const r=await svCall({type:'scramble',tokens:toks}); if(r.error){ st.textContent=r.error; return; }
+      svReset(); if(SV.n===3){ SV.cols=r.f.slice(); } else { for(let f=0;f<6;f++) [0,2,6,8].forEach((q,j)=>{ SV.cols[f*4+j]=r.f[f*9+q]; }); }
+      svRender(); $('svOut').textContent=''; st.textContent='Loaded. Press \u201csolve it\u201d.'; }
+    catch(e){ st.textContent=(e&&e.message)||'The solver could not start.'; }
+  }
+  function svMoves(m){ const d=el('div','sv-sol',m.join(' ')); return d; }
+  function svCopy(text,b){ const done=()=>{ b.textContent='copied'; setTimeout(()=>{ b.textContent='copy'; },1400); };
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done,()=>{}); else { const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); try{ document.execCommand('copy'); done(); }catch(e){} t.remove(); } }
+  function svShow(r){
+    const host=$('svOut'); host.textContent='';
+    if(r.error){ const d=el('div','coach-tip'); d.appendChild(el('b','','This cannot be solved yet')); d.appendChild(el('div','coach-ev',r.error)); host.appendChild(d); return; }
+    SV.last=r; const tip=el('div','coach-tip');
+    if(r.len===0){ tip.appendChild(el('b','','Already solved')); tip.appendChild(el('div','coach-ev','Every face has one colour, so there is nothing to do.')); host.appendChild(tip); return; }
+    if(SV.n===2){
+      tip.appendChild(el('b','','Shortest solution \u00b7 '+r.len+' move'+(r.len===1?'':'s')));
+      tip.appendChild(svMoves(r.moves));
+      tip.appendChild(el('div','coach-ev','Proven shortest: no solution with fewer moves exists (a half turn counts as one move). Only U, R and F are turned, so keep the cube as you entered it.'));
+      if(r.alts && r.alts.length){ tip.appendChild(el('div','coach-adv','Other shortest solutions: '+r.alts.map(a=>a.join(' ')).join('   |   '))); }
+    } else {
+      tip.appendChild(el('b','','Solution \u00b7 '+r.len+' moves'));
+      tip.appendChild(svMoves(r.moves));
+      tip.appendChild(el('div','coach-ev','Found in '+(r.ms/1000).toFixed(2)+' s with a two-phase search and checked on a model of your cube. It is a short solution but not proven to be the shortest possible. Hold the cube exactly as you entered it.'));
+      const b2=btn('look for a shorter one (6 s)', async()=>{ b2.disabled=true; $('svStatus').textContent='Searching for a shorter solution\u2026'; try{ const rr=await svCall({type:'improve3',cols:SV.cols.slice(),len:r.len,ms:6000}); if(rr.moves){ svShow(rr); $('svStatus').textContent='Found a shorter one: '+rr.len+' moves.'; } else if(rr.error){ svShow(rr); } else { b2.disabled=false; $('svStatus').textContent='No shorter solution found in 6 s. That does not prove there is none.'; } }catch(e){ b2.disabled=false; $('svStatus').textContent='The search stopped unexpectedly.'; } });
+      tip.appendChild(b2);
+    }
+    const cp=btn('copy',()=>svCopy(r.moves.join(' '),cp)); tip.appendChild(cp);
+    host.appendChild(tip);
+  }
+  async function svSolve(){
+    if(SV.busy) return; const st=$('svStatus'), out=$('svOut'); out.textContent=''; st.textContent='';
+    const need=SV.n===3?9:4, cnt=[0,0,0,0,0,0]; let empty=0; SV.cols.forEach(c=>{ if(c<0) empty++; else cnt[c]++; });
+    if(empty){ st.textContent=empty+' sticker'+(empty===1?' is':'s are')+' still empty. Paint every sticker first.'; return; }
+    const off=SV_PAL.map((p,i)=>cnt[i]!==need?p[0]+' has '+cnt[i]+' (needs '+need+')':null).filter(Boolean);
+    if(off.length){ st.textContent='The colour counts do not add up: '+off.join(', ')+'. Look for a sticker painted the wrong colour.'; return; }
+    SV.busy=true; $('svSolve').disabled=true; st.textContent=SV.n===2?'Working out the shortest solution\u2026':'Searching\u2026';
+    try{ const r=await svCall({type:SV.n===3?'solve3':'solve2',cols:SV.cols.slice(),ms:1200}); st.textContent=''; svShow(r); }
+    catch(e){ st.textContent=(e&&e.message)||'The solver could not start.'; }
+    finally{ SV.busy=false; $('svSolve').disabled=false; }
+  }
+  $('svPuzzle').addEventListener('change',()=>{ SV.n=parseInt($('svPuzzle').value,10)||3; svReset(); svRender(); $('svOut').textContent=''; $('svStatus').textContent=''; });
+  $('svClear').addEventListener('click',()=>{ svReset(); svRender(); $('svOut').textContent=''; $('svStatus').textContent=''; });
+  $('svExample').addEventListener('click',()=>{ const t=svRandomScramble(); $('svScr').value=t.join(' '); svApplyScramble(t); });
+  $('svLoad').addEventListener('click',()=>{ const p=svParse($('svScr').value); if(p.error){ $('svStatus').textContent=p.error; return; } svApplyScramble(p.toks); });
+  $('svScr').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); $('svLoad').click(); } });
+  $('svSolve').addEventListener('click',svSolve);
+  $('solverCard').addEventListener('toggle',()=>{ if($('solverCard').open) svStart().catch(()=>{}); });
+  svReset(); svRenderPalette(); svRender();
+
   $('xcNew').addEventListener('click', xcNew); $('xcShow').addEventListener('click', xcShow);
   $('xcrossCard').addEventListener('toggle', ()=>{ if($('xcrossCard').open && !XC.readyP){ xcStart(t=>{ if(!XC.busy) $('xcStatus').textContent=t; }).then(()=>{ if(!XC.busy) $('xcStatus').textContent='Solver ready.'; }).catch(()=>{}); } });
   ['xcMode','xcLevel','xcSession'].forEach(id=>$(id).addEventListener('change', xcPrefsSave));
-  onViewActive('view-learn', async ()=>{ await xcPrefsLoad(); renderXcStats(); });
+  onViewActive('view-learn', async ()=>{ await xcPrefsLoad(); renderXcStats(); renderXcPick(); });
 
 
   // ---------- personal trainer: where your time goes, and a plan built from it ----------
