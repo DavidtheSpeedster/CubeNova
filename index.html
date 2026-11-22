@@ -997,7 +997,7 @@ select:focus-visible, input:focus-visible, textarea:focus-visible{ outline:2px s
 .learn-group::after{ content:''; flex:1; height:1px; background:var(--line); opacity:0.6; }
 .learn-grid > details.card{ margin:0; padding:14px 16px; border-left:4px solid var(--kc, var(--line)); transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
 .learn-grid > details.card[data-kind="guide"]{ --kc:#2b9bff; } .learn-grid > details.card[data-kind="test"]{ --kc:#f2b84b; }
-.learn-grid > details.card[data-kind="practice"]{ --kc:#3fd68a; } .learn-grid > details.card[data-kind="tool"]{ --kc:#3ee0ff; }
+.learn-grid > details.card[data-kind="battle"]{ --kc:#ff5d7a; background:linear-gradient(135deg, rgba(255,93,122,0.10), rgba(43,155,255,0.08)); } .learn-grid > details.card[data-kind="practice"]{ --kc:#3fd68a; } .learn-grid > details.card[data-kind="tool"]{ --kc:#3ee0ff; }
 .learn-grid > details.card > summary{ list-style:none; display:block; position:relative; padding:0 26px 0 0; line-height:1.3; cursor:pointer; }
 .learn-grid > details.card > summary::-webkit-details-marker{ display:none; }
 .learn-grid > details.card > summary::before{ content:'\203A'; position:absolute; right:2px; top:50%; transform:translateY(-50%); font-size:24px; line-height:1; color:var(--muted); transition:transform .2s ease; }
@@ -1006,83 +1006,6 @@ select:focus-visible, input:focus-visible, textarea:focus-visible{ outline:2px s
 .learn-grid > details.card[open] > summary{ margin-bottom:10px; }
 @media (hover:hover){ .learn-grid > details.card:not([open]):hover{ transform:translateY(-2px); border-color:var(--kc); box-shadow:0 10px 24px rgba(0,0,0,0.28); } }
 @media (prefers-reduced-motion: reduce){ .learn-grid > details.card{ transition:none; } }
-
-/* v101: input mode bar (timer / type / virtual cube) and online battle button on the Timer screen, virtual cube panel, battle sheet */
-.mode-bar{ display:flex; gap:4px; flex-wrap:nowrap; align-items:center; box-sizing:border-box; flex:0 0 auto; padding:4px; border:1px solid var(--line); border-radius:999px; background:var(--surface); z-index:3;
-  position:absolute; top:8px; left:50%; transform:translateX(-50%); width:auto; max-width:calc(100% - 16px); }
-.mode-bar .modes{ display:flex; gap:2px; flex:0 1 auto; min-width:0; }
-.mode-bar .dbtn{ min-height:0 !important; height:30px; padding:0 10px !important; font-size:12.5px !important; border-radius:999px !important; border:none !important; background:transparent !important; box-shadow:none !important; white-space:nowrap; flex:0 0 auto; width:auto !important; color:var(--muted); }
-.mode-bar .modes button.active{ background:color-mix(in srgb, var(--green) 24%, transparent) !important; color:var(--text); font-weight:700; }
-.mode-bar .battle-open{ position:relative; margin-left:6px; border-left:1px solid var(--line) !important; border-radius:0 999px 999px 0 !important; padding-left:12px !important; }
-.mode-bar .battle-open.live::after{ content:''; position:absolute; top:4px; right:5px; width:7px; height:7px; border-radius:50%; background:#ff5c7a; box-shadow:0 0 8px #ff5c7a; }
-body.cubeinput .mode-bar{ position:sticky; top:0; left:auto; transform:none; align-self:center; margin-bottom:8px; }
-body.cubeinput #vcCanvas{ width:auto; max-width:100%; height:min(413px, 100vh - 360px); min-height:200px; }
-body.cubeinput #vcGuide, body.cubeinput #vcStages, body.cubeinput #vcHist, body.cubeinput #vcSaved, body.cubeinput #vcCard > .row ~ .row{ display:none !important; }
-@media (hover:hover) and (pointer:fine){   /* mouse and keyboard: drag the cube or use keys, so the on-screen move pad is hidden and everything fits */
-  body.cubeinput #vcPad, body.cubeinput #vcKeysLegend{ display:none !important; }
-  body.cubeinput #vcCanvas{ height:min(430px, 100vh - 465px); }
-}
-}
-body.focus-mode .mode-bar{ display:none; }
-#timerStage .cube-panel{ display:none; }
-body.cubeinput #timerStage{ justify-content:flex-start !important; align-items:stretch !important; overflow:auto; }
-body.cubeinput #timerStage > :not(#modeBar):not(#cubePanel){ display:none !important; }
-body.cubeinput #timerStage .cube-panel{ display:block; flex:1 1 auto; min-height:0; width:100%; text-align:left; }
-#cubeLast{ font-size:13px; color:var(--muted); margin:2px 2px 8px; min-height:1.3em; }
-#cubePanel #vcCard{ margin:0; }
-body.cubeinput #vcCard > summary, body.cubeinput #vcCard .gd-intro, body.cubeinput #vcPuzzle, body.cubeinput #vcNew, body.cubeinput #vcReset, body.cubeinput #vcWatch, body.cubeinput #vcHint, body.cubeinput #scBox{ display:none !important; }
-body.cubeinput #vcCard .dbtn{ min-height:36px; padding:4px 12px; font-size:13px; }
-body.cubeinput #vcCard{ border:none; background:transparent; padding:0; box-shadow:none; max-width:480px; margin:0 auto !important; }
-#battleSheet{ position:fixed; inset:0; z-index:70; overflow:auto; background:var(--bg); padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(24px + env(safe-area-inset-bottom,0px)); }
-#battleSheet[hidden]{ display:none; }
-#battleSheet .sheet-bar{ display:flex; align-items:center; justify-content:space-between; gap:10px; max-width:760px; margin:0 auto 10px; font-size:16px; }
-#battleSheet #battleCard{ max-width:760px; margin:0 auto; border-left:4px solid #ff5c7a; }
-#battleSheet #battleCard > summary{ display:none; }
-
-.coach-ask{ border-top:1px solid var(--line); margin-top:10px; padding-top:10px; }
-.coach-ask-h{ display:block; margin:0 0 6px; }
-.coach-ask-row{ display:flex; gap:8px; align-items:center; margin:8px 0; }
-.coach-input{ flex:1; min-width:0; padding:9px 12px; border:1px solid var(--line); border-radius:12px; background:var(--surface2); color:var(--text); font:inherit; font-size:14px; }
-.coach-input::placeholder{ color:var(--muted); }
-#coachAnswer .coach-tip{ border-top:none; padding:6px 0 2px; }
-#coachAnswer .coach-q{ font-size:12px; color:var(--muted); }
-
-#backupNudge{ position:fixed; left:8px; right:8px; top:calc(8px + env(safe-area-inset-top,0px)); z-index:3100; display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:10px 12px; border-radius:14px; background:var(--surface2); color:var(--text); border:1px solid var(--green); box-shadow:0 12px 34px -10px rgba(0,0,0,.6); font-size:13px; }
-#backupNudge > span{ flex:1 1 220px; }
-#backupNudge button{ border:0; border-radius:999px; padding:7px 14px; font:inherit; font-weight:600; cursor:pointer; background:var(--green); color:#04141f; }
-#backupNudge button[data-a=x]{ background:transparent; color:var(--muted); padding:7px 8px; }
-.learn-search{ margin:8px 0; }
-.learn-search .coach-input{ width:100%; box-sizing:border-box; }
-.dev-out{ white-space:pre-wrap; word-break:break-word; font:12px/1.55 ui-monospace,Menlo,Consolas,monospace; background:var(--surface2); border:1px solid var(--line); border-radius:12px; padding:10px; margin:8px 0 0; user-select:text; -webkit-user-select:text; }
-
-#catTabs{ display:none !important; }
-.alg-sets{ margin:4px 0 6px; }
-.alg-sets h4{ margin:14px 2px 8px; font-size:20px; letter-spacing:.01em; }
-.alg-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(104px,1fr)); gap:10px; }
-.alg-tile{ position:relative; display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 6px 9px; border:1px solid var(--line); border-radius:16px; background:var(--surface); color:var(--text); font:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
-.alg-tile:hover{ border-color:var(--green); }
-.alg-tile.active{ border-color:var(--green); box-shadow:0 0 0 1px var(--green) inset, 0 8px 22px -10px var(--green); }
-.alg-tile svg{ width:76px; height:76px; display:block; }
-.alg-tile .alg-name{ font-size:14px; font-weight:600; text-align:center; }
-.alg-tile .alg-count{ position:absolute; right:8px; top:60px; font-size:11px; line-height:1; padding:3px 7px; border-radius:999px; border:1px solid var(--line); background:var(--surface2); color:var(--muted); font-variant-numeric:tabular-nums; }
-.alg-tile.done .alg-count{ color:var(--green); border-color:var(--green); }
-#caseGrid{ scroll-margin-top:72px; }
-.case-chip.known b::after{ content:' \2713'; color:var(--green); }
-
-.case-grid{ grid-template-columns:repeat(auto-fill, minmax(96px,1fr)); gap:8px; }
-.case-chip{ padding:8px 4px 7px; }
-.case-chip .chip-pic{ display:block; }
-.case-chip .chip-pic svg{ display:block; width:68px; height:68px; margin:0 auto 4px; }
-.case-chip .chip-name{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:10.5px; line-height:1.25; min-height:2.5em; word-break:break-word; }
-
-.case-top{ display:flex; justify-content:center; margin:6px 0 2px; }
-.case-top svg{ width:min(240px,68vw); height:auto; aspect-ratio:1; }
-.detail:not(.show-net) .net-wrap{ display:none; }
-.detail.show-net .case-top{ display:none; }
-
-@media (max-width:370px){ .mode-bar .ico{ display:none; } .mode-bar .dbtn{ padding:0 10px !important; } }
-@media (max-width:330px){ .mode-bar .dbtn{ padding:0 7px !important; font-size:12px !important; } .mode-bar{ gap:2px; } }
-.mode-bar .modes button, .mode-bar .battle-open{ min-width:0; }
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "CubeNova", "alternateName": ["CubeNova speedcubing timer", "davidthespeedster cubenova", "CubeNova by davidthespeedster"], "url": "https://davidthespeedster.github.io/CubeNova/", "description": "Free, offline speedcubing timer with WCA-style scrambles, deep statistics, goals and OLL, PLL and F2L algorithm trainers. Made by David the Speedster.", "applicationCategory": "SportsApplication", "operatingSystem": "Any (web browser, installable on Android, iOS, Windows)", "browserRequirements": "Requires a modern web browser", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "image": "https://davidthespeedster.github.io/CubeNova/screenshots/wide-timer.png", "screenshot": ["https://davidthespeedster.github.io/CubeNova/screenshots/wide-timer.png", "https://davidthespeedster.github.io/CubeNova/screenshots/wide-stats.png"], "author": {"@type": "Person", "name": "David the Speedster", "alternateName": ["DavidTheSpeedster", "davidthespeedster"], "url": "https://github.com/DavidtheSpeedster"}, "sameAs": ["https://github.com/DavidtheSpeedster/CubeNova"]}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"CubeNova","alternateName":["CubeNova by davidthespeedster","davidthespeedster cubenova","CubeNova speedcubing timer"],"url":"https://davidthespeedster.github.io/CubeNova/","inLanguage":"en","publisher":{"@type":"Person","name":"David the Speedster","alternateName":["DavidTheSpeedster","davidthespeedster"],"url":"https://github.com/DavidtheSpeedster"}}</script>
@@ -1191,10 +1114,6 @@ body.cubeinput #vcCard{ border:none; background:transparent; padding:0; box-shad
           <div class="timer-stage" id="timerStage">
             <div class="focus-exit" id="focusExit" title="Exit fullscreen (Esc)">✕</div>
             <button type="button" class="insp-cancel" id="inspCancel" aria-label="Cancel inspection">cancel inspection</button>
-            <div class="mode-bar" id="modeBar" role="group" aria-label="how you enter your times">
-              <div class="modes" id="modeSeg"><button type="button" class="dbtn active" data-mode="timer" aria-pressed="true"><span class="ico">⏱ </span>Timer</button><button type="button" class="dbtn" data-mode="type" aria-pressed="false"><span class="ico">⌨️ </span>Type</button><button type="button" class="dbtn" data-mode="cube" aria-pressed="false" title="Virtual cube: solve the scramble on screen" aria-label="Virtual cube"><span class="ico">🧊 </span>Cube</button></div>
-              <button type="button" class="dbtn battle-open" id="battleOpen" aria-label="open the online battle"><span class="ico">⚔️ </span>Battle</button>
-            </div>
             <div class="pb-banner" id="pbBanner" role="status" style="display:none;"></div>
             <div class="avg-badge" id="avgBadge" role="status" style="display:none;"></div>
             <div class="timer-display" id="timerDisplay">0.00</div>
@@ -1211,13 +1130,10 @@ body.cubeinput #vcCard{ border:none; background:transparent; padding:0; box-shad
               <button class="pbtn" id="btnUndo">↩ undo</button>
               <button class="pbtn" id="btnNote" aria-label="add a note to this solve">💬</button>
             </div>
-            <div class="cube-panel" id="cubePanel"><div id="cubeLast" role="status" aria-live="polite"></div></div>
           </div>
         </div>
       </div>
     </div>
-
-    <div id="battleSheet" hidden role="dialog" aria-label="Online battle"><div class="sheet-bar"><b>⚔️ Online battle</b><button type="button" class="dbtn" id="battleSheetClose">✕ close</button></div></div>
 
     <!-- STATS VIEW -->
     <div class="view" id="view-stats">
@@ -1235,14 +1151,8 @@ body.cubeinput #vcCard{ border:none; background:transparent; padding:0; box-shad
       </div>
       <div class="card" id="coachCard">
         <h3>Coach</h3>
-        <div class="detail-sub" style="margin-bottom:8px;">Simple tips from your own numbers, worked out on your device. Nothing is sent anywhere. Tap a question below or type your own.</div>
+        <div class="detail-sub" style="margin-bottom:8px;">Simple tips from your own numbers, worked out on your device. Nothing is sent anywhere.</div>
         <div id="coachBody"></div>
-        <div class="coach-ask" id="coachAsk">
-          <b class="coach-ask-h">Ask the coach</b>
-          <div class="lab-row" id="coachChips"></div>
-          <div class="coach-ask-row"><input id="coachQ" type="text" class="coach-input" placeholder="Ask about your solves…" aria-label="Ask the coach a question" maxlength="120" enterkeyhint="send" autocomplete="off"><button class="dbtn primary" id="coachGo" type="button">Ask</button></div>
-          <div id="coachAnswer" role="status" aria-live="polite"></div>
-        </div>
       </div>
       <div class="card" id="aiCard">
         <h3>AI coach <span style="font-weight:400; font-size:12px; color:var(--muted);">optional</span></h3>
@@ -1320,10 +1230,8 @@ body.cubeinput #vcCard{ border:none; background:transparent; padding:0; box-shad
     <!-- LEARN VIEW -->
     <div class="view" id="view-learn">
       <div class="learn-jump" id="learnJump" role="navigation" aria-label="jump to a part of the Learn tab">
-        <button type="button" data-jump="catTabs">Cases</button><button type="button" data-jump="planCard">Today's plan</button><button type="button" data-jump="grpLearn">Learn</button><button type="button" data-jump="grpTest">Test</button><button type="button" data-jump="grpPractice">Practice</button><button type="button" data-jump="grpTools">Tools</button>
+        <button type="button" data-jump="catTabs">Cases</button><button type="button" data-jump="planCard">Today's plan</button><button type="button" data-jump="grpLearn">Learn</button><button type="button" data-jump="grpTest">Test</button><button type="button" data-jump="grpBattle">Battle</button><button type="button" data-jump="grpPractice">Practice</button><button type="button" data-jump="grpTools">Tools</button>
       </div>
-      <div class="learn-search"><input id="learnSearch" type="search" class="coach-input" placeholder="Search the guides, quizzes and tools…" aria-label="search the guides, quizzes and tools in the Learn tab" autocomplete="off"></div>
-      <div class="detail-sub" id="learnNoMatch" hidden>Nothing matches that. Try a shorter word, like quiz, pll or pyraminx.</div>
       <div class="row" id="learnOptions" style="gap:12px; flex-wrap:wrap; align-items:center; margin:8px 0;">
         <label class="toggle-row">cross color
           <select class="mini-select" id="learnCrossSel">
@@ -1332,14 +1240,12 @@ body.cubeinput #vcCard{ border:none; background:transparent; padding:0; box-shad
           </select></label>
         <span style="font-size:12px; color:var(--muted);">diagrams show the cross layer on the bottom and the last layer on top</span>
       </div>
-      <div class="alg-sets" id="algSets" role="group" aria-label="algorithm sets"></div>
       <div class="cat-tabs" id="catTabs" style="flex-wrap:wrap;">
         <button data-cat="OLL" class="active">OLL <span style="color:var(--muted2)">· 57</span></button>
         <button data-cat="PLL">PLL <span style="color:var(--muted2)">· 21</span></button>
         <button data-cat="F2L">F2L <span style="color:var(--muted2)">· 41</span></button>
         <button data-cat="OLL2">2×2 OLL <span style="color:var(--muted2)">· 7</span></button>
         <button data-cat="PLL2">2×2 PLL <span style="color:var(--muted2)">· 2</span></button>
-        <button data-cat="PBL">Ortega PBL <span style="color:var(--muted2)">· 8</span></button>
         <button data-cat="CLL">CLL <span style="color:var(--muted2)">· 40</span></button>
         <button data-cat="EG1">EG-1 <span style="color:var(--muted2)">· 40</span></button>
         <button data-cat="ZBLLPi" data-group="ZBLL">ZBLL <span style="color:var(--muted2)">· 472</span></button>
@@ -1357,9 +1263,7 @@ body.cubeinput #vcCard{ border:none; background:transparent; padding:0; box-shad
       <div class="detail">
         <div class="detail-sub" id="detailSub">—</div>
         <div class="detail-name" id="detailName">—</div>
-        <div class="case-top" id="caseTop" aria-hidden="true"></div>
         <div class="net-wrap"><div class="net" id="caseNet"></div></div>
-        <div style="text-align:center;"><button class="dbtn" id="netToggle" type="button" aria-pressed="false">show flat net</button></div>
         <div class="detail-alg" id="detailAlg">—</div>
         <div class="detail-sub" id="detailSetupRow" style="text-align:center; margin-top:4px;">setup · tap to copy</div>
         <div class="detail-alg" id="detailSetup" style="font-size:15px; opacity:.85; cursor:pointer;" title="tap to copy the setup moves">—</div>
@@ -1375,7 +1279,6 @@ body.cubeinput #vcCard{ border:none; background:transparent; padding:0; box-shad
           <button class="dbtn" id="tryVcBtn" type="button">🧊 try on the virtual cube</button>
           <span id="drillStatus" style="font-size:13px; color:var(--muted);">no attempts yet</span>
           <label class="toggle-row" style="margin-left:8px;"><input type="checkbox" id="caseLearning"> still learning</label>
-        <label class="toggle-row" style="margin-left:8px;"><input type="checkbox" id="caseKnown"> I know this one</label>
         </div>
       </div>
       <div class="row" style="justify-content:space-between; align-items:center;">
@@ -1438,7 +1341,7 @@ body.cubeinput #vcCard{ border:none; background:transparent; padding:0; box-shad
       </details>
       <details class="card" id="battleCard">
         <summary style="cursor:pointer; font-weight:600;">⚔️ Online battle: same scramble, friends, who is faster</summary>
-        <div class="gd-intro">Make a room, share the link or code, and everyone gets the same scramble for each round. Solve it on the Timer screen as usual, type your time, or use the virtual cube; your time is sent as soon as you finish and the table shows who won. It uses a free public message relay (ntfy.sh unless you change it below). Anyone who knows the room code can read the room, and the relay sees your name and times, so pick a nickname you are happy to share.</div>
+        <div class="gd-intro">Make a room, share the link or code, and everyone gets the same scramble for each round. You solve it on the Timer tab as usual, type your time in typing mode, or solve it on the virtual cube; your time is sent when you stop the timer, save a typed time or finish the virtual solve and the table shows who won. It uses a free public message relay (ntfy.sh unless you change it below). Anyone who knows the room code can read the room, and the relay sees your name and times, so pick a nickname you are happy to share.</div>
         <div class="row" style="gap:10px; flex-wrap:wrap; align-items:center; margin:8px 0;">
           <label class="toggle-row" style="margin:0;">nickname <input type="text" id="battleName" maxlength="20" placeholder="your name" style="width:140px;"></label>
         </div>
@@ -1717,7 +1620,7 @@ body.cubeinput #vcCard{ border:none; background:transparent; padding:0; box-shad
           <div style="font-size:12px; color:var(--muted);">Frosted, translucent panels with glossy edges. Intensity sets blur, gloss, shadow and glow strength; transparency sets how see-through panels are. The colored glow is off by default and is hidden whenever a background image is set. Readable mode keeps panels from getting too clear for text and adds a soft text shadow.</div>
         </div>
         <div class="ct-box" id="aboutBox">
-          <div style="display:flex; align-items:center; gap:10px; font-weight:600;"><img src="data:image/png;base64,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" width="44" height="44" alt="" style="border-radius:10px; flex:0 0 auto;"><span>About CubeNova <span style="color:var(--muted); font-weight:400;">v108</span><span style="display:block; color:var(--muted); font-weight:400; font-size:12px;">CubeNova by davidthespeedster · davidthespeedster.github.io/CubeNova</span></span></div>
+          <div style="display:flex; align-items:center; gap:10px; font-weight:600;"><img src="data:image/png;base64,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" width="44" height="44" alt="" style="border-radius:10px; flex:0 0 auto;"><span>About CubeNova <span style="color:var(--muted); font-weight:400;">v102</span><span style="display:block; color:var(--muted); font-weight:400; font-size:12px;">CubeNova by davidthespeedster · davidthespeedster.github.io/CubeNova</span></span></div>
           <div style="font-size:12px; color:var(--muted); line-height:1.5;">A free speedcubing timer. <b>Privacy:</b> your solves, settings and background image are stored only in this browser on this device. There are no accounts, no tracking and nothing is uploaded unless you choose the optional AI coach (it sends a summary of your numbers to Anthropic with your own key, only when you press its button); the only other outside request is for the page fonts, which are saved for offline use. Use the backup export in Settings to move your data between devices. Scrambles are generated on your device and follow WCA-style formats.</div>
           <button type="button" id="tourBtn" class="pbtn" style="margin-top:8px;">❓ Show the quick tour</button>
           <div style="font-size:12px; margin-top:8px;"><a href="about.html" target="_blank" rel="noopener">About CubeNova</a> · <a href="privacy.html" target="_blank" rel="noopener">Privacy policy</a></div>
@@ -1866,15 +1769,6 @@ body.cubeinput #vcCard{ border:none; background:transparent; padding:0; box-shad
           </div>
         </div>
         <div class="detail-sub" id="lastBackupNote" style="margin-top:8px;"></div>
-        <div class="detail-sub" id="persistNote" style="margin-top:6px;"></div>
-        <div class="row"><button class="dbtn" id="persistBtn" type="button" hidden>Ask the browser to keep my data</button></div>
-      </div>
-
-      <div class="card" id="deviceCard">
-        <h3>Check this device</h3>
-        <div class="detail-sub">Checks what this browser and device can do: saving, offline mode, install, screen, Bluetooth and more. It cannot tell whether a Bluetooth cube or a Stackmat works. Nothing is sent anywhere.</div>
-        <div class="row"><button class="dbtn primary" id="devRun" type="button">Run check</button><button class="dbtn" id="devCopy" type="button" hidden>Copy report</button></div>
-        <pre class="dev-out" id="devOut" hidden></pre>
       </div>
 
       <div class="card">
@@ -3195,7 +3089,6 @@ function applyAndShowScramble(ev, moves){
   }
   noteEl.style.display='none';
   currentScrambleMoves = moves;
-  try{ if(cubeInput && window.CNVirtual) CNVirtual.loadTimerScramble(); }catch(e){}
   document.getElementById('scrambleText').innerHTML = scrambleHtml(ev, moves);
   { const sb = document.querySelector('#view-timer .scramble-box'); if(sb) sb.classList.toggle('mega-scr', ev==='mega'); }
   if(ev==='skewb'){
@@ -3528,7 +3421,6 @@ async function updateBackupReminder(){
     note.textContent = currentCount>0 ? 'No backup taken yet.' : '';
     banner.style.display = currentCount>=15 ? 'block' : 'none';
     if(currentCount>=15) banner.textContent = currentCount+' solves logged and no backup yet — consider exporting a full backup.';
-    showBackupNudge(currentCount>=30, currentCount+' solves and no backup yet. If this browser clears its data, they are gone.');
     return;
   }
   const daysSince = (Date.now()-lastAt)/86400000;
@@ -3540,22 +3432,7 @@ async function updateBackupReminder(){
   } else {
     banner.style.display='none';
   }
-  showBackupNudge(newSolves>=40 || (daysSince>=14 && newSolves>=10), newSolves+' new solve'+(newSolves===1?'':'s')+' since your last backup'+(daysSince>=1?' ('+Math.floor(daysSince)+' days ago)':'')+'.');
 }
-async function showBackupNudge(due, msg){
-  let el = document.getElementById('backupNudge'), snooze = 0;
-  try{ const r = await window.storage.get('backupNudgeSnooze', false); snooze = r && r.value ? parseInt(r.value,10) : 0; }catch(e){}
-  if(!due || Date.now()-snooze < 3*864e5 || document.getElementById('storageWarn')){ if(el) el.remove(); return; }
-  if(!el){
-    el = document.createElement('div'); el.id = 'backupNudge'; el.setAttribute('role','status');
-    el.innerHTML = '<span><b>Back up your solves.</b> <span data-t></span></span><button type="button" data-a="bk">Back up now</button><button type="button" data-a="x" aria-label="remind me in 3 days">Later</button>';
-    el.querySelector('[data-a=bk]').addEventListener('click', ()=>{ const b = document.getElementById('exportFullBtn'); if(b) b.click(); });
-    el.querySelector('[data-a=x]').addEventListener('click', async ()=>{ el.remove(); try{ await window.storage.set('backupNudgeSnooze', String(Date.now()), false); }catch(e){} });
-    document.body.appendChild(el);
-  }
-  el.querySelector('[data-t]').textContent = msg;
-}
-document.addEventListener('visibilitychange', ()=>{ if(!document.hidden){ try{ updateBackupReminder(); }catch(e){} } });
 document.getElementById('exportFullBtn').addEventListener('click', async ()=>{
   const sessionsData = await getAllSessionsData();
   const body = {
@@ -3570,7 +3447,6 @@ document.getElementById('exportFullBtn').addEventListener('click', async ()=>{
     srs: srs,
     goals: goals,
     caseMarks: caseMarks,
-    caseKnown: caseKnown,
     vcSolves: await (async()=>{ try{ const r=await window.storage.get('vcsolves',false); const a=(r&&r.value)?JSON.parse(r.value):[]; return Array.isArray(a)?a:[]; }catch(e){ return []; } })()
   };
   const json = JSON.stringify(body);
@@ -3683,7 +3559,6 @@ document.getElementById('importFile').addEventListener('change', async (e)=>{
       if(data.srs && typeof data.srs==='object' && !Array.isArray(data.srs)){ const ok={}; Object.keys(data.srs).forEach(k=>{ const e=data.srs[k]; if(/^[A-Za-z0-9]+\|\d+$/.test(k) && e && typeof e.box==='number' && e.box>=0 && e.box<=5 && typeof e.due==='number' && isFinite(e.due)) ok[k]={box:Math.floor(e.box),due:e.due,last:typeof e.last==='number'?e.last:0}; }); srs=ok; await saveSrs(); try{ srsInfo(); }catch(err){} }
       if(data.goals && typeof data.goals==='object' && !Array.isArray(data.goals)){ const ok={}; Object.keys(data.goals).forEach(k=>{ const v=data.goals[k]; if(/^[A-Za-z0-9]+$/.test(k) && typeof v==='number' && isFinite(v) && v>=100 && v<=3600000) ok[k]=v; }); goals=ok; await saveGoals(); try{ renderProExtras(); }catch(err){} }
       if(data.caseMarks && typeof data.caseMarks==='object' && !Array.isArray(data.caseMarks)){ const ok={}; Object.keys(data.caseMarks).forEach(k=>{ if(/^[A-Za-z0-9]+\|\d+$/.test(k) && data.caseMarks[k]===true) ok[k]=true; }); caseMarks=ok; await saveCaseMarks(); try{ showCase(); }catch(err){} }
-      if(data.caseKnown && typeof data.caseKnown==='object' && !Array.isArray(data.caseKnown)){ const ok={}; Object.keys(data.caseKnown).forEach(k=>{ if(/^[A-Za-z0-9]+\|\d+$/.test(k) && data.caseKnown[k]===true) ok[k]=true; }); caseKnown=ok; await saveCaseKnown(); try{ renderCaseGrid(); showCase(); syncAlgTiles(); }catch(err){} }
       if(data.algPicks && typeof data.algPicks==='object' && !Array.isArray(data.algPicks)){ const ok={}; Object.keys(data.algPicks).forEach(k=>{ if(/^[A-Za-z0-9]+\|\d+$/.test(k) && typeof data.algPicks[k]==='string' && data.algPicks[k].length<200) ok[k]=data.algPicks[k]; }); algPicks=ok; await saveAlgPicks(); try{ showCase(); }catch(err){} }
       if(data.keybinds && typeof data.keybinds==='object' && !Array.isArray(data.keybinds)){ try{ await CNKeys.importMap(data.keybinds); }catch(err){} }
       if(Array.isArray(data.vcSolves) && data.vcSolves.length){
@@ -4753,126 +4628,17 @@ function renderProExtras(){
   const anchor = document.getElementById('learnGuides'); if(!anchor || document.getElementById('learnGrid')) return;
   const groups = [
     ['grpLearn','Learn the methods','guide',['guideCard','tut2Card','tutCfopStartCard','tutCfopCard','tutOrtegaCard','tutPyraCard']],
-    ['grpTest','Test yourself','test',['quizCard','dailyCard','roundCard','battleCard']],
+    ['grpTest','Test yourself','test',['quizCard','dailyCard','roundCard']],
+    ['grpBattle','Online battle','battle',['battleCard']],
     ['grpPractice','Practice trainers','practice',['transCard','xcrossCard','advCard']],
     ['grpTools','Virtual puzzles and tools','tool',['pzCard','vcCard','solverCard']] ];
-  const subs = { guideCard:'Start here if you have never solved a cube', tut2Card:'Solve a 2×2 with simple steps', tutCfopStartCard:'Your first CFOP solve, step by step', tutCfopCard:'Learn 2-look OLL and PLL to go faster', tutOrtegaCard:'A quicker way to solve the 2×2', tutPyraCard:'Beginner steps for the Pyraminx',
+  const subs = { battleCard:'Race friends on the same scramble, live', guideCard:'Start here if you have never solved a cube', tut2Card:'Solve a 2×2 with simple steps', tutCfopStartCard:'Your first CFOP solve, step by step', tutCfopCard:'Learn 2-look OLL and PLL to go faster', tutOrtegaCard:'A quicker way to solve the 2×2', tutPyraCard:'Beginner steps for the Pyraminx',
     quizCard:'Test how fast you recognise cases', dailyCard:'One shared scramble every day', roundCard:'Practise like a real competition round', transCard:'Practise planning right after the cross', xcrossCard:'Practise planning your solve during inspection', advCard:'Drill your cases with the advanced trainer' };
   const grid = document.createElement('div'); grid.className = 'learn-grid'; grid.id = 'learnGrid'; anchor.after(grid);
   groups.forEach(([gid,title,kind,ids])=>{
     const h = document.createElement('h4'); h.className = 'learn-group'; h.id = gid; h.textContent = title; grid.appendChild(h);
     ids.forEach(id=>{ const c = document.getElementById(id); if(!c) return; c.dataset.kind = kind; const sm = c.querySelector(':scope > summary'); if(sm && subs[id]) sm.dataset.sub = subs[id]; grid.appendChild(c); });
   });
-})();
-
-
-// ---- ask the browser to keep the data (a tap is needed: some browsers show a permission question) ----
-(function persistUi(){
-  const note = document.getElementById('persistNote'), btn = document.getElementById('persistBtn'); if(!note || !btn) return;
-  async function refresh(){
-    if(!(navigator.storage && navigator.storage.persisted)){ note.textContent = 'This browser cannot say whether it may clear your data, so keep a backup.'; return; }
-    let p = false; try{ p = await navigator.storage.persisted(); }catch(e){}
-    note.textContent = p ? 'Browser storage is protected: the browser will not clear CubeNova data on its own.' : 'The browser may clear CubeNova data if the device runs low on space. A backup is the safe way to keep your solves.';
-    btn.hidden = p || !navigator.storage.persist;
-  }
-  btn.addEventListener('click', async ()=>{ try{ const ok = await navigator.storage.persist(); note.textContent = ok ? 'Browser storage is protected: the browser will not clear CubeNova data on its own.' : 'The browser said no. Installing CubeNova to your home screen often helps. A backup is still the safe way.'; btn.hidden = !!ok; }catch(e){ note.textContent = 'The browser could not do that.'; } });
-  refresh(); window.addEventListener('focus', refresh);
-})();
-
-// ---- Check this device: what the browser offers, as a report you can copy ----
-(function deviceCheck(){
-  const run = document.getElementById('devRun'), out = document.getElementById('devOut'), cp = document.getElementById('devCopy'); if(!run || !out) return;
-  const yn = v=>v?'yes':'no';
-  async function report(){
-    const L = [], add = (k,v)=>L.push(k.padEnd(28)+' '+v);
-    const ver = [...document.querySelectorAll('#view-settings span')].map(e=>e.textContent.trim()).find(t=>/^v\d+$/.test(t)) || 'unknown';
-    add('CubeNova version', ver);
-    add('Browser', (navigator.userAgent||'').slice(0,110));
-    add('Installed as an app', yn((window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone));
-    add('Online now', yn(navigator.onLine));
-    add('Screen', innerWidth+'x'+innerHeight+' at '+(window.devicePixelRatio||1)+'x, '+((screen.orientation && screen.orientation.type) || 'orientation unknown'));
-    add('Touch points', String(navigator.maxTouchPoints||0)+(window.matchMedia && matchMedia('(pointer:coarse)').matches ? ' (touch first)' : ' (mouse or trackpad first)'));
-    let st = 'no'; try{ await window.storage.set('devcheck', String(Date.now()), false); const r = await window.storage.get('devcheck', false); st = yn(r && r.value); await window.storage.delete('devcheck', false); }catch(e){ st = 'FAILED: '+String(e && e.message || e).slice(0,60); }
-    add('Saving works', st);
-    try{ if(navigator.storage && navigator.storage.estimate){ const e = await navigator.storage.estimate(); add('Storage used', (e.usage/1048576).toFixed(1)+' MB of '+Math.round(e.quota/1048576)+' MB'); } else add('Storage used', 'cannot be measured here'); }catch(e){ add('Storage used', 'cannot be measured here'); }
-    try{ add('Storage protected', navigator.storage && navigator.storage.persisted ? yn(await navigator.storage.persisted()) : 'cannot be checked here'); }catch(e){}
-    try{
-      if(!/^https?:$/.test(location.protocol)) add('Offline helper', 'not available when the page is opened as a file');
-      else if('serviceWorker' in navigator){ const reg = await navigator.serviceWorker.getRegistration();
-        add('Offline helper', reg ? ((reg.active ? 'active' : 'not active yet')+(navigator.serviceWorker.controller ? ', in control of this page' : ', not in control yet (reload once)')) : 'not registered');
-        try{ add('Page saved for offline', yn(await caches.match('./index.html'))); }catch(e){ add('Page saved for offline', 'cannot be checked'); }
-      } else add('Offline helper', 'not supported in this browser');
-    }catch(e){ add('Offline helper', 'error: '+String(e && e.message || e).slice(0,50)); }
-    [['Keep screen on (wake lock)','wakeLock' in navigator],['Vibration','vibrate' in navigator],['Sound',('AudioContext' in window)||('webkitAudioContext' in window)],['Web Bluetooth','bluetooth' in navigator],['Web Serial','serial' in navigator],['Microphone access (Stackmat)',!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)],['Copy to clipboard',!!(navigator.clipboard && navigator.clipboard.writeText)],['Share sheet','share' in navigator],['Fullscreen',!!document.fullscreenEnabled]].forEach(([k,v])=>add(k, v?'available':'not available'));
-    try{ let min = Infinity, prev = performance.now(), t = prev, n = 0; const end = prev+40; while(t<end && n<300000){ t = performance.now(); if(t>prev){ min = Math.min(min, t-prev); prev = t; } n++; }
-      add('Timer precision', isFinite(min) ? (min<0.01 ? 'better than 0.01 ms (fine)' : min.toFixed(2)+' ms'+(min>1.5 ? ' (coarse: this browser rounds time, so times may be less exact)' : '')) : 'could not measure'); }catch(e){}
-    try{ const fps = await new Promise(res=>{ let c=0, t0=performance.now(); const f=(t)=>{ c++; if(t-t0>=500) res(c*1000/(t-t0)); else requestAnimationFrame(f); }; requestAnimationFrame(f); setTimeout(()=>res(null), 1500); }); add('Screen refresh', fps ? Math.round(fps)+' frames per second' : 'not measured (page hidden?)'); }catch(e){}
-    L.push('', 'This only shows what the browser offers. It does not prove that a Bluetooth cube or a Stackmat works.');
-    return L.join('\n');
-  }
-  run.addEventListener('click', async ()=>{ run.disabled = true; out.hidden = false; out.textContent = 'Checking…'; try{ out.textContent = await report(); }catch(e){ out.textContent = 'The check failed: '+String(e && e.message || e); } run.disabled = false; if(cp) cp.hidden = false; });
-  if(cp) cp.addEventListener('click', async ()=>{ const txt = out.textContent; try{ await navigator.clipboard.writeText(txt); cp.textContent = 'Copied'; }catch(e){ const r = document.createRange(); r.selectNodeContents(out); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); cp.textContent = 'Selected: copy it'; } setTimeout(()=>{ cp.textContent = 'Copy report'; }, 2000); });
-})();
-
-// ---- Learn search: filters the guide, quiz, practice and tool cards ----
-(function learnSearch(){
-  const inp = document.getElementById('learnSearch'), grid = document.getElementById('learnGrid'), none = document.getElementById('learnNoMatch'); if(!inp || !grid) return;
-  const KEYS = {guideCard:'beginner start first cube method basics', tut2Card:'2x2 pocket cube tutorial', tutCfopStartCard:'cfop first solve beginner', tutCfopCard:'oll pll 2-look intermediate faster', tutOrtegaCard:'ortega 2x2 face first', tutPyraCard:'pyraminx tutorial', quizCard:'quiz recognition oll pll test cases', dailyCard:'daily scramble streak challenge', roundCard:'round competition ao5 practice timed', battleCard:'battle online friends race', transCard:'cross f2l transition planning trainer', xcrossCard:'xcross cross planning inspection trainer', advCard:'advanced algorithms trainer', pzCard:'pyraminx skewb virtual puzzle', vcCard:'virtual cube keyboard csTimer', solverCard:'solver colours solution scrambled'};
-  function apply(){
-    const words = inp.value.trim().toLowerCase().split(/\s+/).filter(Boolean); let any = false, shown = false;
-    const kids = [...grid.children]; let head = null, headHit = false;
-    const closeGroup = ()=>{ if(head) head.style.display = (!words.length || headHit) ? '' : 'none'; };
-    kids.forEach(ch=>{
-      if(ch.tagName==='H4'){ closeGroup(); head = ch; headHit = false; return; }
-      const sm = ch.querySelector(':scope > summary'), text = ((sm?sm.textContent:'')+' '+((sm&&sm.dataset.sub)||'')+' '+(KEYS[ch.id]||'')).toLowerCase();
-      const hit = !words.length || words.every(w=>text.includes(w)); ch.style.display = hit ? '' : 'none'; if(hit){ any = true; headHit = true; }
-    });
-    closeGroup(); if(none) none.hidden = !words.length || any;
-  }
-  inp.addEventListener('input', apply); inp.addEventListener('keydown', (e)=>{ e.stopPropagation(); if(e.key==='Escape'){ inp.value=''; apply(); } });
-})();
-
-// ---- input modes on the Timer screen: timer / type / virtual cube (like csTimer's input types) ----
-let __vcHome = null;
-function syncModeBar(){
-  const m = cubeInput ? 'cube' : (typingMode ? 'type' : 'timer');
-  document.querySelectorAll('#modeSeg button').forEach(b=>{ const on = b.dataset.mode===m; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on?'true':'false'); });
-}
-function cnCubeMode(on){
-  const card = document.getElementById('vcCard'), panel = document.getElementById('cubePanel'); if(!card || !panel) return;
-  if(on){
-    if(typingMode) setTypingMode(false);
-    if(['running','holding','ready','inspecting'].includes(state)){ try{ resetTimerToIdle(); }catch(e){} }
-    cubeInput = true; document.body.classList.add('cubeinput');
-    if(!__vcHome){ __vcHome = document.createComment('vcCard home'); card.parentNode.insertBefore(__vcHome, card); }
-    panel.appendChild(card); card.open = true;
-    const t = document.getElementById('vcTimeOn'); if(t && !t.checked){ t.checked = true; t.dispatchEvent(new Event('change')); }
-    const ts=document.getElementById('vcTimerScr'); if(ts){ if(ts.dataset.t0===undefined) ts.dataset.t0=ts.textContent; ts.textContent='restart this scramble'; }
-    try{ CNVirtual.loadTimerScramble(true); }catch(e){}
-  } else {
-    const ts=document.getElementById('vcTimerScr'); if(ts && ts.dataset.t0!==undefined){ ts.textContent=ts.dataset.t0; delete ts.dataset.t0; }
-    cubeInput = false; document.body.classList.remove('cubeinput');
-    if(__vcHome && __vcHome.parentNode){ __vcHome.parentNode.insertBefore(card, __vcHome.nextSibling); card.open = false; }
-    const l = document.getElementById('cubeLast'); if(l) l.textContent = '';
-  }
-  syncModeBar();
-}
-window.cnSetInputMode = (m)=>{
-  if(m==='cube'){ cnCubeMode(true); return; }
-  if(cubeInput) cnCubeMode(false);
-  setTypingMode(m==='type');
-  syncModeBar();
-};
-(function bindModeBar(){
-  const seg = document.getElementById('modeSeg'); if(!seg) return;
-  seg.addEventListener('click', (e)=>{ const b = e.target.closest('button[data-mode]'); if(b) cnSetInputMode(b.dataset.mode); });
-  const sheet = document.getElementById('battleSheet'), card = document.getElementById('battleCard'), open = document.getElementById('battleOpen');
-  if(sheet && card){ sheet.appendChild(card); card.open = true; }
-  window.cnOpenBattle = ()=>{ if(!sheet) return; sheet.hidden = false; sheet.scrollTop = 0; };
-  window.cnCloseBattle = ()=>{ if(sheet) sheet.hidden = true; };
-  if(open) open.addEventListener('click', cnOpenBattle);
-  const close = document.getElementById('battleSheetClose'); if(close) close.addEventListener('click', cnCloseBattle);
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && sheet && !sheet.hidden){ e.stopPropagation(); cnCloseBattle(); } }, true);
 })();
 (function bindLearnJump(){
   const bar = document.getElementById('learnJump'); if(!bar) return;
@@ -5158,7 +4924,7 @@ window.addEventListener('keydown', (e)=>{
 });
 function tick(){
   const el=performance.now()-startTs;
-  display.textContent = (hideTimeWhileSolving || timerLiveMode==='hidden') ? 'solving…' : (timerLiveMode==='seconds' ? (Math.floor(el/1000)>=60 ? Math.floor(el/60000)+':'+String(Math.floor(el/1000)%60).padStart(2,'0') : String(Math.floor(el/1000))) : fmtSeconds(el/1000,true));
+  display.textContent = (hideTimeWhileSolving || timerLiveMode==='hidden') ? 'solving…' : (timerLiveMode==='seconds' ? String(Math.floor(el/1000)) : fmtSeconds(el/1000,true));
   if(splitPhasesEnabled) hint.textContent = 'phase '+(currentSplits.length+1)+' — press Enter to split';
   rafId=requestAnimationFrame(tick);
 }
@@ -5191,7 +4957,7 @@ function inspectionTick(){
   inspectionRaf = requestAnimationFrame(inspectionTick);
 }
 function beginHold(){
-  if(typingMode || cubeInput) return;
+  if(typingMode) return;
   if(state==='running'||state==='holding'||state==='ready') return;
   if(state==='inspecting'){ cancelAnimationFrame(inspectionRaf); phase='start-solve'; }
   else { phase = inspectionLimit>0 ? 'start-inspection' : 'start-solve'; inspectionStart=null; }
@@ -5553,9 +5319,9 @@ document.getElementById('shortcutsHelpClose').addEventListener('click', ()=>togg
 document.getElementById('shortcutsHelp').addEventListener('click', (e)=>{ if(e.target.id==='shortcutsHelp') toggleShortcutsHelp(false); });
 
 document.getElementById('inspCancel').addEventListener('click',(e)=>{ e.stopPropagation(); if(inInspection()){ resetTimerToIdle(); hint.textContent='inspection cancelled — '+CNKeys.startPhrase()+' to start'; } });
-stage.addEventListener('mousedown',(e)=>{ if(typingMode || cubeInput || !mouseTimerEnabled) return; if(state!=='running' && e.target.closest('.mode-bar')) return; if(e.target.closest('.pbtn')||e.target.closest('.focus-exit')||e.target.closest('.insp-cancel')) return; if(state==='running'){ if(!stopIsLocked()) stopTimer(); return; } beginHold(); });
+stage.addEventListener('mousedown',(e)=>{ if(typingMode || !mouseTimerEnabled) return; if(e.target.closest('.pbtn')||e.target.closest('.focus-exit')||e.target.closest('.insp-cancel')) return; if(state==='running'){ if(!stopIsLocked()) stopTimer(); return; } beginHold(); });
 window.addEventListener('mouseup',()=>{ if(!mouseTimerEnabled) return; releaseHold(); });
-stage.addEventListener('touchstart',(e)=>{ if(typingMode || cubeInput) return; if(state!=='running' && e.target.closest('.mode-bar')) return; if(e.target.closest('.pbtn')||e.target.closest('.focus-exit')||e.target.closest('.insp-cancel')) return; e.preventDefault(); if(state==='running'){ if(!stopIsLocked()) stopTimer(); return; } beginHold(); },{passive:false});
+stage.addEventListener('touchstart',(e)=>{ if(typingMode) return; if(e.target.closest('.pbtn')||e.target.closest('.focus-exit')||e.target.closest('.insp-cancel')) return; e.preventDefault(); if(state==='running'){ if(!stopIsLocked()) stopTimer(); return; } beginHold(); },{passive:false});
 window.addEventListener('touchend',()=>{ releaseHold(); });
 
 // ================= AUTO-FIT TIMER VIEW (measures real rendered height; shrinks only as much as needed) =================
@@ -5857,19 +5623,6 @@ const OLL2 = [
 // 2x2 PLL (2 cases): with the first layer solved, a 2x2 last layer has only two unsolved permutations up to a U turn.
 const PLL2 = [
   ["Adjacent swap","y R U R' F' R U R' U' R' F R2 U' R'"], ["Diagonal swap","R U' R' U' F2 U' R U R' U F2"]
-].map((x,i)=>({id:i+1,name:x[0],alg:x[1]}));
-
-// Ortega PBL (8 cases): after the first face and OLL, both layers still need permuting. Case names are top layer / bottom layer.
-// Found by a computer search (shortest using only R, U and F) and checked on a separate model of the 2x2. Turning either layer before or after the algorithm never changes which of these 8 cases you have.
-const PBL = [
-  ["Adj / Solved","R F' U F2 U' F R F2 R2"],
-  ["Diag / Solved","R U' R2 U' F' R' U F2 R U' F"],
-  ["Solved / Adj","R F' R F2 R' U F R2 F2"],
-  ["Solved / Diag","R U' R U R' F2 R' U' R' U F2"],
-  ["Adj / Adj","F2 U' F2 U2 R2 U' R2"],
-  ["Adj / Diag","F R' F R2 F' U F'"],
-  ["Diag / Adj","F R' U F2 U' R F'"],
-  ["Diag / Diag","R2 F2 R2"]
 ].map((x,i)=>({id:i+1,name:x[0],alg:x[1]}));
 
 // CLL (40 cases): 2x2 "Corners of the Last Layer" — orients + permutes the last layer in one look.
@@ -6406,10 +6159,9 @@ const ZBLL_AS = [
 
 const PLL_ALTS = {"H":["M2 U M2 U2 M2 U M2","R2 S2 R2 U' R2 S2 R2 U","M2 U2 M2 U M2 U2 M2 U'","R2 U2 R U2 R2 U2 R2 U2 R U2 R2"],"Ua":["R U R' U R' U' R2 U' R' U R' U R U2","y R2 U' S' U2 S U' R2","y2 R U' R U R U R U' R' U' R2","R2 U' R' U' R U R U R U' R"],"Ub":["y2 R2 U R U R' U' R' U' R' U R'","R' U R' U' R' U' R' U R U R2"],"Z":["M' U' M2 U' M2 U' M' U2 M2 U'","y M2 U' M2 U' M' U2 M2 U2 M'","y M' U M2 U M2 U M' U2 M2 U","R' U' R2 U R U R' U' R U R U' R U' R'"],"Aa":["y x' R2 D2 R' U' R D2 R' U R' x","R' U2 R2 U' L' U R' U' L U R' U2 R","R' F R' B2 R F' R' B2 R2"],"Ab":["y' x L U' L D2 L' U L D2 L2","y' r U' L D2 L' U L D2 L2","y' L F' L B2 L' F L B2 L2","y x' R U' R D2 R' U R D2 R2 x"],"E":["R2 U F' R' U R U' R' U R U' R' U R U' F U' R2","R2 U R' U' y R U R' U' R U R' U' R U R' y' R U' R2","R' U L' D2 L U' R L' U R' D2 R U' L","R2 U R' y R U' R' U R U' R' U R U' R' U y' R U' R2"],"F":["R' U R U' R2 F' U' F U R F R' F' R2 U'","y2 R' U2 R' d' R' F' R2 U' R' U R' F R U' F","B' U' R' B U B' U' B' R B2 U' B' U' B U B' U B","L U' L' U L2 F U F' U' L' F' L F L2 U"],"Ga":["R2 u R' U R' U' R u' R2 F' U F U'","R2 u R' U R' U' R u' R2 y' R' U R U'"],"Gb":["D R' U' R U D' R2 U R' U R U' R U' R2","R' d' F R2 u R' U R U' R u' R2 U","y F' U' F R2 u R' U R U' R u' R2 U"],"Gc":["R2 u' R U' R U R' u R2 B U' B' U"],"Gd":["R U R' y' R2 u' R U' R' U R' u R2 U'"],"Ja":["y2 x R2 F R F' R U2 r' U r U2 x' U","L' U' L F L' U' L U L F' L2 U L U2","R U' L' U R' U2 L U' L' U2 L U","y2 R' U2 R U R' z R2 U R' D R U' z' U"],"Jb":["R U2 R' U' R U2 L' U R' U' L U","r' F R F' r U2 R' U R U2 R' U","L' U R U' L U2 R' U R U2 R' U"],"Na":["F' R U R' U' R' F R2 F U' R' U' R U F' R'","R F U' R' U R U F' R2 F' R U R U' R' F","L U' R U2 L' U R' L U' R U2 L' U R' U'","R U' L U2 R' U L' R U' L U2 R' U L' U'"],"Nb":["R' U L' U2 R U' L R' U L' U2 R U' L U","B R' U' R U R B' R2 B' U R U R' U' B R","R' B' U R U' R' U' B R2 B R' U' R' U R B'","r' D' F r U' r' F' D r2 U r' U' r' F r F'"],"Ra":["L U2 L' U2 L F' L' U' L U L F L2 U2","y R U R' F' R U2 R' U2 R' F R U R U2 R'"],"Rb":["y R2 F R U R U' R' F' R U2 R' U2 R U2","R' U2 R' D' R U' R' D R U R U' R' U' R"],"T":["R U R' U' R' F R2 U' R' U F' L' U L U2","R2 u R2 u' R2 F2 u' F2 u F2 U'","F R U' R' U R U R2 F' R U R U' R'","R2 U R2 U' R2 U' D R2 U' R2 U R2 D'"],"V":["R' U R' U' y R' F' R2 U' R' U R' F R F","R' U R' d' R' F' R2 U' R' U R' F R F","y R U' R U R' D R D' R U' D R2 U R2 D' R2"],"Y":["F R' F R2 U' R' U' R U R' F' R U R' U' F'","R2 U' R2 U' R2 U R' F' R U R2 U' R' F R","R' U' R F2 R' U R d R2 U' R2 U' R2","R2 U' R2 U' R2 d R U R' B2 R U' R'"]};   // other algorithms for some PLL cases, from SpeedCubeDB; each is lined up (with y and U turns) to solve the picture of its case exactly
 const MIRROR_ALGS = {"OLL":{"1":["L' U2 L2 F' L' F U2 L F' L' F","Runway"],"2":["U2 F' L' U' L U F f' L' U' L U f","Zamboni"],"3":["y f' L' U' L U f U' F' L' U' L U F","Pinwheel"],"4":["y f' L' U' L U f U F' L' U' L U F","Anti-Pinwheel"],"5":["U2 l' U2 L U L' U l","Righty Square"],"6":["U2 l U2 L' U' L U' l'","Lefty Square"],"7":["y2 l U L' U L U2 l'","Reverse Lightning"],"8":["l' U' L U' L' U2 l","Lightning"],"9":["U' L' U' L U' L F' L' F L' U2 L","Anti-Kite"],"10":["y2 L' U' L U L F' L2 U' L U F","Kite"],"11":["y2 M' L U L' U L U2 L' U M","Upstairs"],"12":["U M L' U' L U' L' U2 L U' M'","Downstairs"],"13":["L F' L' U' L F L' F' U F","Anti-Gun"],"14":["l' U l U l' U' l F U' F'","Gun"],"15":["U2 l' U' l L' U' L U l' U l","Anti-Squeegee"],"16":["U2 l U l' L U L' U' l U' l'","Squeegee"],"17":["U L' U' L U' L F' L' F U2 L F' L' F","Slash"],"18":["y' L' U2 L2 F' L' F U2 M' U' L' U l","Crown"],"19":["M U' L' U' L U M' L F' L' F","Bunny"],"20":["l' U' L U M2 U' L' U L U M'","Checkers"],"21":["L' U' L U' L' U L U' L' U2 L","Sune-H"],"22":["U2 L' U2 L2 U L2 U L2 U2 L'","Pi"],"23":["L2 D' L U2 L' D L U2 L","Headlights"],"24":["U2 l' U' L U l F' L' F","T-OCLL"],"25":["F l' U' L U l F' L'","Bowtie"],"26":["U2 L' U' L U' L' U2 L","Sune"],"27":["y L' U2 L U L' U L","Antisune"],"28":["U l' U' L U M U' L' U L","Stealth"],"29":["y2 F' U' L' U2 L U L' U2 L U F","Anti-Spotted Chameleon"],"30":["y' L' U' L U L' U L F U F' L' U' L","Spotted Chameleon"],"31":["U2 S' L' U' L U L F' L' f","Anti-Couch"],"32":["U2 L U F' U' L' U L F L'","Couch"],"33":["U2 L' U' L U L F' L' F","Tying Shoelaces"],"34":["y2 L' U' L2 U L F' L' U' L' U F","City"],"35":["U L' U2 L2 F' L' F L' U2 L","Fish Salad"],"37":["U F' L' U L U L' U' L F","Mounted Fish"],"41":["L U L' U L U2 L' F' L' U' L U F","Lefty Awkward Fish"],"42":["y2 L' U' L U' L' U2 L F' L' U' L U F","Awkward Fish"],"43":["f' L' U' L U f","P"],"44":["y' L U F U' F' L'","Anti-P"],"45":["U2 F' L' U' L U F","Suit Up (T)"],"46":["U2 L U L F' L' F U' L'","Seein' Headlights"],"49":["l U' l2 U l2 U l2 U' l","Right Front Squeezy"],"50":["y2 l' U l2 U' l2 U' l2 U l'","Right Back Squeezy"],"51":["U2 f' L' U' L U L' U' L U f","Bottlecap"],"52":["L F U F' U L' U' L U' L'","Rice Cooker"],"53":["U2 l' U' L U' L' U L U' L' U2 l","Anti-Frying Pan"],"54":["U2 l U L' U L U' L' U L U2 l'","Frying Pan"],"55":["L' U2 L2 U L' U L U2 F' L' F","Highway"],"56":["l' U' l U' L' U L U' L' U L l' U l","Streetlights"],"57":["L' U' L U M' U' L' U l","Mummy"]},"PLL":{"1":["M2 U M2 U2 M2 U M2","H"],"4":["y M2 U' M2 U' M' U2 M2 U2 M'","Z"],"5":["y' x L2 D2 L' U' L D2 L' U L' x'","Ab"],"6":["y' x L U' L D2 L' U L D2 L2 x'","Aa"],"7":["y' x' L' U L D' L' U' L D L' U' L D' L' U L D x","E"],"8":["y' L U F L' U' L U L F' L2 U L U L' U' L U' L'","F"],"9":["y2 L2 U L' U L' U' L U' L2 D U' L' U L D'","Gc"],"10":["y2 L' U' L U D' L2 U L' U L U' L U' L2 D","Gd"],"11":["y2 L2 U' L U' L U L' U L2 D' U L U' L' D","Ga"],"12":["y2 L U L' U' D L2 U' L U' L' U L' U L2 D'","Gb"],"13":["L' U' L F L' U' L U L F' L2 U L U2","Jb"],"14":["y' L U' R U2 L' U L U2 L' R' U2","Ja"],"15":["L U' L' U L F U F' L' U' L F' L F L' U L'","Nb"],"16":["L' U' L U' L' U' L F L' U' L U L F' L2 U L U2 L' U L","Na"],"17":["L U2 L' U2 L F' L' U' L U L F L2 U2","Rb"],"18":["y' L' U L U L' U' L' D' L U L' D L U2 L U2","Ra"],"19":["y2 L' U' L U L F' L2 U L U L' U' L F","T"],"20":["y' L U' L U L' D L D' L U' D L2 U L2 D' L2","V"],"21":["y F' L' U L U L' U' L F L' U' L U L F' L' F","Y"]},"OLL2":{"1":["U L' U2 L U L' U L","Anti Sune"],"2":["U L' U' L U' L' U2 L","Sune"],"3":["U2 F' L' U' L U L' U' L U F","Pi"],"4":["U2 F' L' U' L U F","P"],"5":["F L' U' L U L F' L'","L"],"6":["U2 L' U' L U L F' L' F","T"],"7":["L2 U2 L U2 L2","H"]},"PLL2":{"1":["y' L' U' L F L' U' L U L F' L2 U L U2","Adjacent swap"],"2":["L' U L U F2 U L' U' L U' F2 U2","Diagonal swap"]},"CLL":{"1":["y L' U2 L U L' U L","Antisune 1"],"4":["L F' L' F L' U' L","Antisune 4"],"5":["y2 L' U2 L F' L F L' U L' U L","Antisune 6"],"6":["y' L' U2 L U L' U L F' L F L' U' L' U L U U'","Antisune 5"],"7":["y2 L' U' L U' L' U2 L","Sune 1"],"10":["y2 L' U L F' L F L'","Sune 4"],"11":["U2 L' U' L U L F' L' F L' U' L U' L' U2 L U","Sune 6"],"12":["L' U' L U' L F' L' F L' U2 L","Sune 5"],"13":["y2 F' L' U' L U L' U' L U F","Pi 1"],"14":["y' L U L F' L' F L' U L U2 L'","Pi 2"],"15":["L F' L' F L' U L U L' U L","Pi 3"],"16":["y F' L2 U L2 U' L2 U' L2 F","Pi 4"],"17":["y F' L F L' U2 L' U L U' L' U2 L","Pi 6"],"18":["y2 L' U2 L U L' U' L U2 L F' L' F","Pi 5"],"19":["y F' L' U' L U F","U 1"],"20":["L U L2 U' L U2 L' U2 L U' L","U 2"],"21":["y2 F' L' U' L U2 F L' U L F'","U 3"],"22":["y F' L F L' U L' U L U2 L' U L","U 4"],"23":["L U' L F' L' F L' U2 L U' L' U2","U 6"],"24":["L' U L2 F' L' F L' U' L U L' U' L U2","U 5"],"25":["y2 F' L F L' U' L' U L","L 2"],"26":["y F L' U' L U L F' L'","L 1"],"27":["y2 L' U2 L2 F' L' F L' U2 L U2","L 3"],"28":["y L U' L U2 L' U L U' L' U L2 U2","L 4"],"29":["y2 L' U2 L F L' U2 L U' L F2 L'","L 6"],"30":["y L' U2 L2 F2 L' U' L F2 L' F","L 5"],"33":["F' U L' U2 L U F2 L' U' L","T 3"],"34":["L U' L' U2 L2 F L' U L F2 L2 U2","T 4"],"35":["y2 F' L' U' L U L' U L U L' U' L F","T 5"],"36":["L U' L' U2 L2 F' L' F L'","T 6"],"37":["y' L2 U2 L U2 L2 U2","H 1"],"38":["y' F' L' U' L U L' U' L U L' U' L U F","H 2"],"39":["y2 L' U' L U' L' U' L F' L F L'","H 3"],"40":["F' L2 U L2 U L2 U' L2 F","H 4"]},"EG1":{"2":["y2 F L' U' L U L' U' L2 F L'","Antisune 3"],"3":["L' U L2 F' L' U L F' L' F","Antisune 2"],"4":["U2 L' U L F U L' U' L U F' U2","Antisune 4"],"5":["U2 U' L' U L F U F2 L' U L U'","Antisune 6"],"6":["U2 y L' U' L F U L' U' L U L' U' L U2","Antisune 5"],"8":["y2 L F' L2 U L U' L' U L F'","Sune 3"],"9":["F' L F L' U' L F L2 U' L","Sune 2"],"10":["U2 U' F L F' L2 U' L U F' L F L' U' U2","Sune 4"],"11":["U2 y' L' U L U' L' U L U' F' L' U L U2","Sune 6"],"12":["U2 L' U' L F2 U' F' L' U' L U'","Sune 5"],"13":["U2 y2 U F' U L F' L' U F2 L' U' L","Pi 1"],"14":["y' L' U L2 F' L2 U L","Pi 2"],"15":["y' F' L F' U F2 L' U' L' U2","Pi 3"],"16":["y' L' U L U' L' U L F' L' U L U2","Pi 4"],"17":["U2 U L F L' U L F' L2 U' L F L' U' L","Pi 6"],"18":["U2 L' U L2 F' L' U' L' U L U L F' L' F","Pi 5"],"19":["y2 U2 y' U2 L' U' L U' L' U L2 F L2 U' L U'","U 1"],"20":["U2 y' L U' L U L' U L U F2 L2 U2","U 2"],"21":["F U2 L' U2 L U2 F'","U 3"],"22":["y2 U2 y' L F' L' F L F' L2 U L U2","U 4"],"23":["y2 U2 y2 L F' L' U L F' L' U L' U' L F U2","U 6"],"24":["y2 U2 U2 L' U L U' L' U L U F' L' U L","U 5"],"25":["U' y U L F' L' U L F' L2 U' L F U2 U2","L 2"],"26":["U' y' L' U L U' L' U L2 F L' F' U2","L 1"],"27":["y2 U y' L U' L2 U L2 U F' L2 U L U","L 3"],"28":["y2 U y' L F' L2 U' L F L' U2 L U'","L 4"],"29":["U' y2 L U2 F' L' U2 L' U L2 F' U'","L 6"],"30":["U' y2 L' U' L F L' U' L U F' L F L' U'","L 5"],"31":["F L F' L2 U' L U L' U' L","T 2"],"32":["F' L' U L2 F L' U' L F L'","T 1"],"33":["y2 U2 y' L' U L2 F' L' U' L' U2 L U2","T 3"],"34":["y2 U2 y U2 L F' L' F U' L' U L U' F' L' U L U2","T 4"],"35":["y2 U2 y L F L2 U' L F L' U' L U2","T 5"],"36":["y2 U2 y U L' U L U2 F' L' U2 L F' U2","T 6"],"37":["U L F' L2 U L F' L' U' L F U2","H 1"],"38":["U F U' L' U L2 F2 L' U F' U2","H 2"],"39":["U2 U' L F' L' F U2 F' L' U2 L F'","H 3"],"40":["U L' U' L F L' U' L U L' U' L U U2","H 4"]},"ZBLLPi":{"1":["y' l F l' U l F2 l2 U' L U l F' L' F","Pi 2"],"2":["y' L' U' L U' L' U2 L2 F l' U' L' U l F'","Pi 1"],"3":["L' U' L' D' L U L' D L' U L' U L U2 L'","Pi 4"],"4":["L U L D L' U' L D' L U' L U' L' U2 L","Pi 3"],"5":["U2 F' L' U' L U L F L' U2 L U L2 U L2 U2 L' U","Pi 6"],"6":["U2 F' L F L' U2 L' U2 L U l' U' L U' L' U2 l U","Pi 5"],"7":["U2 L2 F' L' U' L' U L F L' U L U L' U' L U' L'","Pi 7"],"8":["y F' U' L' U L U' L' U2 L U L' U' L F","Pi 8"],"9":["U2 L U F L' U' L U L F' L2 U2 L U2 L' U","Pi 12"],"10":["y' L' F' U' L2 U2 L2 U' L2 U' L2 F L","Pi 11"],"11":["y' F' U L' U L U' L' U' L U2 L' U2 L U' F","Pi 10"],"12":["y' L' U' L U' L' U L U L F L' U2 L' U2 L F' U'","Pi 9"],"13":["y' L2 D' L U2 L' D L2 U L2 D' L U L' D L2","Pi 14"],"14":["y L2 D L' U2 L D' L2 U' L2 D L' U' L D' L2","Pi 13"],"15":["y2 L' U' L U' L2 D' L U L' D L2 U' L' U2 L","Pi 16"],"16":["y2 L U L' U L2 D L' U' L D' L2 U L U2 L'","Pi 15"],"17":["U2 y' L' U2 L U L' U2 L U2 L' U L2 D L' U L D' L'","Pi 18"],"18":["U2 L U L' U' L2 F L' U' L' U L F' U L' U' L U' L'","Pi 17"],"19":["y' F' U' L' U2 L U' L' U' L F L' U2 L U L' U L","Pi 19"],"20":["L' U2 L U L' U' l F2 l' U2 L U l F' l' U2","Pi 20"],"21":["y' L' U' L U' F L' U2 L U2 L F' L' U'","Pi 24"],"22":["U2 l' U l U l' U' l U L2 B L B' L U' U'","Pi 23"],"23":["U2 l U' l' U' l U l' U' L2 F' L' F L' U'","Pi 22"],"24":["R U' L' U R' U L U L' U L U'","Pi 21"],"25":["y2 L' U' L' D' L U' L' D L2 U L' U' L U L' U L","Pi 38"],"26":["U2 L F' L' U' L U L F L2 U L U' L' U L U2 L' U","Pi 37"],"27":["y' L U L' U L U' L' U L2 D L' U' L D' L' U' L'","Pi 40"],"28":["U2 y L2 F2 L2 U L' U' L U' L2 F2 L U2 L","Pi 39"],"29":["L' U2 L U2 L F' L2 U L U2 L' U2 L U F","Pi 42"],"30":["y2 L' U' L U L F' L2 U' L U L' U' L U F","Pi 41"],"31":["U2 L' U2 L U' L2 D' L U2 L' D L2 U L' U2 L U L' U' L U","Pi 43"],"32":["U2 l F l' U' l' U2 l F2 U L' U' L U L' U L U","Pi 44"],"33":["y' L' U' L U' F2 L' U2 L U2 L F2 L'","Pi 48"],"34":["y L' U' L U' L' U L U' L' U L' D' L U L' D L2","Pi 47"],"35":["y' L U2 L' U' L U' L2 U l F' L F l'","Pi 46"],"36":["U2 L' U' L U' L' U2 L U L' U R U' L U R'","Pi 45"],"37":["U2 L' U L U L' U L U' L' U' L U' L F L' U' L' U L F' U","Pi 26"],"38":["y2 L U L D L' U L D' L2 U' L U L' U' L U' L'","Pi 25"],"39":["L U2 L' U' L U L' U' L2 F' L' U' L' U L F L' U2","Pi 28"],"40":["y L' U' L U' L' U L U' L2 D' L U L' D L U L","Pi 27"],"41":["y F' U' L' U L U' L' U L2 F L' U' L' U L","Pi 30"],"42":["y F' U' L' U2 L U2 L' U' L2 F L' U2 L' U2 L","Pi 29"],"43":["y L' U' L U L' U' L2 D L' U' L D' L' U' L' U L U' L' U2 L U'","Pi 31"],"44":["y' L' U' L U' L' U L2 F' L' F L' U L F U' F' U'","Pi 32"],"45":["U2 L U L' U L U2 L' U R U' L' U R' U' L","Pi 36"],"46":["y L' U2 L U L' U L2 U' l' f U' f' l","Pi 35"],"47":["y' L U L' U L U' L' U L U' L D L' U' L D' L2","Pi 34"],"48":["y L U L' U B2 L U2 L' U2 r' U2 r","Pi 33"],"49":["L' U2 L U' L D L' U' L D' L2 U L U' L' U L","Pi 57"],"50":["y L' U2 L U F L' U2 L U L' U L F' L' U L","Pi 60"],"51":["y2 L2 D' L U2 L' D L2 U L' U' L' D' L U2 L' D L2","Pi 58"],"52":["U2 L' F U L2 F' U F U' L2 U' F' L U","Pi 59"],"53":["y2 F' U' L U L2 U L2 U2 L' U2 L' U' L F","Pi 53"],"54":["y L U L D L' U' L D' L' U2 L D L' U2 L D' L2","Pi 54"],"55":["y2 L2 D L' U' L D' L' U' L' U L U' L' U' L U' L'","Pi 56"],"56":["y2 L2 D' L U L' D L U L U' L' U L U L' U L","Pi 55"],"57":["y L' U2 L U2 L U F' U' L2 U L U' L' U L F","Pi 49"],"58":["L' F' U L2 U2 L' U' L U' L2 U' F L","Pi 51"],"59":["y L' U' L U L' U' L2 D L' U L D' L' U L' U2 L U'","Pi 52"],"60":["y2 L F U F' U L' U' S L U' L' S'","Pi 50"],"61":["y2 L U2 L2 U' L2 U' L2 U2 L","Pi 68"],"62":["y L' U2 L U L' U L2 U L' U L U2 L'","Pi 67"],"63":["L' U' L U L2 U' L U' L' U2 L2 U L' U' L U'","Pi 64"],"64":["y' L' U2 L U2 L' U L U2 L' U L U2 L' U' L U'","Pi 63"],"65":["U2 L' U2 L2 U L2 U' L2 U2 L' S' L2 S","Pi 66"],"66":["U2 y l' U2 L2 F' L' F L F' L' F L' U2 l","Pi 65"],"67":["y' L U2 L' U' L U' L2 U' L U' L' U2 L","Pi 62"],"68":["y2 L' U2 L2 U L2 U L2 U2 L'","Pi 61"],"69":["U2 L U L' U L U2 L' U' L U L' U L U2 L' U","Pi 70"],"70":["U2 L U L' U' L' U2 L U L' U L2 U2 L' U","Pi 69"],"71":["U2 y' L' U' L U' L' U2 L U' L' U' L U' L' U2 L","Pi 71"],"72":["U2 L' U' L2 U L2 U L2 U2 L2 U L U' L' U2 L","Pi 72"]},"ZBLLT":{"1":["y' L' U' L U' L' U' L U2 R' L' U L U' R","T 15"],"2":["y2 F' L' U' L U L F U2 L' U' L' U L2 U2 L'","T 16"],"3":["y2 L U L' U' D L' U L' U' L' U L2 D' U2","T 13"],"4":["y L D L' U' L D' L2 U L U' L' U' L U L' U' L","T 14"],"5":["L U L' U L2 F L' U' L' U L F' U' L' U L U2 L'","T 18"],"6":["y l' U' L U l F' L' F","T 17"],"7":["y L' U2 L2 D' L U L' D U' L' U L2 U L U","T 19"],"8":["y L' U' L U L' U L R' U L' U' L R","T 20"],"9":["y F U l F2 l' U' F' L' U L U2","T 22"],"10":["y L' U2 L U2 L F' L' U' L' U L F","T 21"],"11":["y2 L' R U' L U R' U' L' U' L U L' U L U","T 24"],"12":["y L' U L U L' U' L' D' L U2 L' D L U L","T 23"],"13":["L2 F2 L' U2 L' U2 L F2 L' U L U' L' U2","T 3"],"14":["y L' D' L U L' D L2 U' L' U L U L' U' L U L'","T 4"],"15":["y' L U L' U L U L' U2 R L U' L' U R'","T 1"],"16":["y' L U2 L2 U' L U L U2 F L' U2 L' U2 L F'","T 2"],"17":["y F' L' F l' U' L U l","T 6"],"18":["y' F' L' U' L U L' U' L U F L' U' L U L F' L' F","T 5"],"19":["L U2 L' F' U L U' L' U' F L U' L' U","T 7"],"20":["y L U L' U' L U' L' R U' L U L' R'","T 8"],"21":["y' L' U' L U L F L' U2 L' U2 L F'","T 10"],"22":["y' F' U' L' U2 L U' L' U' L F U2","T 9"],"23":["y L U' L' U' L U L D L' U2 L D' L' U' L'","T 12"],"24":["y F' U' L U L' F L U L' U' L U' L' U","T 11"],"25":["y2 L' U L U2 R' L' U L U' R","T 27"],"26":["y' L F' L F L2 U L U F U F' L' U2","T 28"],"27":["L U' L' U2 R L U' L' U R'","T 25"],"28":["y' L' U' L2 F' L' F L' U L F U' F' U2","T 26"],"29":["l U2 L' U' L2 F2 L' F' L F2 L' U' l'","T 30"],"30":["y2 l' U2 L U r' L' U2 L U L' U2 r U l","T 29"],"31":["y2 l' U l' U2 L F' L' U2 l2 F'","T 31"],"32":["y2 L U L2 U' L F L' U' L U L F' L2 U L U L U' L'","T 32"],"33":["L' U' L U' L' U L F U R U2 R' U' F'","T 34"],"34":["y2 L U L' U L U' L' F' U L U2 L' U' F","T 33"],"35":["y2 F U R U2 R' U' F' L' U' L U L' U L","T 36"],"36":["F' U L U2 L' U' F L U L' U' L U' L'","T 35"],"37":["y' L U L' U F' U L U' L' U' F L U' L'","T 39"],"38":["y2 L' U2 L' D' L U2 L' D L' U L' U L U2 L'","T 40"],"39":["y' L' U' L R U2 L' U L U2 R' U' L' U L","T 37"],"40":["L U2 L D L' U2 L D' L U' L U' L' U2 L","T 38"],"41":["y r' U2 L' D2 L U2 L' D2 L2 x","T 42"],"42":["y r U2 L D2 L' U2 L D2 L2 x'","T 41"],"43":["y2 F' L' U' L U L' U L U L' U' L F","T 43"],"44":["y L' U' L U2 L' U L U2 L' U L2 F L' U' L' U L F'","T 44"],"45":["y2 L' F' L U' L' U2 L U' L' U' F L U","T 46"],"46":["y' L U L D L' U' L D' L' U L' U L U2 L' U","T 45"],"47":["y2 L' U L2 D L' U L D' L' U L' U' L U' L' U' L","T 48"],"48":["L U' L2 D' L U' L' D L U' L U L' U L U L'","T 47"],"49":["y' L' U' L U L' U' L2 D L' U L D' L' U2 L' U L U2","T 59"],"50":["y' L D L' U L D' L' U L' U L U' L' U L U L' U' L U'","T 58"],"51":["y2 L' U' L F L' U' L U L F' L' U L F' L' U' L' U L F","T 60"],"52":["L U L' U2 L' D' L U L' D L2 U' L' U L U' L'","T 57"],"53":["y2 F' U' L D L' U' L D' L' U L D L' U L D' L' F","T 53"],"54":["y2 L2 F' L' U' L U L F L U L2 U2 L' U2 L' U2","T 54"],"55":["L U' L2 D' l U2 l' D L2 U L'","T 56"],"56":["y2 L' U L2 D l' U2 l D' L2 U' L","T 55"],"57":["y2 L' U' L U2 L D L' U' L D' L2 U L U' L' U L","T 52"],"58":["F' U L2 U' L U' L' U2 L2 U L' U2 L F U'","T 50"],"59":["F' U' L D l' U2 l D' L2 U L U' F U2","T 49"],"60":["y' L' U L2 D l' U2 l D' L2 U L U L' U L","T 51"],"61":["y L' U' L U' L' U2 L U L' U2 L U L' U L","T 62"],"62":["y2 L' U L U2 L' U' L U2 L' U' L U' L' U L","T 61"],"63":["y L U L' U L U' L' U L' U' L2 U' L2 U2 L","T 65"],"64":["y2 L U2 L' U' L U' L' U L U L' U L U2 L'","T 66"],"65":["y L' U' L U' L' U L U' L U L2 U L2 U2 L'","T 63"],"66":["L' U2 L U L' U L U' L' U' L U' L' U2 L","T 64"],"67":["y L' U' L2 U L2 U L2 U2 L' U L' U L","T 68"],"68":["y L U L2 U' L2 U' L2 U2 L U' L U' L'","T 67"],"69":["y2 L U2 L' U' L U' L2 U2 L U L' U L","T 72"],"70":["L U' L' U2 L U L' U L' U' L U L U L' U' L' U L","T 70"],"71":["y L' U' L U' L' U2 L U2 L U L' U L U2 L'","T 71"],"72":["L' U2 L U L' U L2 U2 L' U' L U' L'","T 69"]},"ZBLLH":{"1":["y F' L F l' U' L' U l2 F2 l' U' R U' R'","H 2"],"2":["y' F l' U' L U l F' L2 U2 L U L' U L","H 1"],"3":["y' F L' U2 L U2 L F' U L' U' L' U L U L U' L'","H 4"],"4":["y L' U2 L U L' U' L U2 L F' L2 U L U L' U' L F","H 3"],"5":["y L' U2 L U L' U' L U F L' U' L U L F' L2 U L U2","H 6"],"6":["y2 L U2 L2 U' L2 U' L' U2 L F' L' U' L' U L F U2","H 5"],"7":["L' U' L U' L' U L2 F L' U2 L' U2 L F' L' U L U2","H 7"],"8":["y2 F' L' U L U' L' U2 L U L' U' L U F","H 8"],"9":["F' U L' U2 L U2 L' U L U L' U' L U' F","H 12"],"10":["y' F L' U2 L U2 L F' L' U' L' U' L U L' U L U","H 11"],"11":["y L U2 L' U2 L2 F L' U' L' U L F' U' L' U","H 10"],"12":["y2 F' L F L2 U2 L U' L' U2 L U' L' U L2 F' L' F","H 9"],"13":["L2 D L' U L D' L2 U L2 D L' U2 L D' L2 U2","H 15"],"14":["y L U2 L' U' L2 D L' U L D' L2 U' L U' L'","H 16"],"15":["U2 y L U2 L' U' L U F L' U' L U L F' L' U2 L'","H 13"],"16":["y' L' U2 L U L2 D' L U' L' D L2 U L' U L","H 14"],"17":["L U L' U L U' F L' U' L U L F' L2 U L U' L'","H 18"],"18":["y2 F' L F L' U2 L' U2 L U L F2 l' U' l F' L'","H 17"],"19":["U2 y F' L' U L U L' U2 L U F U' L' U' L U' L' U2 L","H 19"],"20":["y L' U' L U' L' U2 L F' L' U L U L' U2 L U F","H 20"],"21":["U2 L' U' L U' L' U' l F' L F l' U'","H 22"],"22":["U2 L F L' U2 L' U2 L F' U L' U L U'","H 21"],"23":["y' L' U' L2 F' L' F l' U l U' l' U' l","H 24"],"24":["y L F' L F L2 U l U' l' U l U l'","H 23"],"25":["y L' U' L U' y L U' L' U L2 F' L' F L'","H 32"],"26":["L U F U' F' L' U F' U' L' U L U' L' U L F U'","H 31"],"27":["y' F' L' U' L U L' U' L U L' U' L U F","H 27"],"28":["x' U L' U L U' L F2 L' U L' U' L U' x","H 28"],"29":["L U L' U L U2 L2 U2 R U' L U R' U L' U L U'","H 30"],"30":["L U2 L' U' L U' L' U' L U L' U' L F L' U' L U L F' L2 U'","H 29"],"31":["y' L' U L2 U F2 U L2 U' L2 U' F2 L2 U' L U'","H 26"],"32":["y L U L' y' U L' U L U' L' r' U L U' r","H 25"],"33":["y2 L U L' U L U' L' U L U2 L'","H 34"],"34":["y2 L' U' L U' L' U L U' L' U2 L","H 33"],"35":["y L' U2 L U L' U' L U L' U L","H 36"],"36":["y L U2 L' U' L U L' U' L U' L'","H 35"],"37":["y' L' U2 L U L' U L U L U L' U L U2 L'","H 38"],"38":["y L U2 L' U' L U' L' U' L' U' L U' L' U2 L","H 37"],"39":["L' U' L U' L' U2 L U L U2 L' U' L U' L' U2","H 39"],"40":["L' U' L U' L' U L U' L' U L U' L U L2 U L U' L U' L'","H 40"]},"ZBLLS":{"1":["L' U2 L U2 l F' L' F l' L U'","AS 2"],"2":["U2 y L U2 L D L' U' L D' L2 U L U2 L'","AS 9"],"3":["y2 L' U L U2 L' U L2 D L' U L D' L'","AS 7"],"4":["y L' U2 L U F L' U' L U L F' L2 U L","AS 8"],"5":["y L2 D' L U' L' D L2 U l F' L' F M' U","AS 1"],"6":["y L' U' L U L' U L F L' U' L U' L' U L U L F' L'","AS 12"],"7":["S' L' U' L U L F' L' S L' U' L U F U'","AS 5"],"8":["L U L' U L2 D l' U2 l D' L2","AS 10"],"9":["L' U2 L U L' U' L U2 L F' L' U' L' U L F U","AS 6"],"10":["L U L' U L2 D L' U2 L D' L2","AS 4"],"11":["U2 L U L' U' L F' L' U' L U L F L2 U'","AS 11"],"12":["y2 L U2 L D L' U2 L D' L' U L' U L U2 L'","AS 3"],"13":["y2 L U L' U L' D L' U2 L D' L' U2 L' U2 L'","AS 20"],"14":["y' L D L' U2 L D' L2 U L U2 L' U' L U' L' U' L U'","AS 13"],"15":["y L' U' L2 F U F' U' L' F' L F L2 U2 L U'","AS 17"],"16":["L U2 F L' U' L U L F' L2 U' L U' L'","AS 15"],"17":["L F' U F U L' F' U L U L' F","AS 18"],"18":["L F' U2 F L' F' L U2 L' F","AS 21"],"19":["y L U L' U L U' L D L' U L l' U2 l D' L2","AS 23"],"20":["y' L2 U' L2 U' L' U2 L U2 L U D' L U' L' D U'","AS 19"],"21":["y L' U2 L' D' L U L' D L U' L U L' U L","AS 24"],"22":["L U L' U L U' L D L' U L D' L' U2 L'","AS 14"],"23":["y L U L' U L U' L D L' U' L D' L2","AS 22"],"24":["L2 D' L U' L' D L U' L U L' U L","AS 16"],"25":["y2 L2 D L' U2 L D' L' U' L' U L U2 L'","AS 63"],"26":["F' U' L' U L U' L' U L2 F L' U2 L' U2 L U2","AS 66"],"27":["y' L' U2 L U L' U' L' D' L U2 L' D L2","AS 71"],"28":["L U2 L F L' U' L' U L F' U2 L' U2","AS 64"],"29":["l F' L' F l' U' L","AS 72"],"30":["U2 y L U2 L' U' L2 D L' U L D' L2 U' L U L' U' L U' L'","AS 61"],"31":["L U' L' U' L U L D L' U' L D' L' U' L' U L U2 L' U","AS 70"],"32":["D' L U L' D L' U L U' L2 U' L U L2","AS 65"],"33":["y' L' U' L' U L2 D' U2 L U L' U' D L'","AS 69"],"34":["L U2 L D L' U' L D' L' U L' U' L U L' U' L U' L' U","AS 68"],"35":["F' L' U L U' L' U' L2 F L' U' L' U' L U L' U L U","AS 67"],"36":["y L' D U' L' U L U2 D' L2 U L' U' L'","AS 62"],"37":["R L' U R' U' L U2 R U2 R'","AS 44"],"38":["y' L' D' L U L' D L2 U L' U2 L U L'","AS 37"],"39":["U2 L' U' L F L' U' L U L F' L2 U' L U L' U L","AS 41"],"41":["U2 L2 D L' U L D' F' L' U' L' U L F L' U","AS 42"],"42":["L2 D' L U2 L' D L' U L2 U L U' L U' L' U'","AS 45"],"43":["L2 D' l U2 l' D L2 U L' U L","AS 47"],"44":["y L' U' L U' L' U L2 F' L' F l' U l U' l' U' l","AS 43"],"45":["U2 y L U L' U L F L' U' L U L F' L' U' L' U L U2 L'","AS 48"],"46":["y2 L' U2 L U L' U L' D' L U2 L' D L U2 L","AS 38"],"47":["y F' L' U' L2 U2 L2 U' L2 U' L' F U'","AS 46"],"48":["L2 D' L U2 L' D L2 U L' U L","AS 40"],"49":["L U' F L' U' L U L F' L' U2 L' U2 L U L'","AS 32"],"50":["y' F' L' U' L U L' U' L F' L F L' U F","AS 25"],"51":["y' L' U L2 D U L' U L U2 D' L2 U' L","AS 29"],"52":["y' L2 U' L2 F L' U' L U' L' U2 L F' L2 U L2","AS 27"],"53":["F' L F L' U' L' U L2 F' L' U' L U F U' L'","AS 30"],"54":["U2 F U2 L D' L' U L D L' f' L F' L' f U'","AS 33"],"55":["y L F U F' U' L' F' L' U' L U L' U' L U F U","AS 35"],"56":["y' F' U L U' L' U' F L U' L' U L U2 L' U","AS 31"],"57":["L F' L' f U2 L' U L U f' L F L'","AS 36"],"58":["y' L' U2 L2 U L2 F L' U' L U L F' U L","AS 26"],"59":["y L' U L F L' U' L U L F' L2 U L U2 L' U L U'","AS 34"],"60":["y2 L' U' L F L' U2 L U L' U L F' L' U L","AS 28"],"61":["y L U L' U' L' U2 L U L' U L U' L U' L'","AS 52"],"62":["y L2 U' L2 U' L U2 L U' L' U' L U L2 U","AS 57"],"63":["y2 L U L2 U' L2 U' L2 U2 L2 U2 L'","AS 50"],"64":["y L' U2 L U L' U L","AS 54"],"65":["L' U' L U' L U L' U L U2 L' U' L' U L U2","AS 59"],"66":["U2 y L U L' U L' U' L2 U' L' U L' U' L U L' U L","AS 56"],"67":["y2 L U L' U L U2 L'","AS 51"],"68":["y2 L' U2 L2 U2 L2 U' L2 U' L2 U L","AS 55"],"69":["y L U L' U' L' U2 L U L U' L' U L' U L","AS 58"],"70":["y L' U' L U L U L' U' L' U L U L U' L'","AS 53"],"71":["L' U' L U' L U L2 U L2 U2 L'","AS 60"],"72":["y' L2 D L' U2 L D' L' U' L F' L' U' L' U L F L' U","AS 49"]},"ZBLLU":{"1":["l2 F2 l' U2 l' U R U' L U' L' U R'","U 2"],"2":["L2 B2 L B2 L U' L' U R' U R U' L","U 1"],"3":["y L' U2 L U2 L F' L' U' L' U2 L U L' U2 L U F","U 12"],"4":["L F' L' U L U L' U' L F L' U' L U L F' L' F L'","U 5"],"5":["y F2 L' U L U L' U' L F L' U' L U L F' L' F2","U 4"],"6":["y L2 F L' U' L U L F' L2 U L U2 L2 U' L U' L'","U 6"],"7":["y F' U' L2 D L' U L D' L2 F L U' L'","U 11"],"8":["y L2 D' L U2 L' D L U2 L U L' U2 L U L' U L","U 10"],"9":["y' L U' L' U' L F L' U' L U L F' L2 U L U2 L' U L U2 L' U2","U 9"],"10":["y l' U' L U l F' L2 U L U L' U2 L U F","U 8"],"11":["y L U L' F' L2 D L' U' L D' L2 U F","U 7"],"12":["y' F' U' L' U2 L U' L' U' L2 F l' U' L' U l","U 3"],"13":["y2 L' U L2 F' L' U' L' U L2 F L' U F U' F'","U 13"],"14":["L' F' U L U L' U2 L U L' F L U'","U 23"],"15":["y2 L' U' L U' L' U' L U2 L' U L2 D L' U L D' L' U'","U 19"],"16":["y L U2 L' U' L U' L D' L U2 L' D L U2 L U2","U 21"],"17":["y2 x L2 D2 L' U2 L D2 L' U2 L' x'","U 22"],"18":["L' U' L U' L D L' U2 L D' L2 U L U2 L' U2 L U","U 20"],"19":["L U L' U2 L F L' U' L U L F' L2 U2 L U' L' U'","U 15"],"20":["y L' U L U L' U L U' L D L' U' L D' L2 U' L U","U 18"],"21":["L' U' L U' L' U L U2 L D L' U2 L D' L2 U L U2","U 16"],"22":["x' L2 D2 L U2 L' D2 L U2 L x","U 17"],"23":["L U2 L' U' L U' L D L' U L D' L' U' L' U'","U 14"],"24":["F' L' U L U' L' U' L U' L' U L F","U 24"],"25":["y F' L' U' L U L' U' L U F U L F U F' U' L'","U 27"],"26":["L2 D L' U' L D' L' U' L' U L U L'","U 36"],"27":["M' U' L U F U' F' L2 U' L U' L' U2 l","U 25"],"28":["L' U L U L' U' L' D' L U' L' D L2","U 34"],"29":["L' U' L R U2 L' U L U L' U L R'","U 32"],"30":["y L U2 L' F' U L U' L' U' L U' L' U F U'","U 33"],"31":["F' U' L' U2 L U' L' U' L U' L' U2 L U' L' U' L F","U 31"],"32":["y2 L U F U' F' U L' S L U' L' S'","U 29"],"33":["y l' U2 L2 F' L' F U2 l L' U' L' U L U'","U 30"],"34":["y2 L U' L' U' L U L D L' U L D' L2","U 28"],"35":["y l' U' L U M U' L' U L F' L' U' L U F","U 35"],"36":["y2 L2 D' L U L' D L U L U' L' U' L","U 26"],"37":["y L' U2 L' D' L U2 L' D L U2 L U L' U L","U 56"],"38":["y' L' U' L2 D L' U' L D' L2 U2 L","U 54"],"39":["y L2 D L' U L D' L2 U' L U' L' U2 L U' L' U2 L U L' U'","U 57"],"40":["L' U L U L' U2 L U L D L' U2 L D' L'","U 59"],"41":["y2 L2 D' l U2 l' D L U2 L","U 50"],"42":["L U L' U' L' U' L U L U' F' L' U' L' U L F","U 60"],"43":["y L' U2 L2 D L' U2 L D' L2 U L U2 L' U2 L U","U 58"],"44":["y L' U L U' L' U' L U2 L D L' U' L D' L2 U' L","U 55"],"45":["y2 L D l' U2 l D' L' U2 L' U L U L' U L","U 49"],"46":["y' L' U' L U' L' U L U' L' U L U R U' L' U L R' U","U 51"],"47":["y2 L2 D' L U2 L' D L U2 L","U 53"],"48":["y L' U' L U' L' U L U' F L' U2 L U2 L F' L' U","U 52"],"49":["L' D' l U2 l' D L U2 L U' L' U' L U' L'","U 45"],"50":["L2 D l' U2 l D' L' U2 L'","U 41"],"51":["F' U' L' U L' D' L U L' D L2 U' L' U' L F U","U 46"],"52":["y L2 F L' U2 L' U2 L F' U L' U' L U L' U","U 48"],"53":["L2 D L' U2 L D' L' U2 L'","U 47"],"54":["y' L2 D L' U L D' L2 U L U2 L'","U 38"],"55":["y L U' L' U L U L' U2 L' D' L U L' D L2 U L'","U 44"],"56":["y L U2 L D L' U2 L D' L' U2 L' U' L U' L'","U 37"],"57":["L2 D L' U2 L U D' L U L2 U' L' U' L2 U'","U 39"],"58":["L F l' U2 L D' L' U L D L2 U l F' U","U 43"],"59":["y2 L U' L' U' L U2 L' U' L' D' L U2 L' D L","U 40"],"60":["y2 F' L' U' L U L2 D' L U L' D L2 U L' U' L F","U 42"],"61":["y2 L' U' L U' L' U2 L2 U L' U L U2 L'","U 72"],"62":["y' L' U2 L U L' U L U L' U' L U' L' U2 L","U 67"],"63":["y2 L' U' L U' L U2 L2 U' L2 U' L2 U L","U 71"],"64":["y L U L' U' L U' L' U2 L U' L' U2 L U L'","U 66"],"65":["y' L' U2 L U L' U L U2 L U2 L' U' L U' L'","U 65"],"66":["y L' U' L U L' U L U2 L' U L U2 L' U' L","U 64"],"67":["y' L U2 L' U' L U' L' U' L U L' U L U2 L'","U 62"],"68":["y' L' U2 L2 U L2 U L U' L U L' U' L U' L'","U 69"],"69":["y' L U2 L2 U' L2 U' L' U L' U' L U L' U L","U 68"],"70":["L' U' L U L' U L' U2 L2 U L' U' L U L2 U L2 U2","U 70"],"71":["L U L' U L' U2 L2 U L2 U L2 U' L'","U 63"],"72":["L U L' U L U2 L2 U' L U' L' U2 L","U 61"]},"ZBLLL":{"1":["U' F' L' U' L U L' U L U2 L' U2 L U F U'","L 1"],"3":["y' L D L' U L D' L' U2 L' U L U' L' U' L U L' U' L","L 8"],"5":["F' L' U L U L' U' L U' L D L' U L D' L2 U' L U F","L 5"],"6":["y2 M' U l' U2 L F' L' U2 l2 F' L'","L 9"],"7":["y' l' U' L2 D L' U2 L D' L' U' l F' L' F","L 11"],"8":["y2 L' U L U' L' U L U L' U' L U2 L D L' U' L D' L'","L 3"],"9":["y2 L U' L' U L U L' U L U2 L D L' U L D' L2","L 6"],"10":["y2 l' U2 l2 F' L' F l2 L U2 l U2","L 10"],"11":["y F l' U' L U' L D' L' U L D L' U l F' L'","L 7"],"12":["U' l' U2 L' l2 F' L F l2 U2 l U'","L 12"],"13":["y' L U2 L2 U' L U L U2 F' L' U' L' U L F","L 61"],"14":["y2 L2 U' L' U' L' D L' U L D' U L U2 L U","L 64"],"15":["y2 F' L' U' L U L F L' U2 L' U2 L","L 68"],"16":["y2 L' U L U' L' U L U L' U' L2 D L' U L D' L'","L 62"],"17":["U' L2 D L' U2 L D' L2 U' L2 F L' U' L' U L F' L'","L 65"],"18":["L U2 L' U2 L' U L' D U' L' U L D' L","L 69"],"19":["y' L U L' U L U' L' U L U' L' U L2 D L' U2 L D' L2","L 71"],"20":["y2 L' U' L' D' L U2 L' D L U L U' L' U' L","L 63"],"21":["U' R' L' U L U' R L' U' L U' L' U L","L 66"],"22":["y L' U' L F U l F2 l' U' F' U2","L 70"],"23":["y' x' L' U L D' L' U' L D x","L 67"],"24":["y2 L' U L U L D l' U2 l D' L' U L' U' L U","L 72"],"25":["U' D L' U' L U2 L' U' L U' D' L U2 L' U L U L' U'","L 37"],"26":["L U L2 D' l U2 l' D L2 U' L' U' L U2 L'","L 40"],"27":["y2 L' D' L U2 L' D L U L U2 L' U L U L'","L 44"],"28":["L U2 L' U' L2 D L' U' L D' L2","L 38"],"29":["y' L U2 L D L' U2 L D' L2","L 41"],"30":["U' L U' L' U L U' F L' U2 L U2 L F' L2","L 45"],"31":["U' y' F L' U' L U L F' L2 U L U L' U L U' L' U' L","L 47"],"32":["y' L U' L2 D' L U' L' D L U2 L U' L' U' L U L'","L 39"],"33":["y' L U2 L D l' U2 l D' L2","L 42"],"34":["y' L U2 L' U2 L U L2 D' L U2 L' D L2 U2 L'","L 46"],"35":["L' U L2 F2 L' U2 L' U2 L F2 U2 L' U L U'","L 43"],"36":["F' L' U L U' L' U' L2 D L' U' L D' L2 U L F","L 48"],"37":["y L' U' L U' L' U' L U2 L D l' U2 l D' L' U2","L 25"],"38":["y L' U2 L U L2 D' L U L' D L2","L 28"],"39":["y2 L' U L2 D L' U L D' L' U2 L' U L U L' U' L","L 32"],"40":["y2 L U' L D L' U' L U2 L' U' L U' D' L' U L'","L 26"],"41":["y2 L' U2 L' D' L U2 L' D L2","L 29"],"42":["y2 L' U2 L' D' l U2 l' D L2","L 33"],"43":["F' U L' U' L U' L U2 L' U' L U' L2 U L U' F U'","L 35"],"44":["y' L D L' U2 L D' L' U' L' U2 L U' L' U' L","L 27"],"45":["U' y2 L F L' U2 L' U2 L F' U L' U' L U L' U L","L 30"],"46":["y2 L' U2 L U2 L' U' L2 D L' U2 L D' L2 U2 L","L 34"],"47":["U' y2 L' U' L U' L' U2 L' D' L U2 L' D L U2 L","L 31"],"48":["y F' L' U' L U L F U L' U' L' U L U L U' L'","L 36"],"49":["y2 L' U2 L U L' U L U2 L' U' L U' L' U2 L","L 49"],"50":["y2 L' U2 L U L' U L U' L U2 L' U' L U' L'","L 52"],"51":["y2 L2 U L' U' L' U L U L' U L U' L U' L2","L 56"],"52":["y' L U2 L' U' L U' L' U L' U2 L U L' U L","L 50"],"53":["U' L' U L R U2 R' U' R U' R' L' U2 L U'","L 53"],"54":["y L2 U L' U L' U' L U' L' U' L U L U' L2","L 57"],"55":["y' L U L' U L U2 L' U L' U' L U' L' U2 L","L 59"],"56":["y' L2 U' L U L U' L' U' L U' L' U L' U L2","L 51"],"57":["L2 U' L U' L U L' U L U L' U' L' U L2","L 54"],"58":["L' U' L U' L' U L U' L' U L U' L' U2 L","L 58"],"59":["y2 L' U' L U' L' U2 L U' L U L' U L U2 L'","L 55"],"60":["y2 L' U' L U' L' U2 L U2 L' U2 L U L' U L","L 60"],"61":["y F L' U2 L U2 L F' U2 L' U' L' U L2 U2 L'","L 13"],"62":["y2 S L U L' f' L F U' L' U' L' U L","L 16"],"63":["y' L U L D L' U2 L D' L' U' L' U L U L'","L 20"],"64":["y2 R U' L U R' L' U2 L U' L' U' L U' L' U","L 14"],"65":["L U L' U' L F2 L' U2 L U2 L F2 L2 U'","L 17"],"66":["L F' L' U' L' U L F U' L' U' L U' L' U L U'","L 21"],"67":["y F l' U' L U l F' L'","L 23"],"68":["y F L' U2 L U2 L F' L' U' L' U L","L 15"],"69":["y L' U2 L U2 D' L U' L U L U' L2 D","L 18"],"70":["F' L' U L U L' U2 L U F U2","L 22"],"71":["y2 L' U' L U' L' U L U' L' U L U' L2 D' L U2 L' D L2","L 19"],"72":["y2 L' U' L U' L D L' U2 L D' L2 U L U' L' U L U","L 24"]},"ZBLLAS":{"1":["y L F' L' U' L U L F D L' U' L D' L2 U","S 5"],"2":["L U2 L' U' F' L U' L' U F U'","S 1"],"3":["y2 L' U2 L' D' L U2 L' D L U' L U' L' U2 L","S 12"],"4":["L' U' L U' L2 D' L U2 L' D L2","S 10"],"5":["y' L U L' U' L2 U L U L' U' D L' U' L D' L U'","S 7"],"6":["y L' U' L U L' U' L2 D L' U' L D' L' U' L' U2 L U","S 9"],"7":["y2 L U' L' U2 L U' L2 D' L U' L' D L","S 3"],"8":["S U2 R U2 R' U2 R' F R f'","S 4"],"9":["U2 L' U' L U' L' U L2 F L' U' L' U L F' L' U L","S 2"],"10":["L' U' L U' L2 D' l U2 l' D L2","S 8"],"11":["y' L D L' U2 L D' L' U L' U' L U2 L' U' L U","S 11"],"12":["y2 F L' U' L U' L' U2 L F' U' L' U L U2 L' U L","S 6"],"13":["U2 L' U' L U' L F' L' F L' U L F U' F' L' U L U","S 14"],"14":["L' U' L U' L' U L' D' L U' L' D L U2 L","S 22"],"15":["L' U2 L U L' U' L U L' U' L' D' L U2 L' D L2","S 16"],"16":["L2 D L' U L D' L' U L' U' L U' L'","S 24"],"17":["y L U F2 U L2 U' L2 U' F2 L2 U2 L U'","S 15"],"18":["y' F' L U' L' U' F L U' F' U' F L'","S 17"],"19":["U2 L' U L U L' U' L' D' L U2 L' D L2 U' L' U2 L U","S 20"],"20":["y2 L' U' L U L2 U R U' L2 U R' U L' U2 L","S 13"],"21":["y' F' L U2 L' F L F' U2 F L'","S 18"],"22":["y' L' U' L U' L' U L' D' L U L' D L2","S 23"],"23":["y' L' U' L U' L' U L' D' L U' L' l U2 l' D L2","S 19"],"24":["y' L U2 L D L' U' L D' L' U L' U' L U' L'","S 21"],"25":["y F' U' L F' L' F L' U L U' L' U L F","S 50"],"26":["y2 F' U L U' L' U' F L' U' L2 U' L2 U2 L","S 58"],"27":["y F L' U' L D' L' U' L U D L' U L F'","S 52"],"28":["y2 F' L' U L2 U2 L' U' L U' L2 U' L F","S 60"],"29":["y' L' U L2 U2 D L' U' L U' D' L2 U' L","S 51"],"30":["y' L U2 L2 U' L F L' U' L U L F' L2 U L2 U' L'","S 53"],"31":["U2 R U2 L' U L U2 R' U' L' U L U' L' U2 L U'","S 56"],"32":["y L2 U' L2 F L' U2 L U L' U L F' L2 U L2","S 49"],"33":["U2 F' L' U' L U' L' U2 L' U2 L2 U L2 U L2 F U'","S 54"],"34":["U2 L U2 R' U L' U' R U' L U' L' U","S 59"],"35":["U2 L U2 L' U' L U L' F' U L U L' U' F U'","S 55"],"36":["L' U' L U' R U' L' U R' U2 L","S 57"],"37":["y L D L' U' L D' L2 U' L U2 L' U' L","S 38"],"38":["y2 L U2 L' U' L U' L D L' U2 L D' L' U2 L'","S 46"],"40":["L2 D L' U2 L D' L2 U' L U' L'","S 48"],"41":["U2 y' L U2 L' U' L2 D L' U L D' L' U2 L'","S 39"],"42":["y' R L' U' L U R' U' L2 D' L U L' D L2 U'","S 41"],"43":["y2 F' U' L' U L S' L F L' U' L' U L S","S 44"],"44":["y2 R L' U' L U R' U2 L' U2 L","S 37"],"45":["U2 L F L' U' L' U' L U L' U L F' L' U' L U' L' U L U","S 42"],"46":["U2 L2 F' L' U' L' U L F L' U L U' L' U","S 47"],"47":["L2 D l' U2 l D' L2 U' L U' L'","S 43"],"48":["U2 F' L' U' L U L F L' U2 L' U L U' L' U2 L","S 45"],"49":["U2 L' U' L U L' U' L U' L' U' L' U2 L U L' U L U' L U'","S 72"],"50":["y2 L' U' L2 U L2 U L2 U2 L2 U2 L","S 63"],"51":["y2 L' U' L U' L' U2 L","S 67"],"52":["y' L' U' L U L U2 L' U' L U' L' U L' U L","S 61"],"53":["y' L U L' U' L' U' L U L U' L' U' L' U L","S 70"],"54":["y' L U2 L' U' L U' L'","S 64"],"55":["y2 L U2 L2 U2 L2 U L2 U L2 U' L'","S 68"],"56":["U2 L' U' L2 F L' U2 L' U L U L F' L2 U L","S 66"],"57":["U2 L' U' L U' L' U L U' L U L2 U L U' L U' L' U'","S 62"],"58":["y' L' U' L U L U2 L' U' L' U L U' L U' L'","S 69"],"59":["U2 L' U' L U' L' U' L' U' L' U' L' U L U L2","S 65"],"60":["y' L U2 L2 U' L2 U' L' U L' U L","S 71"],"61":["U2 y L U2 L2 U' L' D L' U' L D' L2 U L' U L","S 30"],"62":["y' L U D' L U' L' D U2 L2 U' L U L","S 36"],"63":["y2 L2 D' L U2 L' D L U L U' L' U2 L","S 25"],"64":["U2 y' L' U' L U' L' U L2 D L' U' L D' L2 U2 L","S 28"],"65":["L' U' L F L' U' L U' L' U L U L F' L2 U L","S 32"],"66":["U2 y L U2 F L' U' L U L F' L' U2 L'","S 26"],"67":["U2 L2 D' l U2 l' D L U L U' L' U2 L U'","S 35"],"68":["R' U L U' R L U L U L U' L' U' L2 U","S 34"],"69":["y L U L U' L2 D U2 L' U' L U D' L","S 33"],"70":["y' L' U' L U' L' U2 L2 U' L' U2 R L U' L' U R' U","S 31"],"71":["y L U2 L' U' L U L D L' U2 L D' L2","S 27"],"72":["y2 L' U R U' L U R'","S 29"]}};   // left-handed version of a case: [algorithm, name of the case whose algorithm it is the mirror image of]; lined up with y and U turns to solve (OLL: orient) this case's picture
-const CASES = {OLL, PLL, F2L, OLL2, PLL2, PBL, CLL, EG1, ZBLLPi:ZBLL_PI, ZBLLT:ZBLL_T, ZBLLH:ZBLL_H, ZBLLS:ZBLL_S, ZBLLU:ZBLL_U, ZBLLL:ZBLL_L, ZBLLAS:ZBLL_AS};
-const CASE_ENGINE_2x2 = {OLL2:true, PLL2:true, PBL:true, CLL:true, EG1:true};
+const CASES = {OLL, PLL, F2L, OLL2, PLL2, CLL, EG1, ZBLLPi:ZBLL_PI, ZBLLT:ZBLL_T, ZBLLH:ZBLL_H, ZBLLS:ZBLL_S, ZBLLU:ZBLL_U, ZBLLL:ZBLL_L, ZBLLAS:ZBLL_AS};
+const CASE_ENGINE_2x2 = {OLL2:true, PLL2:true, CLL:true, EG1:true};
 const CAT_NOTES = {
-  PBL: 'Ortega PBL (8 cases): after the first face and OLL, both layers still need permuting. Names are top layer / bottom layer: Adj = two neighbouring corners swapped, Diag = two opposite corners swapped, Solved = already in order (up to a turn). Turn the top layer and the bottom layer separately until your cube looks like the picture, do the algorithm, then finish with a turn of each layer. Solved / Adj is Adj / Solved upside down, so some cubers learn only 5 algorithms and flip the cube. The algorithms were found by a computer search (shortest using only R, U and F) and checked on a model of the 2x2. They are correct, but they may not be the ones other cubers use.',
   CLL: 'One-look last layer for 2x2 (orient + permute together). "Anti-CLL" isn\u2019t a separate algorithm set — it\u2019s a technique for recognizing these same CLL algorithms using extra info from the bottom layer, similar in spirit to EG-1.',
   ZBLLPi: 'ZBLL Pi: solves the whole last layer in one algorithm when the edges are already oriented and the corners form the Pi pattern. 72 cases from SpeedCubeDB (the first algorithm listed for each case). Each one solves its case on this app\\u2019s cube engine, but some stop one top-layer turn short of fully solved, so finish with a U turn if needed. The other ZBLL sets are not in the app yet.',
   ZBLLT: 'ZBLL T: solves the whole last layer in one algorithm when the edges are already oriented and the corners form the T pattern. 72 cases. 71 come from SpeedCubeDB (the first algorithm listed for each case) and the last one, T 72, from Cube Resolver\\u2019s ZBLL list, because SpeedCubeDB\\u2019s T list does not show it. Each one solves its case on this app\\u2019s cube engine, but some stop one top-layer turn short of fully solved, so finish with a U turn if needed.',
@@ -6428,14 +6180,10 @@ let caseCells = buildNetCells(caseNetEl, 3);
 let currentCat = 'OLL';
 let zbllLast = 'ZBLLPi';                       // the ZBLL set the single ZBLL tab opens
 const isZbll = (c)=>String(c).indexOf('ZBLL')===0;
-let caseKnown = {};
-const CASE_PIC_MODE = {OLL:'oll', OLL2:'oll', F2L:'iso', PLL2:'iso', PBL:'iso'};
-let casePicCache = {};   // one small picture per case, kept until the cross colour changes   // key -> true when the user says they have learned that case
 function updateCatTabs(){
   document.querySelectorAll('#catTabs button').forEach(b=>b.classList.toggle('active', b.dataset.group==='ZBLL' ? isZbll(currentCat) : b.dataset.cat===currentCat));
   if(isZbll(currentCat)) zbllLast=currentCat;
   const row=document.getElementById('zbllSets'); if(row){ row.style.display=isZbll(currentCat)?'flex':'none'; row.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b.dataset.set===currentCat)); }
-  try{ syncAlgTiles(); }catch(e){}
 }
 let currentCaseIdx = 0;
 let trainerHidden = false;
@@ -6507,10 +6255,10 @@ function renderCaseGrid(){
     const c = list[i];
     const d=document.createElement('div');
     const tier = tierOf[i];
-    d.className='case-chip'+(i===currentCaseIdx?' sel':'')+(tier?' '+tier:' untried')+(caseKnown[caseKey(currentCat,c.id)]===true?' known':'');
+    d.className='case-chip'+(i===currentCaseIdx?' sel':'')+(tier?' '+tier:' untried');
     const avg = caseAvg(currentCat, c.id);
     const statText = avg!==null ? fmtSeconds(avg/1000)+' avg' : 'no attempts';
-    d.innerHTML = '<span class="chip-pic" aria-hidden="true">'+caseThumb(currentCat,i)+'</span><b>'+c.id+'</b><span class="chip-name">'+c.name+'</span><span class="chip-stat">'+statText+'</span>';
+    d.innerHTML = '<b>'+c.id+'</b>'+c.name+'<span class="chip-stat">'+statText+'</span>';
     d.addEventListener('click', ()=>{ currentCaseIdx=i; showCase(); });
     grid.appendChild(d);
   });
@@ -6588,8 +6336,6 @@ function showCase(){
   const caseState = eng.applyAlg(eng.solved(), invertAlg(c.alg));
   { const sch = crossSchemeFor(scramblePrefs.cross); renderNet(caseCells, caseState.map(c=>sch[c]||c)); }
   { const lc=document.getElementById('caseLearning'); if(lc) lc.checked = isLearningCase(currentCat, c.id); }
-  { const kc=document.getElementById('caseKnown'); if(kc) kc.checked = caseKnown[caseKey(currentCat, c.id)]===true; }
-  try{ const m=CASE_PIC_MODE[currentCat]||'top'; document.getElementById('caseTop').innerHTML = algTileSvg(currentCat, currentCaseIdx, m==='oll'?'top':m); }catch(e){}
   document.querySelectorAll('.case-chip').forEach((el,i)=>el.classList.toggle('sel', i===currentCaseIdx));
   updateDrillStatus();
   resetDrillButton();
@@ -7061,77 +6807,9 @@ async function saveCaseMarks(){ try{ await window.storage.set('casemarks', JSON.
 function isLearningCase(cat,id){ return caseMarks[caseKey(cat,id)]===true; }
 document.getElementById('caseLearning').addEventListener('change', async (e)=>{
   const c = CASES[currentCat][currentCaseIdx]; const k = caseKey(currentCat, c.id);
-  if(e.target.checked){ caseMarks[k]=true; if(caseKnown[k]){ delete caseKnown[k]; const kc=document.getElementById('caseKnown'); if(kc) kc.checked=false; await saveCaseKnown(); renderCaseGrid(); try{ syncAlgTiles(); }catch(err){} } } else delete caseMarks[k];
+  if(e.target.checked) caseMarks[k]=true; else delete caseMarks[k];
   await saveCaseMarks();
 });
-document.getElementById('netToggle').addEventListener('click', ()=>{ const d=document.getElementById('netToggle').closest('.detail'), on=d.classList.toggle('show-net'); const b=document.getElementById('netToggle'); b.textContent = on ? 'show picture' : 'show flat net'; b.setAttribute('aria-pressed', on?'true':'false'); });
-async function loadCaseKnown(){ try{ const r=await window.storage.get('caseknown',false); const o=(r&&r.value)?JSON.parse(r.value):{}; caseKnown=(o&&typeof o==='object'&&!Array.isArray(o))?o:{}; }catch(e){ caseKnown={}; } }
-async function saveCaseKnown(){ try{ await window.storage.set('caseknown', JSON.stringify(caseKnown), false); }catch(e){} }
-document.getElementById('caseKnown').addEventListener('change', async (e)=>{
-  const c = CASES[currentCat][currentCaseIdx]; const k = caseKey(currentCat, c.id);
-  if(e.target.checked){ caseKnown[k]=true; if(caseMarks[k]){ delete caseMarks[k]; const lc=document.getElementById('caseLearning'); if(lc) lc.checked=false; await saveCaseMarks(); } } else delete caseKnown[k];
-  await saveCaseKnown(); renderCaseGrid(); try{ syncAlgTiles(); }catch(err){}
-});
-
-// ---------- the alg set tiles: a picture, the name and how many you have learned ----------
-const ALG_TILES = [
-  ['3×3', [['F2L','F2L',3,'iso'], ['OLL','OLL',26,'oll'], ['PLL','PLL',1,'top'], ['ZBLL','ZBLLPi',0,'top']]],
-  ['2×2', [['Ortega OLL','OLL2',0,'oll'], ['Ortega PBL','PBL',0,'iso'], ['2×2 PLL','PLL2',0,'iso'], ['CLL','CLL',0,'top'], ['EG 1','EG1',0,'top']]]
-];
-const ZBLL_ALL = ['ZBLLPi','ZBLLT','ZBLLH','ZBLLS','ZBLLU','ZBLLL','ZBLLAS'];
-function algSetCount(cat){ let n=0,k=0; (cat==='ZBLLPi'?ZBLL_ALL:[cat]).forEach(c=>(CASES[c]||[]).forEach(x=>{ n++; if(caseKnown[caseKey(c,x.id)]===true) k++; })); return [k,n]; }
-function algTileSvg(cat, idx, mode){
-  const list=CASES[cat]; if(!list||!list.length) return '';
-  const c=list[Math.min(idx,list.length-1)], eng=CASE_ENGINE_2x2[cat]?E2:E3, n=eng.n, O=eng.OFFSET;
-  const st=eng.applyAlg(eng.solved(), invertAlg(c.alg)), sch=crossSchemeFor(scramblePrefs.cross), top=sch.U;
-  const fill=(f,r,q)=>{ const L=sch[st[O[f]+r*n+q]]||st[O[f]+r*n+q]; return (mode==='oll' && L!==top) ? '#5d6675' : (colorFor(L)||'#888'); };
-  const poly=(pts,col)=>'<polygon points="'+pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')+'" fill="'+col+'" stroke="#0b0f17" stroke-width="1.3" stroke-linejoin="round"/>';
-  let out='<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">';
-  if(mode==='iso'){
-    const T=[50,5], A=[38,22], B=[-38,22], C=[0,44], add=(P,V,k)=>[P[0]+V[0]*k, P[1]+V[1]*k];
-    for(let r=0;r<n;r++) for(let q=0;q<n;q++){ const P=add(add(T,A,q/n),B,r/n); out+=poly([P,add(P,A,1/n),add(add(P,A,1/n),B,1/n),add(P,B,1/n)],fill('U',r,q)); }
-    const TB=add(T,B,1), TAB=add(add(T,A,1),B,1);
-    for(let r=0;r<n;r++) for(let q=0;q<n;q++){ const P=add(add(TB,A,q/n),C,r/n); out+=poly([P,add(P,A,1/n),add(add(P,A,1/n),C,1/n),add(P,C,1/n)],fill('F',r,q)); }
-    for(let r=0;r<n;r++) for(let q=0;q<n;q++){ const P=add(add(TAB,B,-q/n),C,r/n); out+=poly([P,add(P,B,-1/n),add(add(P,B,-1/n),C,1/n),add(P,C,1/n)],fill('R',r,q)); }
-  } else {
-    const m=5, t=9, s=(100-2*m-2*t)/n, x0=m+t, rect=(x,y,w,h,col)=>'<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" fill="'+col+'" stroke="#0b0f17" stroke-width="1.3"/>';
-    for(let r=0;r<n;r++) for(let q=0;q<n;q++) out+=rect(x0+q*s, x0+r*s, s, s, fill('U',r,q));
-    for(let q=0;q<n;q++){
-      out+=rect(x0+q*s, m, s, t, fill('B',0,n-1-q));      // back strip (the back face is seen from behind, so it is mirrored)
-      out+=rect(x0+q*s, 100-m-t, s, t, fill('F',0,q));    // front strip
-      out+=rect(m, x0+q*s, t, s, fill('L',0,q));          // left strip, back to front
-      out+=rect(100-m-t, x0+q*s, t, s, fill('R',0,n-1-q)); // right strip, back to front
-    }
-  }
-  return out+'</svg>';
-}
-function caseThumb(cat, idx){
-  let key; try{ key = cat+'|'+idx+'|'+scramblePrefs.cross; }catch(e){ return ''; }
-  if(casePicCache[key]===undefined){ try{ casePicCache[key] = algTileSvg(cat, idx, CASE_PIC_MODE[cat]||'top'); }catch(e){ return ''; } }
-  return casePicCache[key];
-}
-function renderAlgTiles(){
-  const host=document.getElementById('algSets'); if(!host) return; host.textContent='';
-  ALG_TILES.forEach(([title,tiles])=>{
-    const h=document.createElement('h4'); h.textContent=title; host.appendChild(h);
-    const g=document.createElement('div'); g.className='alg-grid'; host.appendChild(g);
-    tiles.forEach(([label,cat,idx,mode])=>{
-      const b=document.createElement('button'); b.type='button'; b.className='alg-tile'; b.dataset.cat=cat;
-      b.innerHTML=algTileSvg(cat,idx,mode)+'<span class="alg-name"></span><span class="alg-count"></span>'; b.querySelector('.alg-name').textContent=label;
-      b.addEventListener('click', ()=>{ const t=document.querySelector('#catTabs button[data-cat="'+cat+'"]'); if(t){ t.click(); const cg=document.getElementById('caseGrid'); if(cg) cg.scrollIntoView({behavior:'smooth', block:'start'}); } });
-      g.appendChild(b);
-    });
-  });
-  syncAlgTiles();
-}
-function syncAlgTiles(){
-  document.querySelectorAll('#algSets .alg-tile').forEach(b=>{
-    const cat=b.dataset.cat, [k,n]=algSetCount(cat), on = cat==='ZBLLPi' ? isZbll(currentCat) : currentCat===cat;
-    b.classList.toggle('active', on); b.classList.toggle('done', n>0 && k===n); b.setAttribute('aria-pressed', on?'true':'false');
-    b.querySelector('.alg-count').textContent = k+'/'+n; b.setAttribute('aria-label', b.querySelector('.alg-name').textContent+', '+k+' of '+n+' learned');
-  });
-}
-(function(){ const sel=document.getElementById('learnCrossSel'); if(sel) sel.addEventListener('change', ()=>{ try{ casePicCache={}; renderAlgTiles(); renderCaseGrid(); }catch(e){} }); })();
 // ---------- spaced repetition ----------
 // Every case you drill gets a box 0 to 5 and a due time. Good drills move it up a box (longer wait), slow ones move it down one, and
 // forgotten ones (peeked at the hidden algorithm, or far slower than your usual time) send it back to box 0 to return in minutes.
@@ -7171,7 +6849,7 @@ function srsAfterDrill(cat, id, ms, prevTimes, peeked){
   const k=caseKey(cat,id), res=srsNext(srs[k], ms, srsRef(prevTimes), peeked, Date.now()); srs[k]={box:res.box,due:res.due,last:res.last}; saveSrs();
   return res;
 }
-const ADV = {active:false, count:0, total:0, sets:{OLL:true,PLL:true,F2L:false,OLL2:false,PLL2:false,PBL:false,CLL:false,EG1:false,ZBLLPi:false,ZBLLT:false,ZBLLH:false,ZBLLS:false,ZBLLU:false,ZBLLL:false,ZBLLAS:false}, last:null, timer:null};
+const ADV = {active:false, count:0, total:0, sets:{OLL:true,PLL:true,F2L:false,OLL2:false,PLL2:false,CLL:false,EG1:false,ZBLLPi:false,ZBLLT:false,ZBLLH:false,ZBLLS:false,ZBLLU:false,ZBLLL:false,ZBLLAS:false}, last:null, timer:null};
 (function buildAdvSets(){
   const wrap = document.getElementById('advSets');
   Object.keys(CASES).forEach(cat=>{
@@ -7246,7 +6924,7 @@ document.getElementById('advFocus').disabled = false;
 
 // ================= CUSTOMIZATION =================
 const SIZE_SCALES = {small:0.8, medium:1, large:1.25};
-let wakeLockEnabled = true, hapticsEnabled = true, typingMode = false, cubeInput = false;
+let wakeLockEnabled = true, hapticsEnabled = true, typingMode = false;
 // ---- look and feel ----
 const CUBE_PRESETS = [
   {id:'standard', name:'standard', c:{U:'#f4f4f0', D:'#ffd21f', F:'#17b860', B:'#2f6bff', L:'#ff7a1f', R:'#e0222c'}},
@@ -7377,7 +7055,6 @@ function submitTypedTime(){
   return true;
 }
 function setTypingMode(on){
-  if(on && cubeInput){ try{ cnCubeMode(false); }catch(e){} }
   typingMode = !!on;
   if(typingMode && (state==='running'||state==='holding'||state==='ready'||state==='inspecting')){ try{ resetTimerToIdle(); }catch(e){} }
   document.body.classList.toggle('typing', typingMode);
@@ -7388,7 +7065,6 @@ function setTypingMode(on){
 }
 window.cnToggleTyping = ()=>setTypingMode(!typingMode);
 function syncTypeQuick(){
-  try{ syncModeBar(); }catch(e){}
   const q = document.getElementById('typeQuick'); if(!q) return;
   q.classList.toggle('on', typingMode); q.setAttribute('aria-pressed', typingMode ? 'true' : 'false');
   q.title = typingMode ? 'Typing mode: ON (click to go back to the timer)' : 'Typing mode: off (click to type times by hand)';
@@ -7560,7 +7236,7 @@ computeFit();
   await loadSoundSetting();
   await loadCustomization();
   await loadScramblePrefs();
-  await loadCaseMarks(); await loadCaseKnown(); try{ renderAlgTiles(); }catch(e){}
+  await loadCaseMarks();
   initWca3();
   await loadCubes();
   await loadCaseStats();
@@ -8087,7 +7763,7 @@ const PYRA_LL={"BC+ BD+ CD+":[],"CD- BC- BD+":["R' L R L'"],"BD- CD- BC+":["B L'
   const mean = a=>a.reduce((x,y)=>x+y,0)/a.length;
   const std = a=>{ const m=mean(a); return Math.sqrt(a.reduce((x,y)=>x+(y-m)*(y-m),0)/a.length); };
   const median = a=>{ const b=a.slice().sort((x,y)=>x-y), n=b.length; return n%2 ? b[(n-1)/2] : (b[n/2-1]+b[n/2])/2; };
-  const LABEL = {OLL:'OLL',PLL:'PLL',F2L:'F2L',OLL2:'2×2 OLL',PLL2:'2×2 PLL',PBL:'Ortega PBL',CLL:'CLL',EG1:'EG-1',ZBLLPi:'ZBLL Pi',ZBLLT:'ZBLL T',ZBLLH:'ZBLL H',ZBLLS:'ZBLL S',ZBLLU:'ZBLL U',ZBLLL:'ZBLL L',ZBLLAS:'ZBLL AS',PLL2S:'PLL, two sides'};
+  const LABEL = {OLL:'OLL',PLL:'PLL',F2L:'F2L',OLL2:'2×2 OLL',PLL2:'2×2 PLL',CLL:'CLL',EG1:'EG-1',ZBLLPi:'ZBLL Pi',ZBLLT:'ZBLL T',ZBLLH:'ZBLL H',ZBLLS:'ZBLL S',ZBLLU:'ZBLL U',ZBLLL:'ZBLL L',ZBLLAS:'ZBLL AS',PLL2S:'PLL, two sides'};
   function openCase(cat, id){
     goTab('learn');
     setTimeout(()=>{ if(isZbll(cat)){ zbllLast=cat; const g=document.querySelector('#catTabs button[data-group="ZBLL"]'); if(g) g.click(); } else { const b=document.querySelector('#catTabs button[data-cat="'+cat+'"]'); if(b) b.click(); }
@@ -8246,137 +7922,6 @@ const PYRA_LL={"BC+ BD+ CD+":[],"CD- BC- BD+":["R' L R L'"],"BD- CD- BC+":["B L'
     if(!tips.length) host.appendChild(el('div','coach-adv','Nothing stands out right now. Keep practising.'));
     tips.forEach(t=>{ const d=el('div','coach-tip'); d.appendChild(el('b','',t.title)); d.appendChild(el('div','coach-ev',t.evidence)); d.appendChild(el('div','coach-adv',t.advice)); if(t.action) d.appendChild(btn(t.action.label, t.action.fn)); host.appendChild(d); });
   }
-
-  // ---------- ask the coach: tappable questions and free text, answered from your own numbers (rule based, on this device) ----------
-  const COACH_Q = [
-    {id:'last',        q:'Why was my last solve slow?',        re:/last (solve|one|time)|latest|just (did|now)|that (solve|one)|why was|worst solve/i},
-    {id:'penalty',     q:'What do DNFs and +2s cost me?',      re:/dnf|\+2|penalt|inspection|lock ?up|pop/i},
-    {id:'goal',        q:'How do I reach my goal?',            re:/goal|target|sub[ -]?\d|reach|break (the )?\d|get (to|under)/i},
-    {id:'consistency', q:'Why am I inconsistent?',             re:/consisten|vary|varies|variance|spread|steady|erratic|up and down|all over|random/i},
-    {id:'progress',    q:'Am I improving?',                    re:/improv|progress|getting (better|faster|slower)|faster|trend|plateau|stuck|worse/i},
-    {id:'plan',        q:'What should I practise this week?',  re:/practi[cs]e|plan|week|drill|routine|schedule|train|what (should|do) i do/i},
-    {id:'learn',       q:'What should I learn next?',          re:/learn|next|algorithm|\balgs?\b|\boll\b|\bpll\b|f2l|method|cfop|zbll|upgrade|level|bracket/i}
-  ];
-  function coachSnapshot(){
-    const ev=currentEvent, S=solvesByEvent[ev]||[], valid=S.map(effectiveTime).filter(isFinite);
-    const last=valid.slice(-12), prev=valid.slice(-24,-12);
-    return {ev, S, n:S.length, valid, last, prev, m12:last.length?mean(last):null};
-  }
-  function coachNeed(d, k, what){
-    return {title:'Not enough solves yet', ev:[d.valid.length+' counted solve'+(d.valid.length===1?'':'s')+' so far in '+EVNAME[d.ev]+' in this session.'], adv:['I need at least '+k+' counted solves '+what+'. Do a few more and ask again.']};
-  }
-  const coachA = {
-    consistency(d){
-      if(d.last.length<5) return coachNeed(d,5,'to look at consistency');
-      const L=d.last, m=mean(L), sd=std(L), cv=sd/m, med=median(L), lo=Math.min(...L), hi=Math.max(...L), cap=1.25*med, spikes=L.filter(t=>t>cap);
-      const ev=['Last '+L.length+' counted solves: fastest '+ms2s(lo)+', median '+ms2s(med)+', slowest '+ms2s(hi)+'. Your times swing about '+Math.round(cv*100)+'% around your mean.'];
-      if(spikes.length){ const fixed=mean(L.map(t=>Math.min(t,cap))); ev.push((spikes.length===1?'1 of them was':spikes.length+' of them were')+' more than 25% slower than your median. Without those spikes your mean would be about '+ms2s(fixed)+' instead of '+ms2s(m)+', so a few bad solves cost you more than your typical pace.'); }
-      else ev.push('There are no big spikes, so the variation is spread across all your solves rather than a few bad ones.');
-      const gap=(m-lo)/m; if(gap>0.3) ev.push('Your best of these is '+Math.round(gap*100)+'% faster than your mean, so you can solve faster than you usually do. Steadiness is the gap, not knowledge.');
-      const adv=[]; if(cv>0.18) adv.push('That is a lot of variation. Do a set of 10 solves at about 70% of your normal speed, and do not stop turning between steps. Smooth beats fast right now.');
-      else if(cv>0.1) adv.push('Moderate variation is normal. Slow, controlled solves with the pace metronome (Settings → Timer controls) tighten it up.');
-      else adv.push('You are already steady, so spread is not your problem. Speed is: push the pace a little.');
-      if(spikes.length) adv.push('After each slow solve, note why in one word: lockup, misrecognised case, long pause, or mistake. The most common word is your next thing to fix.');
-      return {title:'Why your times vary', ev, adv};
-    },
-    progress(d){
-      if(d.n<12 || d.valid.length<12) return coachNeed(d,12,'to see a trend');
-      const ev=[], adv=[], m12=d.m12;
-      if(d.prev.length===12){ const pm=mean(d.prev), ch=(m12-pm)/pm; ev.push('Last 12 mean '+ms2s(m12)+' vs the 12 before '+ms2s(pm)+': '+(Math.abs(ch)<0.01?'about the same':Math.round(Math.abs(ch)*100)+'% '+(ch<0?'faster':'slower'))+'.'); }
-      if(d.valid.length>=36){ const t=Math.floor(d.valid.length/3), a=mean(d.valid.slice(0,t)), c=mean(d.valid.slice(-t)), ch=(c-a)/a; ev.push('Your first third of solves averages '+ms2s(a)+' and your latest third '+ms2s(c)+' ('+Math.round(Math.abs(ch)*100)+'% '+(ch<0?'faster':'slower')+').'); }
-      let best=Infinity, bestAt=-1; for(let i=5;i<=d.S.length;i++){ const a=average(d.S.slice(i-5,i)); if(a<best){ best=a; bestAt=i; } }
-      if(isFinite(best)){ ev.push('Your best ao5 is '+ms2s(best)+', set at solve '+bestAt+' of '+d.n+'.'); if(bestAt>d.n*0.8) adv.push('Your best average is recent, so you are at your peak right now. Keep the same routine.'); else if(bestAt<d.n*0.5 && d.n>=30) adv.push('Your best average came earlier in this session and your recent solves are not matching it yet. Shorter sessions with breaks sometimes help.'); }
-      const withTs=d.S.filter(x=>x.ts&&x.penalty!=='DNF'); if(withTs.length>=12){ const day=x=>new Date(x.ts).toDateString(), today=day({ts:Date.now()}), td=withTs.filter(x=>day(x)===today).map(effectiveTime);
-        if(td.length>=5 && new Set(withTs.map(day)).size>1){ const all=mean(withTs.map(effectiveTime)); ev.push('Today you averaged '+ms2s(mean(td))+' over '+td.length+' solves, against '+ms2s(all)+' across the whole session.'); } }
-      if(d.prev.length===12){ const ch=(m12-mean(d.prev))/mean(d.prev); if(ch<-0.03) adv.push('You are improving. Keep practising a little every day.'); else if(ch>0.03) adv.push('You are a bit slower than before. Dips happen; take a break or go back to slow, clean solves.'); else adv.push('You are on a plateau. Change one specific thing: a new algorithm set, a weak step, or lookahead practice.'); }
-      return {title:'Are you improving?', ev, adv};
-    },
-    goal(d){
-      const g=goals[d.ev], adv=[], ev=[];
-      if(d.last.length<5) return coachNeed(d,5,'to compare with a goal');
-      const m=d.m12;
-      if(!g){ const sug=Math.round(m*0.95/10)*10; ev.push('You have no goal set for '+EVNAME[d.ev]+'. Your last-12 mean is '+ms2s(m)+'.'); adv.push('A goal about 5% faster than your recent mean is a good next target: '+ms2s(sug)+'.');
-        return {title:'Set a goal first', ev, adv, actions:[{label:'Set goal '+ms2s(sug), fn:async()=>{ goals[d.ev]=sug; await saveGoals(); window.dispatchEvent(new Event('cn-goalchange')); coachShow(coachA.goal(coachSnapshot())); }}]}; }
-      ev.push('Goal '+ms2s(g)+'. Your last-12 mean is '+ms2s(m)+'.');
-      if(m<=g){ adv.push('You are already at your goal on average. Make it stick over a full ao50, then set a tighter one.'); }
-      else { const need=(m-g)/m, med=median(d.last), fixed=mean(d.last.map(t=>Math.min(t,1.25*med)));
-        ev.push('You need to be '+Math.round(need*100)+'% faster ('+ms2s(m-g)+' s off your mean).');
-        if(fixed<m-1) ev.push('If your slow spikes were at your normal pace, your mean would be '+ms2s(fixed)+(fixed<=g?', which is already under your goal.':', closing '+Math.round(100*(m-fixed)/(m-g))+'% of the gap.'));
-        const L=levelFor(m,d.ev); if(L) adv.push('Biggest lever for your level: '+L.focus[0]);
-        adv.push('Keep the goal visible: the next-average card above tells you what your next solve must be.'); }
-      try{ const na=nextAvgInfo(5); if(na && na.need){ if(na.need.kind==='t') ev.push('For your next ao5 to be under the goal, your next solve has to be '+ms2s(na.need.t)+' or faster.'); else if(na.need.kind==='any') ev.push('Any solve keeps your next ao5 under the goal.'); else ev.push('The goal is out of reach for the next ao5, even with a perfect solve.'); } }catch(e){}
-      return {title:'Reaching your goal', ev, adv};
-    },
-    plan(d){
-      const ev=[], adv=[]; const m=d.last.length>=5?mean(d.last):null, cv=d.last.length>=5?std(d.last)/m:null;
-      ev.push(m!==null ? EVNAME[d.ev]+': last-12 mean '+ms2s(m)+(cv!==null?', spread '+Math.round(cv*100)+'%':'')+'.' : EVNAME[d.ev]+': not enough solves yet, so this plan is general.');
-      const L=m!==null?levelFor(m,d.ev):null, recent=d.S.slice(-50), dnf=recent.filter(x=>x.penalty==='DNF').length;
-      adv.push('Days 1 to 2: 25 slow solves at about 70% speed with no pauses between steps. '+(cv!==null&&cv>0.14?'This is your priority, because your times vary a lot.':'This keeps your base clean.'));
-      adv.push('Day 3: '+(L?L.focus[0]:'work on the step you find hardest and drill it on its own.'));
-      const rows=[]; Object.keys(CASES).forEach(cat=>CASES[cat].forEach(c=>{ const st=caseStats[caseKey(cat,c.id)]; if(st&&st.times&&st.times.length>=3) rows.push({name:LABEL[cat]+' '+c.name, avg:mean(st.times.slice(-5))}); })); rows.sort((a,b)=>b.avg-a.avg);
-      const weak=weakCases();
-      adv.push('Day 4: '+(weak.length?'review the cases you miss in the quiz ('+weak.slice(0,3).map(w=>w.name).join(', ')+') then quiz yourself.':rows.length?'drill your slowest cases in the trainer ('+rows.slice(0,3).map(r=>r.name).join(', ')+').':'do 10 minutes in the OLL or PLL trainer on the cases you hesitate on.'));
-      adv.push('Day 5: '+(dnf>=2&&recent.length&&dnf/recent.length>=0.08?'clean solves only: slow down the last layer and check the cube before each start, since '+dnf+' of your last '+recent.length+' were DNF.':'do the daily scramble and a practice round from the Learn tab.'));
-      adv.push('Day 6: 2 timed rounds, then compare the mean with day 1.');
-      adv.push('Day 7: rest, or a light session of fun solves.');
-      return {title:'A plan for this week', ev, adv};
-    },
-    last(d){
-      if(!d.n) return {title:'No solves yet', ev:['There are no solves in '+EVNAME[d.ev]+' in this session.'], adv:['Do a solve and ask again.']};
-      const s=d.S[d.n-1], e=effectiveTime(s), ev=[], adv=[];
-      if(!isFinite(e)){ ev.push('Your last solve was a DNF.'); adv.push('A DNF usually means a missed turn or a cube lockup near the end. Check the cube is not locking up and finish each solve cleanly.'); return {title:'Your last solve', ev, adv}; }
-      ev.push('Your last solve was '+ms2s(e)+(s.penalty==='+2'?' (including +2)':'')+'.');
-      const prior=d.S.slice(0,-1).map(effectiveTime).filter(isFinite).slice(-12);
-      if(prior.length>=5){ const med=median(prior), diff=e-med, pct=Math.round(Math.abs(diff)/med*100);
-        if(Math.abs(diff)<0.08*med) ev.push('That is typical for you: your median of the 12 before is '+ms2s(med)+'.');
-        else if(diff>0){ ev.push('That is '+ms2s(diff)+' s ('+pct+'%) slower than your median of the 12 before ('+ms2s(med)+').'); adv.push('One slow solve is normal. Ask why: a lockup, a misrecognised case, or a long pause to recognise something? The cause matters more than the time.'); }
-        else ev.push('That is '+ms2s(-diff)+' s ('+pct+'%) faster than your median of the 12 before ('+ms2s(med)+').'); }
-      if(Array.isArray(s.splits)&&s.splits.length){ const k=s.splits.length+1, same=d.S.slice(0,-1).filter(x=>Array.isArray(x.splits)&&x.splits.length+1===k&&x.penalty!=='DNF').slice(-20);
-        const part=(x,j)=>(j<x.splits.length?x.splits[j]:x.time)-(j===0?0:x.splits[j-1]);
-        if(same.length>=5){ let worst=-1, wd=0; for(let j=0;j<k;j++){ const dev=part(s,j)-mean(same.map(x=>part(x,j))); if(dev>wd){ wd=dev; worst=j; } } if(worst>=0) ev.push('Phase '+(worst+1)+' of '+k+' was your slowest compared with usual: '+ms2s(wd)+' longer than your average for that phase.'); } }
-      else adv.push('Without split times or a smart cube I cannot see which move or step was slow. Turn on splits in Settings if you want phase times.');
-      return {title:'Your last solve', ev, adv};
-    },
-    learn(d){
-      const ev=[], adv=[];
-      if(d.last.length<5){ ev.push('I need a few solves to know your level.'); adv.push('Do at least 5 counted solves, then ask again. Until then, the Learn tab has a step-by-step guide.'); return {title:'What to learn next', ev, adv}; }
-      const m=d.m12, L=levelFor(m,d.ev);
-      ev.push('Your last-12 mean in '+EVNAME[d.ev]+' is '+ms2s(m)+'.');
-      if(L){ ev.push('The next bracket to aim for is sub-'+L.t+'.'); L.focus.slice(0,3).forEach(f=>adv.push(f)); adv.push('The full list for each bracket is in Stats, under What to train at your level.'); }
-      else { adv.push('There is no level guide for '+EVNAME[d.ev]+' at this time, or you are already under its fastest bracket. Pick the weakest step and drill it, or learn the next algorithm set in the Learn tab.'); }
-      return {title:'What to learn next', ev, adv};
-    },
-    penalty(d){
-      if(d.n<5) return coachNeed(d,5,'to look at penalties');
-      const R=d.S.slice(-50), dnf=R.filter(x=>x.penalty==='DNF').length, p2=R.filter(x=>x.penalty==='+2').length, ev=[], adv=[];
-      ev.push('In your last '+R.length+' solves: '+dnf+' DNF'+(dnf===1?'':'s')+' and '+p2+' with +2.');
-      if(p2) ev.push('The +2s added '+(2*p2)+' s in total, about '+(2*p2/R.length).toFixed(2)+' s on every solve.');
-      if(dnf) ev.push('A DNF in an ao5 is dropped as your worst solve, but two DNFs in the same ao5 make the whole ao5 a DNF.');
-      if(!dnf&&!p2) ev.push('That is clean: no penalties at all.');
-      if(dnf&&dnf/R.length>=0.08) adv.push('That is a high DNF rate. A DNF costs far more than a slow solve, so slow down the last layer and check the cube is not locking up.');
-      if(p2&&p2/R.length>=0.1) adv.push('Finish with a deliberate last turn and keep your hands off the cube until the timer stops. Check inspection too: going over 15 seconds gives +2.');
-      if(!adv.length) adv.push('Nothing to fix here. Keep finishing solves cleanly.');
-      return {title:'What penalties cost you', ev, adv};
-    }
-  };
-  function coachShow(a, question){
-    const host=$('coachAnswer'); if(!host) return; host.textContent='';
-    const d=el('div','coach-tip'); if(question) d.appendChild(el('div','coach-q','You: '+question)); d.appendChild(el('b','',a.title));
-    a.ev.forEach(t=>d.appendChild(el('div','coach-ev',t))); a.adv.forEach(t=>d.appendChild(el('div','coach-adv',t)));
-    (a.actions||[]).forEach(x=>d.appendChild(btn(x.label,x.fn))); host.appendChild(d);
-  }
-  function coachAsk(text){
-    const q=String(text||'').trim(); if(!q) return;
-    const hit=COACH_Q.find(x=>x.re.test(q));
-    if(!hit){ coachShow({title:'I can answer questions about your solves', ev:['I did not recognise that one. I work from your own numbers, so try one of the questions above, or words like consistent, improving, goal, practise, last solve, learn or DNF.'], adv:[]}, q); return; }
-    coachShow(coachA[hit.id](coachSnapshot()), q);
-  }
-  (function bindCoachAsk(){
-    const chips=$('coachChips'), inp=$('coachQ'), go=$('coachGo'); if(!chips||!inp||!go) return;
-    COACH_Q.slice().sort((a,b)=>['consistency','progress','goal','plan','last','learn','penalty'].indexOf(a.id)-['consistency','progress','goal','plan','last','learn','penalty'].indexOf(b.id)).forEach(x=>chips.appendChild(btn(x.q, ()=>{ inp.value=''; coachShow(coachA[x.id](coachSnapshot()), x.q); })));
-    const send=()=>{ coachAsk(inp.value); inp.select(); };
-    go.addEventListener('click', send); inp.addEventListener('keydown', (e)=>{ e.stopPropagation(); if(e.key==='Enter'){ e.preventDefault(); send(); } });
-  })();
   onViewActive('view-stats', renderCoach); onViewActive('view-learn', ()=>{ if($('dailyCard').open) renderDaily(); renderPlan(); });
   document.getElementById('eventSeg').addEventListener('click', ()=>setTimeout(()=>{ if($('view-stats').classList.contains('active')) renderCoach(); },200));
 
@@ -8799,8 +8344,8 @@ function XSOLVER(){
   const VC_CNAME={U:'white',R:'red',F:'green',D:'yellow',L:'orange',B:'blue'};
   function vcRecs(){ return store.get('vcsolves').then(r=>Array.isArray(r)?r:[]); }
   function vcRecon(rec){
-    const M=VCMODEL(rec.n), mv=rec.mv.map(m=>({axis:m.a,layers:m.l,q:m.q,whole:!!m.w,name:m.k,at:m.at})), sc=rec.scr, sec=fmt(rec.time);
-    const head='Scramble: '+sc.join(' ')+'\nTime: '+sec+' \u00b7 '+rec.mv.filter(m=>!m.w).length+' moves\n\n';
+    const M=VCMODEL(rec.n), mv=rec.mv.map(m=>({axis:m.a,layers:m.l,q:m.q,whole:!!m.w,name:m.k,at:m.at})), sc=rec.scr, sec=(rec.time/1000).toFixed(2);
+    const head='Scramble: '+sc.join(' ')+'\nTime: '+sec+' s \u00b7 '+rec.mv.filter(m=>!m.w).length+' moves\n\n';
     const an=rec.n===3?VCSTAGES(M,sc,mv):null;
     if(!an) return head+'Solution: '+mv.map(m=>m.name).join(' ');
     return head+an.rows.map(r=>{ const t=mv.slice(r.a,r.b).map(m=>m.name).join(' '); return (t||'(already done)')+' // '+r.name.toLowerCase()+' ('+(r.ms/1000).toFixed(2)+' s, '+r.moves+' moves)'; }).join('\n');
@@ -8847,7 +8392,7 @@ function XSOLVER(){
     host.appendChild(el('div','detail-sub','Saved solves (the latest 30)'));
     recs.slice().reverse().forEach(rec=>{
       const r=el('div','row'); r.style.cssText='gap:6px; flex-wrap:wrap; align-items:center; margin:4px 0; font-size:13px;';
-      r.appendChild(el('span','',rec.n+'\u00d7'+rec.n+' \u00b7 '+fmt(rec.time)+' \u00b7 '+rec.mv.filter(m=>!m.w).length+' moves \u00b7 '+new Date(rec.ts).toLocaleDateString()));
+      r.appendChild(el('span','',rec.n+'\u00d7'+rec.n+' \u00b7 '+(rec.time/1000).toFixed(2)+' s \u00b7 '+rec.mv.filter(m=>!m.w).length+' moves \u00b7 '+new Date(rec.ts).toLocaleDateString()));
       const rp=btn('replay',()=>vcReplay(rec)), cp=btn('copy',()=>svCopy(vcRecon(rec),cp)), dl=btn('delete',async()=>{ const all=await vcRecs(); await store.set('vcsolves',all.filter(x=>x.id!==rec.id)); vcSavedRender(); });
       [rp,cp,dl].forEach(b=>{ b.classList.add('dbtn'); r.appendChild(b); }); host.appendChild(r);
     });
@@ -8857,7 +8402,7 @@ function XSOLVER(){
     vcSetScramble(rec.scr,false); const id=++VC.replayId; VC.t={st:'idle',t0:0,ms:0}; VC.scr=null; $('vcTime').textContent='0.00'; $('vcMeta').textContent='Replaying your solve\u2026';
     rec.mv.forEach(m=>{ setTimeout(()=>{ if(VC.replayId!==id) return; vcMove({axis:m.a,layers:m.l,q:m.q,whole:!!m.w,name:m.k},false); },Math.max(0,m.at)+400); });
     const end=(rec.mv.length?rec.mv[rec.mv.length-1].at:0)+1200+(parseInt($('vcSpeed').value,10)||0);
-    setTimeout(()=>{ if(VC.replayId!==id) return; $('vcMeta').textContent='Replay finished \u00b7 '+fmt(rec.time); $('vcTime').textContent=fmt(rec.time); vcStagesRender(rec); },end);
+    setTimeout(()=>{ if(VC.replayId!==id) return; $('vcMeta').textContent='Replay finished \u00b7 '+(rec.time/1000).toFixed(2)+' s'; $('vcTime').textContent=(rec.time/1000).toFixed(2); vcStagesRender(rec); },end);
   }
   function vcInit(n){
     VC.n=n; const M=VC.model=VCMODEL(n), geo=[];
@@ -8906,7 +8451,7 @@ function XSOLVER(){
     VC.raf=0; const now=performance.now();
     if(VC.anim && now-VC.anim.t0>=VC.anim.dur){ const it=VC.anim; VC.anim=null; vcCommit(it); vcPump(); }
     vcDraw();
-    if(VC.t.st==='run'){ $('vcTime').textContent=fmtSeconds((now-VC.t.t0)/1000, true); }
+    if(VC.t.st==='run'){ $('vcTime').textContent=(((now-VC.t.t0)/1000)).toFixed(2); }
     if(VC.anim || VC.t.st==='run') vcInvalidate();
   }
   function vcPump(){
@@ -8918,7 +8463,7 @@ function XSOLVER(){
     const mv=it.mv, M=VC.model; VC.cube=M.turn(VC.cube,mv.axis,mv.layers,mv.q);
     if(it.user && VCG.g){ VCG.g.dirty=true; vcGuideRender(); }
     if(it.user){ mv.at=(VC.t.st==='run'||VC.t.st==='done')?performance.now()-VC.t.t0:null; VC.hist.push(mv); if(!mv.whole) VC.moves++;
-      if(VC.t.st==='run' && M.isSolved(VC.cube)){ VC.t.ms=performance.now()-VC.t.t0; VC.t.st='done'; mv.at=VC.t.ms; $('vcTime').textContent=fmt(VC.t.ms); vcStagesRender(vcRecOfCurrent()); if(cubeInput){ const sc=VC.scr; VC.pendingSave=true; setTimeout(()=>{ if(cubeInput && VC.t.st==='done' && VC.scr===sc) vcInputSave(); },700); } else if($('vcAuto') && $('vcAuto').checked) vcAddToSession(); }
+      if(VC.t.st==='run' && M.isSolved(VC.cube)){ VC.t.ms=performance.now()-VC.t.t0; VC.t.st='done'; mv.at=VC.t.ms; $('vcTime').textContent=(VC.t.ms/1000).toFixed(2); vcStagesRender(vcRecOfCurrent()); if(VC.battle || ($('vcAuto') && $('vcAuto').checked)) vcAddToSession(); }
       else if(VC.t.st==='ready' && M.isSolved(VC.cube) && VC.moves>0){ VC.t.st='idle'; } }
     vcInfo(); vcInvalidate();
   }
@@ -8929,9 +8474,10 @@ function XSOLVER(){
   }
   function vcAddToSession(){
     const ev=VC_EV[VC.n]; if(!ev || VC.t.st!=='done' || VC.added || !VC.scr) return false;
-    if(ev===currentEvent && activeRound) return false;                       // a timer round is running on this event
+    if(ev===currentEvent && activeRound){ if(VC.battle) $('vcMeta').textContent='A timer round is running on this event, so this solve was not added or sent to the battle. Finish or cancel the round first.'; return false; }   // a timer round is running on this event
     if(!solvesByEvent[ev]) solvesByEvent[ev]=[];
     solvesByEvent[ev].push({time:VC.t.ms, penalty:null, scramble:VC.scr.slice(), ts:Date.now()}); VC.added=true; saveSolves(ev);
+    if(VC.battle){ try{ if(window.CNBattle) CNBattle.virtualSolved(ev, solvesByEvent[ev].length-1); }catch(e){} }
     if(ev===currentEvent){ renderHistory(); renderStats(); renderFullStats(); renderGraphs(); if(VC.fromTimer){ try{ newScramble(); }catch(e){} } }
     return true;
   }
@@ -8949,24 +8495,9 @@ function XSOLVER(){
     $('vcUndo').disabled=!VC.hist.length; $('vcWideWrap').style.display=VC.n>=3?'':'none';
   }
   function vcUndo(){ const m=VC.hist.pop(); if(!m) return; if(!m.whole) VC.moves=Math.max(0,VC.moves-1); VC.queue.push({mv:{axis:m.axis,layers:m.layers,q:(4-m.q)%4,whole:m.whole,name:m.name},user:false}); vcPump(); vcInfo(); }
-  function vcClear(){ VC.pendingSave=false; VC.replayId++; VC.queue=[]; VC.anim=null; VC.hist=[]; VC.moves=0; VC.t={st:'idle',t0:0,ms:0}; VC.added=false; VC.saved=false; $('vcTime').textContent='0.00'; $('vcStages').textContent=''; }
-  window.CNVirtual = { loadTimerScramble(force){
-    if((VC.t.st==='run' || VC.pendingSave) && !force) return;   // never reset a cube that is being solved or is about to be saved
-    const n=VC_N[currentEvent], meta=$('vcMeta');
-    if(!n){ if(meta) meta.textContent='The timer is on '+(EVENT_LABELS[currentEvent]||currentEvent)+', which the virtual cube cannot show. Pick 2×2 to 7×7 above.'; return; }
-    if(n!==VC.n){ $('vcPuzzle').value=String(n); vcInit(n); }
-    vcGuideStop(); vcSetScramble(currentScrambleMoves.slice(),true); } };
-  function vcInputSave(){
-    const scr=VC.scr, ms=VC.t.ms; VC.pendingSave=false; if(VC.t.st!=='done' || !scr || VC.added) return;
-    if(VC_EV[VC.n]!==currentEvent) return;   // the timer moved to another puzzle: leave it to the add button
-    currentScrambleMoves = scr.slice();       // the scramble that was really solved (the timer may have swapped in a new one mid-solve)
-    if(['running','holding','ready','inspecting'].includes(state)){ try{ resetTimerToIdle(); }catch(e){} }
-    state='running'; startTs=performance.now(); pendingPenalty=null;
-    const l=$('cubeLast'); if(l) l.textContent='Saved '+fmt(ms)+' to your solves.';
-    stopTimer(ms);                                       // the normal save path: stats, history, rounds, online battle, next scramble (which loads here)
-  }
-  function vcSetScramble(tokens,fromTimer){
-    vcClear(); const M=VC.model; VC.cube=M.applyAlg(M.solved(),tokens.join(' ')); VC.scr=tokens.slice(); VC.fromTimer=!!fromTimer; VC.t={st:'ready',t0:0,ms:0}; vcInfo(); vcInvalidate();
+  function vcClear(){ VC.battle=false; VC.replayId++; VC.queue=[]; VC.anim=null; VC.hist=[]; VC.moves=0; VC.t={st:'idle',t0:0,ms:0}; VC.added=false; VC.saved=false; $('vcTime').textContent='0.00'; $('vcStages').textContent=''; }
+  function vcSetScramble(tokens,fromTimer,battle){
+    vcClear(); const M=VC.model; VC.cube=M.applyAlg(M.solved(),tokens.join(' ')); VC.scr=tokens.slice(); VC.fromTimer=!!fromTimer; VC.battle=!!battle; VC.t={st:'ready',t0:0,ms:0}; vcInfo(); vcInvalidate();
   }
   function vcRandom(){
     const n=VC.n, ev=VC_EV[n]; let t=null;
@@ -9109,6 +8640,7 @@ function XSOLVER(){
       if(!n){ $('vcMeta').textContent='The timer is on '+(EVENT_LABELS[currentEvent]||currentEvent)+', which the virtual cube cannot show. Switch the timer to a 2×2 to 7×7 first.'; return; }
       if(n!==VC.n){ $('vcPuzzle').value=String(n); vcInit(n); }
       vcSetScramble(currentScrambleMoves.slice(),true); });
+    window.CNVcBattle=function(ev,moves){ const n=VC_N[ev]; if(!n) return false; vcGuideStop(); if(n!==VC.n){ $('vcPuzzle').value=String(n); vcInit(n); } $('vcTimeOn').checked=true; vcSetScramble(moves.slice(),false,true); return true; };
     $('vcReset').addEventListener('click',()=>{ vcGuideStop(); vcClear(); VC.cube=VC.model.solved(); VC.scr=null; vcInfo(); vcInvalidate(); });
     $('vcUndo').addEventListener('click',vcUndo);
     $('vcWatch').addEventListener('click',vcWatchScramble); $('vcHint').addEventListener('click',vcHint);
@@ -9530,7 +9062,7 @@ function XSOLVER(){
   const S = { kind:'pyra', cube:null, hist:[], moves:0, t0:0, ms:0, st:'idle', tick:0, polys:null, byIdx:null, guide:null, play:0, paint:null, colour:null };
   const K = ()=>KIND[S.kind];
   const inv = m => m.endsWith("'") ? m[0] : m+"'";
-  const fmt = ms => fmtSeconds(ms/1000);
+  const fmt = ms => (ms/1000).toFixed(2);
   function render(){
     const P=K().P, cube = S.paint ? S.paint.cube : S.cube;
     for(const k in S.polys){ const idx=P.slotIndex[k]; if(idx===undefined) continue; const c=cube[idx]; S.polys[k].setAttribute('fill', c ? colorFor(c) : '#4b5563'); }
@@ -9655,7 +9187,7 @@ function XSOLVER(){
   const okRelay = u => /^https?:\/\/[^\s/?#]+(:\d+)?\/?$/.test(u);
   const cleanName = x => String(x||'').replace(/[\u0000-\u001f<>]/g,'').trim().slice(0,20) || 'player';
   const effective = r => r.pen==='DNF' ? Infinity : r.ms + (r.pen==='+2' ? 2000 : 0);
-  const fmtT = r => { const e=effective(r); return e===Infinity ? 'DNF' : fmtSeconds(e/1000)+(r.pen==='+2'?'+':''); };
+  const fmtT = r => { const e=effective(r); return e===Infinity ? 'DNF' : (e/1000).toFixed(2)+(r.pen==='+2'?'+':''); };
   // ---- relay ----
   function relayUrl(){ return B.relay.replace(/\/$/,'')+'/'+B.topic; }
   async function publish(obj){ obj.uid = rid(12); B.seen.add(obj.uid); try{ const r=await fetch(relayUrl(),{method:'POST',body:JSON.stringify(obj)}); if(!r.ok) throw new Error('relay answered '+r.status); return true; }catch(e){ say('Could not reach the relay ('+((e&&e.message)||'network problem')+'). Your move is not sent.'); return false; } }
@@ -9692,12 +9224,19 @@ function XSOLVER(){
   function banner(){
     let b=$('battleBanner'); if(!b){ b=document.createElement('div'); b.id='battleBanner'; b.setAttribute('role','status'); b.style.cssText='font-size:13px; text-align:center; padding:6px 10px; margin:6px 0; border:1px solid var(--line); border-radius:12px;'; const v=$('view-timer'); v.insertBefore(b, v.firstChild); }
     if(!B.room || !BATTLE_PENDING){ b.style.display='none'; return; }
-    b.style.display=''; b.textContent='\u2694\ufe0f Battle round '+(B.current?B.current.n:'')+' in room '+B.room+': solve this scramble with the timer, a typed time or the virtual cube. Your time is sent when you finish.';
+    b.style.display=''; b.textContent='\u2694\ufe0f Battle round '+(B.current?B.current.n:'')+' in room '+B.room+': solve this scramble. Your time is sent when you stop the timer, save a typed time or finish it on the virtual cube.';
   }
   function afterSolve(){
     if(!B.room || !BATTLE_PENDING || currentEvent!==BATTLE_PENDING.ev || lastSolveIndex===null) return;
     B.my={ev:currentEvent, idx:lastSolveIndex, n:B.current.n}; BATTLE_PENDING=null; banner(); send();
   }
+  function virtualSolved(ev, idx){      // a solve of the shared scramble finished on the virtual cube and was added to the session
+    if(!B.room || !BATTLE_PENDING || BATTLE_PENDING.ev!==ev || !B.current || !solvesByEvent[ev] || !solvesByEvent[ev][idx]) return false;
+    B.my={ev:ev, idx:idx, n:B.current.n}; BATTLE_PENDING=null; banner(); send();
+    if(currentEvent===ev && !['running','holding','inspecting','ready'].includes(state)){ try{ newScramble(); }catch(e){} }
+    return true;
+  }
+  function pending(){ return (B.room && BATTLE_PENDING) ? {ev:BATTLE_PENDING.ev, moves:BATTLE_PENDING.moves.slice()} : null; }
   function changed(){ if(B.room && B.my && currentEvent===B.my.ev && lastSolveIndex===B.my.idx) send(); }
   function send(){
     const s=solvesByEvent[B.my.ev][B.my.idx]; if(!s) return; const r={ms:Math.round(s.time), pen:s.penalty||null};
@@ -9726,7 +9265,7 @@ function XSOLVER(){
   function render(){
     if(!B.room) return; const box=$('battlePlayers'); const names=[...B.players.values()].map(p=>p.name);
     box.textContent='In the room ('+names.length+'): '+names.join(', ');
-    const c=B.current; const rt=$('battleRound'); rt.textContent = !c ? 'No round yet. Anyone can start one.' : 'Round '+c.n+' \u00b7 '+(EVENT_LABELS[c.ev]||c.ev)+' \u00b7 started by '+c.name+(BATTLE_PENDING ? ' \u00b7 waiting for your solve (timer, typed time or virtual cube)' : (B.my&&B.my.n===c.n ? ' \u00b7 your time is sent' : ''));
+    const c=B.current; const rt=$('battleRound'); rt.textContent = !c ? 'No round yet. Anyone can start one.' : 'Round '+c.n+' \u00b7 '+(EVENT_LABELS[c.ev]||c.ev)+' \u00b7 started by '+c.name+(()=>{ const r=B.rounds[c.n]; const done=r?Object.keys(r.results).length:0; return ' \u00b7 '+done+' of '+B.players.size+' have a time'; })()+(BATTLE_PENDING ? ' \u00b7 waiting for your solve (Timer tab, typing mode or virtual cube)' : (B.my&&B.my.n===c.n ? ' \u00b7 your time is sent' : ''));
     const tb=$('battleTable'); tb.textContent=''; const rounds=Object.keys(B.rounds).map(Number).sort((a,b)=>b-a).filter(n=>Object.keys(B.rounds[n].results).length);
     if(!rounds.length){ banner(); return; }
     const {pts,names:nm}=standings(); const table=document.createElement('table'); table.style.cssText='width:100%; border-collapse:collapse; font-size:13px;';
@@ -9746,20 +9285,14 @@ function XSOLVER(){
   EVENTS.forEach(ev=>{ const o=document.createElement('option'); o.value=ev; o.textContent=EVENT_LABELS[ev]; $('battleEvent').appendChild(o); }); $('battleEvent').value='333';
   $('battleCreate').addEventListener('click',()=>enter(rid(8))); $('battleJoin').addEventListener('click',()=>enter($('battleCode').value)); $('battleLeave').addEventListener('click',()=>leave(false));
   $('battleStart').addEventListener('click',startRound);
-  $('battleGo').addEventListener('click',()=>{ try{ cnCloseBattle(); }catch(e){} const tb=[...document.querySelectorAll('.topnav button')].find(x=>/timer/i.test(x.textContent)); if(tb) tb.click(); });
+  $('battleGo').addEventListener('click',()=>{ const tb=[...document.querySelectorAll('.topnav button')].find(x=>/timer/i.test(x.textContent)); if(tb) tb.click(); });
   $('battleSkip').addEventListener('click',()=>{ BATTLE_PENDING=null; banner(); render(); say('Skipped. You will get a normal scramble; the next round brings a new shared one.'); });
   $('battleLink').addEventListener('click',async()=>{ const u=location.origin+location.pathname+'#battle='+B.room; try{ await navigator.clipboard.writeText(u); say('Invite link copied: '+u); }catch(e){ say('Copy this link: '+u); } });
   window.addEventListener('pagehide',()=>{ if(B.room){ try{ navigator.sendBeacon(relayUrl(), JSON.stringify({t:'bye', id:B.me.id, uid:rid(12)})); }catch(e){} } });
   (async()=>{ try{ const n=await window.storage.get('battlename',false); if(n&&n.value){ $('battleName').value=cleanName(n.value); } const r=await window.storage.get('battlerelay',false); if(r&&r.value&&okRelay(r.value)) $('battleRelay').value=r.value; }catch(e){}
-    const m=/#battle=([A-Za-z0-9]{6,12})/.exec(location.hash); if(m){ $('battleCode').value=m[1].toUpperCase(); $('battleCard').open=true; try{ cnOpenBattle(); }catch(e){} say('Enter your nickname and press join to enter room '+m[1].toUpperCase()+'.'); } })();
-  $('battleVc').addEventListener('click',()=>{
-    if(!B.room || !BATTLE_PENDING){ say('No round is waiting for you. Start the next round first.'); return; }
-    if(!['222','333','444','555','666','777'].includes(BATTLE_PENDING.ev)){ say((EVENT_LABELS[BATTLE_PENDING.ev]||BATTLE_PENDING.ev)+' cannot be shown on the virtual cube (2×2 to 7×7 only). Solve this round on the timer.'); return; }
-    try{ cnCloseBattle(); }catch(e){} const tb=[...document.querySelectorAll('.topnav button')].find(x=>/timer/i.test(x.textContent)); if(tb) tb.click();
-    cnSetInputMode('cube'); say('The shared scramble is on the virtual cube. Turn it to start the clock.'); });
-  const liveDot=()=>{ const o=$('battleOpen'); if(o) o.classList.toggle('live', !!(B.room && BATTLE_PENDING)); };
-  setInterval(liveDot, 700);
-  window.CNBattle = { afterSolve, changed };
+    const m=/#battle=([A-Za-z0-9]{6,12})/.exec(location.hash); if(m){ $('battleCode').value=m[1].toUpperCase(); $('battleCard').open=true; say('Enter your nickname and press join to enter room '+m[1].toUpperCase()+'.'); } })();
+  $('battleVc').addEventListener('click',()=>{ const pd=pending(); if(!pd){ say('There is no battle round waiting for your solve.'); return; } if(!window.CNVcBattle || !window.CNVcBattle(pd.ev, pd.moves)){ say('The virtual cube cannot show '+(EVENT_LABELS[pd.ev]||pd.ev)+'. Use the timer or type your time instead.'); return; } const vb=$('vcCard'); if(vb){ vb.open=true; vb.scrollIntoView({block:'start'}); } say('Solve it on the virtual cube. The clock starts with your first move and your time is sent when it is solved.'); });
+  window.CNBattle = { afterSolve, changed, virtualSolved, pending };
 })();
 
 })();
