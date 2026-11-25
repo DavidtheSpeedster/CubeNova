@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy — CubeNova</title>
+<meta name="description" content="How CubeNova handles your data: solves stay on your device, and what is sent only when you use online battle or the optional AI coach.">
+<link rel="canonical" href="https://davidthespeedster.github.io/CubeNova/privacy.html">
+<meta name="theme-color" content="#00020c">
+<meta name="robots" content="index, follow">
+<style>
+:root{ color-scheme:dark; --bg:#00020c; --card:#0a1535; --line:#1f3a7a; --text:#e8efff; --muted:#93a6d4; --accent:#4aa3ff; }
+@media (prefers-color-scheme:light){ :root{ color-scheme:light; --bg:#f2f4fa; --card:#ffffff; --line:#c5d3f0; --text:#14182a; --muted:#4b5878; --accent:#1763c7; } }
+*{ box-sizing:border-box; } html{ scroll-padding-top:16px; }
+body{ margin:0; background:radial-gradient(1200px 600px at 10% -10%, rgba(43,155,255,.18), transparent 60%), var(--bg); color:var(--text); font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0); }
+.wrap{ max-width:760px; margin:0 auto; padding:28px 18px 56px; }
+header.top{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:22px; }
+.brand{ font-weight:800; font-size:20px; letter-spacing:.2px; color:var(--text); text-decoration:none; }
+nav a{ color:var(--accent); text-decoration:none; margin-right:14px; font-size:15px; } nav a:hover{ text-decoration:underline; }
+h1{ font-size:30px; line-height:1.2; margin:4px 0 6px; } h2{ font-size:20px; margin:28px 0 8px; } p,li{ color:var(--text); } .muted{ color:var(--muted); font-size:14px; }
+.card{ background:linear-gradient(150deg, rgba(255,255,255,.04), transparent), var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px; margin:14px 0; }
+ul{ padding-left:20px; } li{ margin:6px 0; } a{ color:var(--accent); }
+.btn{ display:inline-block; background:var(--accent); color:#fff; padding:10px 18px; border-radius:12px; text-decoration:none; font-weight:700; } .btn:hover{ filter:brightness(1.1); }
+footer{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line); color:var(--muted); font-size:14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><a class="brand" href="./">CubeNova</a><nav><a href="./">Open the timer</a><a href="about.html">About</a><a href="privacy.html">Privacy</a></nav></header>
+<main>
+<h1>Privacy</h1>
+<p class="muted">Last updated: 24 November 2026</p>
+<div class="card"><p>CubeNova keeps your solves, sessions, goals and settings on your own device, in your browser's storage. There are no accounts and no analytics, and no server of ours receives your solves.</p></div>
+
+<h2>What stays on your device</h2>
+<p>Everything you record: your times, sessions, goals, settings and the cases you have marked in the Learn tab. Clearing your browser data deletes it, so use <b>Full backup</b> in Settings to keep a copy.</p>
+
+<h2>What leaves your device, only if you use it</h2>
+<ul>
+<li><b>Online battle.</b> Your display name, a random player ID, your times and the scramble are sent through the ntfy.sh relay (or a relay you choose) to the other people in the room. Anyone who has the room code can read what is shared in that room.</li>
+<li><b>AI coach (optional).</b> If you paste your own Anthropic API key and press the button, a summary is sent to Anthropic to get advice. The summary contains the event name, your averages and best time, your last 30 times, your goal, and the coach's observations. Nothing is sent until you press the button. Your key is saved on your device only if you tick the option to remember it, and you can remove it at any time.</li>
+<li><b>Fonts.</b> The app loads its fonts from Google Fonts, so Google can see your IP address when it does. Once loaded, they are saved for offline use.</li>
+</ul>
+
+<h2>Microphone and Bluetooth</h2>
+<p>The Stackmat feature listens to the microphone, and the GAN and smart-cube features use Bluetooth. This is processed in your browser. Audio is not recorded or uploaded.</p>
+
+<h2>Offline copy</h2>
+<p>CubeNova saves a copy of the app in your browser so it can work offline. This is a normal browser cache and holds no personal data.</p>
+
+<h2>Contact</h2>
+<p>Questions about privacy? Open an issue on <a href="https://github.com/DavidtheSpeedster/CubeNova">GitHub</a>.</p>
+</main>
+<footer>CubeNova is made by David the Speedster. Source and issues: <a href="https://github.com/DavidtheSpeedster/CubeNova">github.com/DavidtheSpeedster/CubeNova</a></footer>
+</div>
+</body>
+</html>
